@@ -23,7 +23,7 @@ public class Usuario extends BaseEntity {
     @Size(max = 255, message = "O nome deve ter no máximo 255 caracteres")
     private String nome;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "O email é obrigatório")
     @Email(message = "Email inválido")
     private String email;
@@ -33,6 +33,7 @@ public class Usuario extends BaseEntity {
     private String senha;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private Perfil perfil;
 
     @Enumerated(EnumType.STRING)
