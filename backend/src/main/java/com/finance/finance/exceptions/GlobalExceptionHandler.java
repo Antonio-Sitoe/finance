@@ -1,14 +1,19 @@
 package com.finance.finance.exceptions;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,6 +57,49 @@ public class GlobalExceptionHandler {
                 request.getRequestURI(),
                 "Validation failed",
                 fieldErrors);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request) {
+        String message = "JSON inválido: verifique se os tipos dos campos estão corretos.";
+
+        Throwable cause = ex.getCause();
+        if (cause instanceof InvalidFormatException invalidFormat) {
+            String fieldPath = invalidFormat.getPath().stream()
+                    .map(JsonMappingException.Reference::getFieldName)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining("."));
+
+            String expectedType = invalidFormat.getTargetType() != null
+                    ? invalidFormat.getTargetType().getSimpleName()
+                    : "tipo esperado";
+
+            Object receivedValue = invalidFormat.getValue();
+
+            if (fieldPath == null || fieldPath.isBlank()) {
+                message = String.format(
+                        "Tipo de dado inválido no JSON. Valor recebido: '%s'. Tipo esperado: %s.",
+                        receivedValue,
+                        expectedType);
+            } else {
+                message = String.format(
+                        "Tipo de dado inválido para o campo '%s'. Valor recebido: '%s'. Tipo esperado: %s.",
+                        fieldPath,
+                        receivedValue,
+                        expectedType);
+            }
+        }
+
+        logger.warn("JSON parse/read error on path {}: {}", request.getRequestURI(), ex.getMessage());
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                message,
+                request.getRequestURI(),
+                ex.getClass().getSimpleName(),
+                null);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

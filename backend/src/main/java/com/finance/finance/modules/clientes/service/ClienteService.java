@@ -73,9 +73,26 @@ public class ClienteService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<ClienteResponseDTO> listar(PaginationRequest paginationRequest) {
+    public PageResponse<ClienteResponseDTO> listar(String nome, Situacao situacao,
+            PaginationRequest paginationRequest) {
         Pageable pageable = paginationRequest.toPageable("id");
-        Page<ClienteResponseDTO> page = clienteRepository.findAll(pageable)
+        String nomeNormalizado = (nome == null) ? null : nome.trim();
+
+        Page<Cliente> clientesPage;
+        if (nomeNormalizado != null && !nomeNormalizado.isBlank() && situacao != null) {
+            clientesPage = clienteRepository.findByNomeEmpresarialContainingIgnoreCaseAndSituacao(
+                    nomeNormalizado,
+                    situacao,
+                    pageable);
+        } else if (nomeNormalizado != null && !nomeNormalizado.isBlank()) {
+            clientesPage = clienteRepository.findByNomeEmpresarialContainingIgnoreCase(nomeNormalizado, pageable);
+        } else if (situacao != null) {
+            clientesPage = clienteRepository.findBySituacao(situacao, pageable);
+        } else {
+            clientesPage = clienteRepository.findAll(pageable);
+        }
+
+        Page<ClienteResponseDTO> page = clientesPage
                 .map(ClienteMapper::toDto);
         return PageResponse.from(page);
     }
