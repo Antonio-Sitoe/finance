@@ -1,4 +1,4 @@
-package com.finance.finance.modules.conta.Lancamento.model;
+package com.finance.finance.modules.Lancamento.model;
 
 import com.finance.finance.modules.categoria.model.Categoria;
 import com.finance.finance.modules.clientes.model.Cliente;

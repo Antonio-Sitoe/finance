@@ -1,45 +1,51 @@
 package com.finance.finance.modules.clientes.dto;
 
 import com.finance.finance.modules.common.enums.Situacao;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
 public class ClienteRequestDTO {
 
-    @NotBlank(message = "O nome empresarial é obrigatório")
+    @NotNull(groups = Update.class, message = "ID é obrigatório para atualização")
+    private Long id;
+
+    @NotBlank(groups = { Create.class, Update.class }, message = "O nome empresarial é obrigatório")
     private String nomeEmpresarial;
 
-    @NotBlank(message = "O email é obrigatório")
-    @Email(message = "Email inválido")
+    @NotBlank(groups = Create.class, message = "O email é obrigatório")
+    @Email(groups = { Create.class, Update.class }, message = "Email inválido")
     private String email;
 
-    @NotBlank(message = "O telefone é obrigatório")
+    @NotBlank(groups = { Create.class, Update.class }, message = "O telefone é obrigatório")
     private String telefone;
 
-    private String cep;
-
+    @NotBlank(groups = { Create.class, Update.class }, message = "O endereço é obrigatório")
     private String endereco;
 
+    @NotBlank(groups = { Create.class, Update.class }, message = "O número é obrigatório")
     private String numero;
 
+    @NotBlank(groups = { Create.class, Update.class }, message = "O complemento é obrigatório")
     private String complemento;
 
-    @NotBlank(message = "A cidade é obrigatória")
+    @NotBlank(groups = { Create.class, Update.class }, message = "A cidade é obrigatória")
     private String cidade;
 
-    @NotBlank(message = "O estado é obrigatório")
+    @NotBlank(groups = { Create.class, Update.class }, message = "O estado é obrigatório")
     @Size(max = 10, message = "O estado deve ter no máximo 10 caracteres")
     private String estado;
 
-    @Positive(message = "A nota deve ser um número positivo")
+    @NotNull(groups = Create.class, message = "A nota é obrigatória")
+    @Positive(groups = { Create.class, Update.class }, message = "A nota deve ser um número positivo")
     private Integer nota;
 
-    @NotNull(message = "A situação é obrigatória")
+    @NotNull(groups = Create.class, message = "A situação é obrigatória")
     private Situacao situacao;
+
+    public interface Create {
+    }
+
+    public interface Update {
+    }
 }

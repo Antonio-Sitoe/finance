@@ -7,10 +7,10 @@ import lombok.Data;
 @Data
 @Builder
 public class ClienteResponseDTO {
+    private Long id;
     private String nomeEmpresarial;
     private String email;
     private String telefone;
-    private String cep;
     private String endereco;
     private String numero;
     private String complemento;

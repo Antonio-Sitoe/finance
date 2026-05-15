@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.modules.clientes.dto.ClienteRequestDTO;
 import com.finance.finance.modules.clientes.dto.ClienteResponseDTO;
+import com.finance.finance.modules.clientes.dto.ClienteStatusResponseDTO;
 import com.finance.finance.modules.clientes.mapper.ClienteMapper;
 import com.finance.finance.modules.clientes.model.Cliente;
 import com.finance.finance.modules.clientes.repository.ClienteRepository;
+import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,34 @@ public class ClienteService {
         return ClienteMapper.toDto(clienteSalvo);
     }
 
+    public ClienteResponseDTO atualizar(Long id, ClienteRequestDTO clienteAtualizado) {
+        Cliente clienteExistente = clienteRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Cliente não encontrado"));
+
+        ClienteMapper.updateEntityFromDto(clienteAtualizado, clienteExistente);
+
+        Cliente clienteSalvo = clienteRepository.save(clienteExistente);
+
+        return ClienteMapper.toDto(clienteSalvo);
+    }
+
+    public ClienteStatusResponseDTO activarOuDesativar(Long id) {
+        Cliente clienteExistente = clienteRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Cliente não encontrado"));
+
+        String mensagem;
+        if (clienteExistente.getSituacao() == Situacao.ATIVO) {
+            clienteExistente.setSituacao(Situacao.INATIVO);
+            mensagem = "Cliente desativado com sucesso";
+        } else {
+            clienteExistente.setSituacao(Situacao.ATIVO);
+            mensagem = "Cliente ativado com sucesso";
+        }
+
+        Cliente clienteSalvo = clienteRepository.save(clienteExistente);
+        return new ClienteStatusResponseDTO(clienteSalvo.getId(), clienteSalvo.getSituacao(), mensagem);
+    }
+
     private void validarEmailUnico(String email, Long idAtual) {
         boolean emailEmUso = idAtual == null
                 ? clienteRepository.existsByEmail(email)
@@ -49,4 +79,12 @@ public class ClienteService {
                 .map(ClienteMapper::toDto);
         return PageResponse.from(page);
     }
+
+    @Transactional(readOnly = true)
+    public ClienteResponseDTO obterPorId(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Cliente não encontrado"));
+        return ClienteMapper.toDto(cliente);
+    }
+
 }

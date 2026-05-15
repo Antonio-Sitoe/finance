@@ -29,9 +29,6 @@ public class Cliente extends BaseEntity {
     private String telefone;
 
     @Column(nullable = false)
-    private String cep;
-
-    @Column(nullable = false)
     private String endereco;
 
     @Column(nullable = false)
