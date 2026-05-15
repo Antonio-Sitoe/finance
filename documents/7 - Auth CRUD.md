@@ -10,3 +10,5 @@ Funcionalidades básicas de segurança.
 * [ ] Expiração de token
 
 Com Spring Security.
+
+* [ ] Implementar Role Based Acess
