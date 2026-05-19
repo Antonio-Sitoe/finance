@@ -12,9 +12,12 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 @Entity
-@Table(name = "contactos")
+@Table(name = "contactos", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "cliente_id", "email" }),
+        @UniqueConstraint(columnNames = { "cliente_id", "telefone" })
+})
 public class Contacto extends BaseEntity {
 
     @Id
@@ -26,10 +29,10 @@ public class Contacto extends BaseEntity {
 
     private String departamento;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String email;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String telefone;
 
     @Enumerated(EnumType.STRING)
