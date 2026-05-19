@@ -41,6 +41,8 @@ public final class ContactoMapper {
                 .situacao(contacto.getSituacao())
                 .clienteId(contacto.getCliente().getId())
                 .clienteNome(contacto.getCliente().getNomeEmpresarial())
+                .createdAt(contacto.getCreatedAt())
+                .updatedAt(contacto.getUpdatedAt())
                 .build();
     }
 }

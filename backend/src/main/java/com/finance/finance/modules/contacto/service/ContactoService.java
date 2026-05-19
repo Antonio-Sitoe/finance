@@ -1,6 +1,9 @@
 package com.finance.finance.modules.contacto.service;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import com.finance.finance.modules.clientes.repository.ClienteRepository;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
+import com.finance.finance.modules.contacto.dto.ContactoPorClienteResponseDTO;
 import com.finance.finance.modules.contacto.dto.ContactoRequestDTO;
 import com.finance.finance.modules.contacto.dto.ContactoResponseDTO;
 import com.finance.finance.modules.contacto.dto.ContactoStatusResponseDTO;
@@ -27,6 +31,7 @@ public class ContactoService {
         private final ContactoRepository contactoRepository;
         private final ClienteRepository clienteRepository;
 
+        @Transactional
         public ContactoResponseDTO criar(ContactoRequestDTO novoContacto) {
                 Cliente cliente = validateCheckCliente(novoContacto);
                 Contacto contacto = ContactoMapper.toEntity(novoContacto, cliente);
@@ -34,6 +39,7 @@ public class ContactoService {
                 return ContactoMapper.toDto(contactoSalvo);
         }
 
+        @Transactional
         public ContactoResponseDTO atualizar(Long id, ContactoRequestDTO dto) {
                 Contacto contacto = contactoRepository.findById(id)
                                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -55,6 +61,7 @@ public class ContactoService {
                 return ContactoMapper.toDto(contactoRepository.save(contacto));
         }
 
+        @Transactional
         public ContactoStatusResponseDTO activarOuDesativar(Long id) {
                 Contacto contacto = contactoRepository.findById(id)
                                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -101,6 +108,19 @@ public class ContactoService {
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Contacto não encontrado com id: " + id));
                 return ContactoMapper.toDto(contacto);
+        }
+
+        @Transactional(readOnly = true)
+        public List<ContactoResponseDTO> listarPorCliente(Long clienteId) {
+                clienteRepository.findById(clienteId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Cliente não encontrado com id: " + clienteId));
+                return contactoRepository.findByClienteId(clienteId).stream().map(ContactoMapper::toDto).toList();
+        }
+
+        @Transactional(readOnly = true)
+        public List<ContactoPorClienteResponseDTO> contactosPorClientesEstaticticas() {
+                return contactoRepository.countContactosPorCliente();
         }
 
         private Cliente validateCheckCliente(ContactoRequestDTO contacto) {

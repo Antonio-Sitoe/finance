@@ -1,5 +1,7 @@
 package com.finance.finance.modules.contacto.dto;
 
+import java.time.LocalDateTime;
+
 import com.finance.finance.modules.common.enums.Situacao;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -14,5 +16,7 @@ public record ContactoResponseDTO(
         String telefone,
         Situacao situacao,
         Long clienteId,
-        String clienteNome) {
+        String clienteNome,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt) {
 }
