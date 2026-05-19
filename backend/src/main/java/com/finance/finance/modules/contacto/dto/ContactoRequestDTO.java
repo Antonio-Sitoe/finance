@@ -6,39 +6,39 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Schema(name = "ContactoRequest", description = "Payload para criação e atualização de contactos via grupos de validação")
 public class ContactoRequestDTO {
 
-    @Schema(description = "Nome do candidato", example = "John Doe")
-    @NotBlank(message = "O nome é obrigatório")
+    @NotBlank(groups = Create.class, message = "O nome é obrigatório")
+    @Schema(description = "Nome do contacto", example = "João Silva")
     private String nome;
 
-    @Schema(description = "Departamento do candidato", example = "TI")
-    @NotBlank(message = "O departamento é obrigatório")
+    @Schema(description = "Departamento do contacto", example = "TI")
     private String departamento;
 
-    @Schema(description = "Email do candidato", example = "john.doe@example.com")
-    @NotBlank(message = "O email é obrigatório")
-    @Email(message = "O email deve ser válido")
+    @NotBlank(groups = Create.class, message = "O email é obrigatório")
+    @Email(groups = { Create.class, Update.class }, message = "O email deve ser válido")
+    @Schema(description = "Email do contacto", example = "joao.silva@empresa.com")
     private String email;
 
-    @Schema(description = "Telefone do candidato", example = "11999999999")
-    @NotBlank(message = "O telefone é obrigatório")
+    @NotBlank(groups = Create.class, message = "O telefone é obrigatório")
+    @Schema(description = "Telefone do contacto", example = "+258841234567")
     private String telefone;
 
-    @Schema(description = "Situacao do contato", example = "ATIVO")
-    @NotNull(message = "A situação é obrigatória")
+    @NotNull(groups = Create.class, message = "A situação é obrigatória")
+    @Schema(description = "Situação do contacto", example = "ATIVO")
     private Situacao situacao;
 
-    @Schema(description = "ID do cliente", example = "12345")
-    @NotNull(message = "O ID do cliente é obrigatório")
+    @NotNull(groups = Create.class, message = "O ID do cliente é obrigatório")
+    @Schema(description = "ID do cliente ao qual o contacto pertence", example = "1")
     private Long clienteId;
+
+    public interface Create {
+    }
+
+    public interface Update {
+    }
 }

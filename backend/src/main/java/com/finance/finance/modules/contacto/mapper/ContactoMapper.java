@@ -1,5 +1,7 @@
 package com.finance.finance.modules.contacto.mapper;
 
+import java.util.Optional;
+
 import com.finance.finance.modules.clientes.model.Cliente;
 import com.finance.finance.modules.contacto.dto.ContactoRequestDTO;
 import com.finance.finance.modules.contacto.dto.ContactoResponseDTO;
@@ -7,15 +9,26 @@ import com.finance.finance.modules.contacto.model.Contacto;
 
 public final class ContactoMapper {
 
-    public static Contacto toEntity(ContactoRequestDTO contactoRequestDTO, Cliente cliente) {
+    private ContactoMapper() {
+    }
+
+    public static Contacto toEntity(ContactoRequestDTO dto, Cliente cliente) {
         return Contacto.builder()
-                .nome(contactoRequestDTO.getNome())
-                .departamento(contactoRequestDTO.getDepartamento())
-                .email(contactoRequestDTO.getEmail())
-                .telefone(contactoRequestDTO.getTelefone())
-                .situacao(contactoRequestDTO.getSituacao())
+                .nome(dto.getNome())
+                .departamento(dto.getDepartamento())
+                .email(dto.getEmail())
+                .telefone(dto.getTelefone())
+                .situacao(dto.getSituacao())
                 .cliente(cliente)
                 .build();
+    }
+
+    public static void updateEntityFromDto(ContactoRequestDTO dto, Contacto contacto) {
+        Optional.ofNullable(dto.getNome()).ifPresent(contacto::setNome);
+        Optional.ofNullable(dto.getDepartamento()).ifPresent(contacto::setDepartamento);
+        Optional.ofNullable(dto.getEmail()).ifPresent(contacto::setEmail);
+        Optional.ofNullable(dto.getTelefone()).ifPresent(contacto::setTelefone);
+        Optional.ofNullable(dto.getSituacao()).ifPresent(contacto::setSituacao);
     }
 
     public static ContactoResponseDTO toDto(Contacto contacto) {
@@ -26,7 +39,8 @@ public final class ContactoMapper {
                 .email(contacto.getEmail())
                 .telefone(contacto.getTelefone())
                 .situacao(contacto.getSituacao())
-                .cliente(contacto.getCliente())
+                .clienteId(contacto.getCliente().getId())
+                .clienteNome(contacto.getCliente().getNomeEmpresarial())
                 .build();
     }
 }

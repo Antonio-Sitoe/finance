@@ -14,6 +14,7 @@ public class ApiErrorResponse {
     private int status;
     private String error;
     private String message;
+    private String debugMessage;
     private String path;
     private Map<String, String> fieldErrors;
 }

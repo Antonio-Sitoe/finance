@@ -1,10 +1,11 @@
 package com.finance.finance.modules.contacto.dto;
 
-import com.finance.finance.modules.clientes.model.Cliente;
 import com.finance.finance.modules.common.enums.Situacao;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
+@Schema(name = "ContactoResponse", description = "Representação de um contacto na API")
 public record ContactoResponseDTO(
         Long id,
         String nome,
@@ -12,5 +13,6 @@ public record ContactoResponseDTO(
         String email,
         String telefone,
         Situacao situacao,
-        Cliente cliente) {
+        Long clienteId,
+        String clienteNome) {
 }
