@@ -48,17 +48,14 @@ Contactos vinculados ao cliente.
 CRUD igual ao cliente.
 
 ### Funcionalidades
-
-* [ ] Criar fornecedor
-* [ ] Editar fornecedor
-* [ ] Listar fornecedores
-* [ ] Desativar fornecedor
-
+* [x] Criar fornecedor
+* [x] Editar fornecedor
+* [x] Listar fornecedores
+* [x] Desativar fornecedor
 ---
-
 Filtros:
 
-* [ ] Nome
+* [x] Nome
 
 ---
 

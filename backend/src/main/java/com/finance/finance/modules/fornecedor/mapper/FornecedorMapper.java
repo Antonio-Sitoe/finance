@@ -2,6 +2,7 @@ package com.finance.finance.modules.fornecedor.mapper;
 
 import java.util.Optional;
 
+import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.fornecedor.dto.FornecedorRequestDTO;
 import com.finance.finance.modules.fornecedor.dto.FornecedorResponseDTO;
 import com.finance.finance.modules.fornecedor.model.Fornecedor;
@@ -29,7 +30,9 @@ public class FornecedorMapper {
         fornecedor.setCidade(dto.getCidade());
         fornecedor.setEstado(dto.getEstado());
         fornecedor.setNota(dto.getNota());
-        fornecedor.setSituacao(dto.getSituacao());
+        fornecedor.setSituacao(dto.getSituacao() != null
+                ? dto.getSituacao()
+                : Situacao.ATIVO);
 
         return fornecedor;
     }
@@ -54,6 +57,7 @@ public class FornecedorMapper {
                 .nota(fornecedor.getNota())
                 .situacao(fornecedor.getSituacao())
                 .build();
+
     }
 
     public static void updateEntity(
@@ -61,9 +65,11 @@ public class FornecedorMapper {
             FornecedorRequestDTO dto) {
         Optional.ofNullable(dto.getNomeEmpresarial()).ifPresent(fornecedor::setNomeEmpresarial);
         Optional.ofNullable(dto.getTelefone()).ifPresent(fornecedor::setTelefone);
+        Optional.ofNullable(dto.getWebsite()).ifPresent(fornecedor::setWebsite);
         Optional.ofNullable(dto.getEndereco()).ifPresent(fornecedor::setEndereco);
         Optional.ofNullable(dto.getNumero()).ifPresent(fornecedor::setNumero);
         Optional.ofNullable(dto.getComplemento()).ifPresent(fornecedor::setComplemento);
+        Optional.ofNullable(dto.getBairro()).ifPresent(fornecedor::setBairro);
         Optional.ofNullable(dto.getCidade()).ifPresent(fornecedor::setCidade);
         Optional.ofNullable(dto.getEstado()).ifPresent(fornecedor::setEstado);
         Optional.ofNullable(dto.getNota()).ifPresent(fornecedor::setNota);

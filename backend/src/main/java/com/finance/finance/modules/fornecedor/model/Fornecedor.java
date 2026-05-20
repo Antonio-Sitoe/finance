@@ -21,6 +21,7 @@ public class Fornecedor extends BaseEntity {
     @Column(name = "nome_empresarial", nullable = false)
     private String nomeEmpresarial;
 
+    @Column(unique = true)
     private String email;
 
     @Column(length = 15)
