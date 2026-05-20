@@ -70,3 +70,20 @@ Muito importantes.
 * [ ] Filtrar por conta
 * [ ] Filtrar por status
 
+### Endpoints Avançados
+
+**Operações em massa / integração**
+- `POST /lancamentos/bulk`: criar/atualizar em lote (CSV/JSON), com validação por linha e resumo de erros
+- `POST /lancamentos/import` / `GET /lancamentos/export`: import/export CSV/Excel
+- `POST /lancamentos/batch-update-status`: atualizar status de múltiplos lançamentos (marcar como pago/pendente em massa)
+
+**Relatórios**
+- `GET /lancamentos/relatorio/mensal`: análise mensal (total de lançamentos e somatório por mês)
+- `GET /lancamentos/relatorio/percentual`: percentual de lançamentos pagos vs pendentes
+- `GET /lancamentos/relatorio/por-categoria`: resumo de lançamentos por categoria
+
+**Parcelamento**
+- `POST /lancamentos/{id}/gerar-parcelas`: gerar parcelas automaticamente para um lançamento
+
+**Busca avançada**
+- `GET /lancamentos/search`: busca com filtros combinados (data, categoria, cliente, fornecedor, conta, status)

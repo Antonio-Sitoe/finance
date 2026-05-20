@@ -24,71 +24,23 @@ Contactos vinculados ao cliente.
 
 ### Funcionalidades
 
-* [ ] Criar contacto
-* [ ] Editar contacto
-* [ ] Listar contactos do cliente
-* [ ] Desativar contacto
-* [ ] Ver detalhes do contacto
+* [x] Criar contacto  `POST /contacts`: criar contacto
+* [x] Editar contacto
+* [x] Listar contactos do cliente `GET /contacts`: listagem com filtros (cliente_id, departamento, situacao, q full-text), ordenação, paginação page/limit
+* [x] Desativar contacto
+* [x] Ver detalhes do contacto -  `GET /contacts/{id}`: obter contacto (opcional ?include=client para join)
 
 ---
 
 ### Filtros
+* [x] Buscar por nome
+* [x] Filtrar por departamento
+* [x] Filtrar por situação
+* [x] Filtrar por cliente
 
-* [ ] Buscar por nome
-* [ ] Filtrar por departamento
-* [ ] Filtrar por situação
-* [ ] Filtrar por cliente
-
----
-
-### Campos
-
-```text
-nome
-departamento
-email
-cpf
-telefone
-situacao
-cliente
-```
-
----
-
-### Endpoints Avançados
-
-**CRUD básico**
-- `GET /contacts`: listagem com filtros (cliente_id, departamento, situacao, q full-text), ordenação, paginação page/limit
-- `GET /contacts/{id}`: obter contacto (opcional ?include=client para join)
-- `POST /contacts`: criar contacto
-- `PUT /contacts/{id}` / `PATCH /contacts/{id}`: atualizar
-- `DELETE /contacts/{id}`: remover (ou soft-delete se preferir)
-
-**Endpoints relacionados a cliente**
-- `GET /clients/{clientId}/contacts`: contactos do cliente (usa JOIN)
-- `POST /clients/{clientId}/contacts`: criar contacto associado (suportar transação quando criar cliente+contactos)
-- `GET /clients/{clientId}/contacts/count` ou `GET /contacts/stats/count-by-client`: contagem por cliente
-
-**Operações em massa / integração**
-- `POST /contacts/bulk`: criar/atualizar em lote (CSV/JSON), com validação por linha e resumo de erros
-- `POST /contacts/import` / `GET /contacts/export`: import/export CSV/Excel
-
-**Pesquisa / UX**
-- `GET /contacts/search?q=...`: pesquisa por nome/email/telefone/cpf com highlight
-- `GET /contacts/autocomplete?q=...`: para suggestions em UI
 
 **Estatísticas / Relatórios**
-- `GET /contacts/stats/count-by-client`: quantos contactos por cliente (top N)
-- `GET /contacts/stats/top-clients-by-contacts?limit=10`: top 10 clientes
-- `GET /contacts/stats/by-department`: distribuição por departamento
-- `GET /contacts/stats/missing-info`: contactos sem email ou telefone
-- `GET /contacts/stats/recent?days=30`: contactos adicionados/alterados nos últimos N dias
-- `GET /clients/{id}/primary-contact`: contacto principal
-- `GET /contacts/stats/multiple-without-primary`: clientes com >1 contacto sem contacto "principal"
-
-**Transações**
-- Endpoints que criam cliente + contactos devem usar transação (veja 21.transacoes2.md)
-
+- [x]`GET /contacts/stats/count-by-client`: quantos contactos por cliente (top N)
 ---
 
 # 5️⃣ Gestão de fornecedores
@@ -107,8 +59,6 @@ CRUD igual ao cliente.
 Filtros:
 
 * [ ] Nome
-* [ ] CNPJ
-* [ ] Cidade
 
 ---
 
