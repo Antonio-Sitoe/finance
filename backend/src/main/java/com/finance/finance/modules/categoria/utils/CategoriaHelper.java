@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.exceptions.ResourceNotFoundException;
-import com.finance.finance.modules.categoria.dto.CategoriaBulkErroDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaRequestDTO;
 import com.finance.finance.modules.categoria.mapper.CategoriaMapper;
 import com.finance.finance.modules.categoria.model.Categoria;
 import com.finance.finance.modules.categoria.repository.CategoriaRepository;
+import com.finance.finance.modules.common.dto.BulkErroDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,7 +51,7 @@ public class CategoriaHelper {
     public CategoriaBulkProcessResult processarBulk(List<CategoriaRequestDTO> dtos) {
         Set<String> nomesNoBatch = new HashSet<>();
         List<Categoria> paraGravar = new ArrayList<>();
-        List<CategoriaBulkErroDTO> erros = new ArrayList<>();
+        List<BulkErroDTO> erros = new ArrayList<>();
 
         for (int i = 0; i < dtos.size(); i++) {
             CategoriaRequestDTO dto = dtos.get(i);
@@ -60,15 +60,15 @@ public class CategoriaHelper {
 
             try {
                 if (dto.getNome() == null || dto.getNome().isBlank()) {
-                    erros.add(new CategoriaBulkErroDTO(pos, nomeDisplay, "Nome é obrigatório"));
+                    erros.add(new BulkErroDTO(pos, nomeDisplay, "Nome é obrigatório"));
                     continue;
                 }
                 if (dto.getSituacao() == null) {
-                    erros.add(new CategoriaBulkErroDTO(pos, nomeDisplay, "Situação é obrigatória"));
+                    erros.add(new BulkErroDTO(pos, nomeDisplay, "Situação é obrigatória"));
                     continue;
                 }
                 if (!nomesNoBatch.add(CategoriaUtils.buildChaveDuplicata(dto.getNome(), dto.getCategoriaPaiId()))) {
-                    erros.add(new CategoriaBulkErroDTO(pos, nomeDisplay, "Nome duplicado na lista enviada"));
+                    erros.add(new BulkErroDTO(pos, nomeDisplay, "Nome duplicado na lista enviada"));
                     continue;
                 }
 
@@ -77,7 +77,7 @@ public class CategoriaHelper {
                 paraGravar.add(CategoriaMapper.toEntity(dto, categoriaPai));
 
             } catch (BusinessException | ResourceNotFoundException e) {
-                erros.add(new CategoriaBulkErroDTO(pos, nomeDisplay, e.getMessage()));
+                erros.add(new BulkErroDTO(pos, nomeDisplay, e.getMessage()));
             }
         }
 

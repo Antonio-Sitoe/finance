@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.exceptions.ResourceNotFoundException;
-import com.finance.finance.modules.categoria.dto.CategoriaBulkResponseDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaRequestDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaResponseDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaStatusResponseDTO;
+import com.finance.finance.modules.common.dto.BulkResponseDTO;
 import com.finance.finance.modules.categoria.mapper.CategoriaMapper;
 import com.finance.finance.modules.categoria.model.Categoria;
 import com.finance.finance.modules.categoria.repository.CategoriaRepository;
@@ -41,7 +41,7 @@ public class CategoriaService {
     }
 
     @Transactional
-    public CategoriaBulkResponseDTO criarBulk(List<CategoriaRequestDTO> dtos) {
+    public BulkResponseDTO<CategoriaResponseDTO> criarBulk(List<CategoriaRequestDTO> dtos) {
         if (dtos == null || dtos.isEmpty()) {
             throw new BusinessException("A lista de categorias não pode estar vazia");
         }
@@ -54,7 +54,7 @@ public class CategoriaService {
                         .map(CategoriaMapper::toResponse)
                         .toList();
 
-        return new CategoriaBulkResponseDTO(criados, resultado.erros());
+        return new BulkResponseDTO<CategoriaResponseDTO>(criados, resultado.erros());
     }
 
     @Transactional

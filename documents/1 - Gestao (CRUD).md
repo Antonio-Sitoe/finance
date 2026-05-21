@@ -65,10 +65,10 @@ Representa contas financeiras.
 
 ### Funcionalidades
 
-* [ ] Criar conta
-* [ ] Editar conta
-* [ ] Listar contas
-* [ ] Desativar conta
+* [x] Criar conta
+* [x] Editar conta
+* [x] Listar contas
+* [x] Desativar conta
 
 ---
 
@@ -90,27 +90,8 @@ Categorias hierárquicas.
 
 ### Funcionalidades
 
-* [ ] Criar categoria
-* [ ] Editar categoria
-* [ ] Excluir categoria
-* [ ] Listar categorias
-* [ ] Criar subcategoria
-
----
-
-Tipos:
-
-* [ ] Receita
-* [ ] Despesa
-
-Campos:
-
-```text
-nome
-descricao
-categoria pai
-tipo
-situacao
-```
-
----
+* [x] Criar categoria
+* [x] Editar categoria
+* [x] Excluir categoria
+* [x] Listar categorias
+* [x] Criar subcategoria

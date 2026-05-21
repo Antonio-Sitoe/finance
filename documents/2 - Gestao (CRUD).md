@@ -4,86 +4,34 @@
 
 Esse é **o módulo principal do sistema**.
 
-Tabela:
-
-```text
-lancamento
-```
-
----
-
-### Criar lançamento
-
-Campos:
-
-```text
-valor
-data vencimento
-data lançamento
-descricao
-categoria
-conta
-cliente
-fornecedor
-situacao
-```
-
----
-
 ### Parcelamento
 
-* [ ] Criar lançamento parcelado
-* [ ] Gerar parcelas automaticamente
-
-Exemplo:
-
-```text
-1000
-3 parcelas
-
-333.33
-333.33
-333.34
-```
-
----
+* [x] Criar lançamento parcelado
+* [x] Gerar parcelas automaticamente
+### Filtros
+Muito importantes.
+* [x] Filtrar por categoria
+* [x] Filtrar por cliente
+* [x] Filtrar por fornecedor
+* [x] Filtrar por conta
+* [x] Filtrar por status
 
 ### Funcionalidades
 
-* [ ] Criar lançamento
-* [ ] Editar lançamento
-* [ ] Excluir lançamento
-* [ ] Marcar como pago
-* [ ] Marcar como pendente
-* [ ] Relatotio - Percentual de Lançamentos Pagos e Pendentes - Calcule o percentual de lançamentos com situação PAGO e PENDENTE.
-* [ ] Relatorio - Análise Mensal de Lançamentos (Mostre o total de lançamentos e o somatório dos valores por mês).
----
+* [x] Criar lançamento
+* [x] Editar lançamento
+* [x] Excluir lançamento
+* [x] Marcar como pago
+* [x] Marcar como pendente
+* [x]  criar/atualizar em lote (CSV/JSON), com validação por linha e resumo de erros
 
-### Filtros
+* [ ] `GET /lancamentos/export`: import/export CSV/Excel
 
-Muito importantes.
-
-* [ ] Filtrar por data
-* [ ] Filtrar por categoria
-* [ ] Filtrar por cliente
-* [ ] Filtrar por fornecedor
-* [ ] Filtrar por conta
-* [ ] Filtrar por status
-
-### Endpoints Avançados
-
-**Operações em massa / integração**
-- `POST /lancamentos/bulk`: criar/atualizar em lote (CSV/JSON), com validação por linha e resumo de erros
-- `POST /lancamentos/import` / `GET /lancamentos/export`: import/export CSV/Excel
-- `POST /lancamentos/batch-update-status`: atualizar status de múltiplos lançamentos (marcar como pago/pendente em massa)
+* [ ] `POST /lancamentos/batch-update-status`: atualizar status de múltiplos lançamentos (marcar como pago/pendente em massa)
 
 **Relatórios**
-- `GET /lancamentos/relatorio/mensal`: análise mensal (total de lançamentos e somatório por mês)
-- `GET /lancamentos/relatorio/percentual`: percentual de lançamentos pagos vs pendentes
-- `GET /lancamentos/relatorio/por-categoria`: resumo de lançamentos por categoria
+* [ ] `GET /lancamentos/relatorio/mensal`: análise mensal (total de lançamentos e somatório por mês)
+* [ ]  `GET /lancamentos/relatorio/percentual`: percentual de lançamentos pagos vs pendentes
+* [ ]  `GET /lancamentos/relatorio/por-categoria`: resumo de lançamentos por categoria
 
-**Parcelamento**
-- `POST /lancamentos/{id}/gerar-parcelas`: gerar parcelas automaticamente para um lançamento
-
-**Busca avançada**
-- `GET /lancamentos/search`: busca com filtros combinados (data, categoria, cliente, fornecedor, conta, status)
+---

@@ -17,8 +17,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
@@ -60,6 +63,38 @@ public class GlobalExceptionHandler {
                                 request.getRequestURI(),
                                 null,
                                 fieldErrors);
+        }
+
+        @ExceptionHandler(MaxUploadSizeExceededException.class)
+        public ResponseEntity<ApiErrorResponse> handleMaxUploadSize(
+                        MaxUploadSizeExceededException ex,
+                        HttpServletRequest request) {
+                logger.warn("File too large on path {}: {}", request.getRequestURI(), ex.getMessage());
+                return buildResponse(HttpStatus.BAD_REQUEST,
+                                "Ficheiro demasiado grande. Verifique o tamanho máximo permitido.",
+                                request.getRequestURI(), null, null);
+        }
+
+        @ExceptionHandler(MultipartException.class)
+        public ResponseEntity<ApiErrorResponse> handleMultipart(
+                        MultipartException ex,
+                        HttpServletRequest request) {
+                logger.warn("Multipart error on path {}: {}", request.getRequestURI(), ex.getMessage());
+                return buildResponse(HttpStatus.BAD_REQUEST,
+                                "Erro ao processar o ficheiro. Certifique-se de que o pedido usa 'Content-Type: multipart/form-data' e que o campo se chama 'file'.",
+                                request.getRequestURI(), null, null);
+        }
+
+        @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+        public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatch(
+                        MethodArgumentTypeMismatchException ex,
+                        HttpServletRequest request) {
+                String tipo = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "desconhecido";
+                String message = String.format(
+                                "Parâmetro '%s' com valor inválido: '%s'. Tipo esperado: %s.",
+                                ex.getName(), ex.getValue(), tipo);
+                logger.warn("Type mismatch on path {}: {}", request.getRequestURI(), message);
+                return buildResponse(HttpStatus.BAD_REQUEST, message, request.getRequestURI(), null, null);
         }
 
         @ExceptionHandler(MissingServletRequestParameterException.class)

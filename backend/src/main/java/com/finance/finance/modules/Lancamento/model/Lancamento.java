@@ -4,6 +4,7 @@ import com.finance.finance.modules.categoria.model.Categoria;
 import com.finance.finance.modules.clientes.model.Cliente;
 import com.finance.finance.modules.common.baseEntity.BaseEntity;
 import com.finance.finance.modules.common.enums.PagamentoEnum;
+import com.finance.finance.modules.common.enums.TipoLancamento;
 import com.finance.finance.modules.conta.model.Conta;
 import com.finance.finance.modules.fornecedor.model.Fornecedor;
 
@@ -16,7 +17,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 @Entity
 @Table(name = "lancamentos")
 public class Lancamento extends BaseEntity {
@@ -46,6 +47,10 @@ public class Lancamento extends BaseEntity {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 20)
   private PagamentoEnum situacao;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) DEFAULT 'DESPESA' NOT NULL")
+  private TipoLancamento tipo;
 
   @ManyToOne
   @JoinColumn(name = "id_conta")

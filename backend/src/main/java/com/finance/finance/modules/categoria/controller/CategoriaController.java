@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.finance.finance.exceptions.ApiErrorResponse;
-import com.finance.finance.modules.categoria.dto.CategoriaBulkResponseDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaRequestDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaResponseDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaStatusResponseDTO;
 import com.finance.finance.modules.categoria.service.CategoriaService;
+import com.finance.finance.modules.common.dto.BulkResponseDTO;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
@@ -63,14 +63,14 @@ public class CategoriaController {
                     + "Os itens válidos são gravados e os inválidos são reportados na lista 'erros', sem bloquear os restantes. "
                     + "Retorna 201 se todos foram criados, 207 se houve sucesso parcial, 422 se todos falharam.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Todas as categorias criadas com sucesso", content = @Content(schema = @Schema(implementation = CategoriaBulkResponseDTO.class))),
-            @ApiResponse(responseCode = "207", description = "Sucesso parcial — alguns itens falharam", content = @Content(schema = @Schema(implementation = CategoriaBulkResponseDTO.class))),
+            @ApiResponse(responseCode = "201", description = "Todas as categorias criadas com sucesso", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
+            @ApiResponse(responseCode = "207", description = "Sucesso parcial — alguns itens falharam", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Lista vazia ou nula", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "422", description = "Todos os itens falharam", content = @Content(schema = @Schema(implementation = CategoriaBulkResponseDTO.class)))
+            @ApiResponse(responseCode = "422", description = "Todos os itens falharam", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class)))
     })
-    public ResponseEntity<CategoriaBulkResponseDTO> criarBulk(
+    public ResponseEntity<BulkResponseDTO<CategoriaResponseDTO>> criarBulk(
             @RequestBody @Valid List<CategoriaRequestDTO> dtos) {
-        CategoriaBulkResponseDTO resultado = service.criarBulk(dtos);
+        BulkResponseDTO<CategoriaResponseDTO> resultado = service.criarBulk(dtos);
 
         if (resultado.erros().isEmpty()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(resultado);

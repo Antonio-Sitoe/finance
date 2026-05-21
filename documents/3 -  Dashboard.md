@@ -18,9 +18,3 @@ Tela inicial do sistema (Role bases acess - ADMIN e USER).
 * [ ] Despesas por categoria
 * [ ] Receitas por mês
 * [ ] Fluxo de caixa
-
-Pode usar no frontend:
-
-* Chart.js
-
----
