@@ -19,9 +19,9 @@ Gerar um relatório que mostre o fluxo de caixa diário com excell:
 - Saldo acumulado
 
 Por exemplo:
-| Data | Entradas | Saídas | Saldo Dia | Saldo Acumulado |
-|------|----------|--------|-----------|-----------------|
-| 2025-12-01 | 5000.00 | 2000.00 | 3000.00 | 3000.00 |
+| Data       | Entradas | Saídas  | Saldo Dia | Saldo Acumulado |
+|------------|----------|---------|-----------|-----------------|
+| 2025-12-01 | 5000.00  | 2000.00 | 3000.00   | 3000.00         |
 
 
 ### Relatório de Demonstrativo de Resultado (DRE)
