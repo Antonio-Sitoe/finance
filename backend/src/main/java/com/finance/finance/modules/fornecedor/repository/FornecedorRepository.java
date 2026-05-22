@@ -1,15 +1,30 @@
 package com.finance.finance.modules.fornecedor.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.finance.finance.modules.fornecedor.model.Fornecedor;
+import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
 
 @Repository
 public interface FornecedorRepository extends JpaRepository<Fornecedor, Long>, JpaSpecificationExecutor<Fornecedor> {
+
+    @Query("""
+            SELECT new com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO(
+                f.id, 'FORNECEDOR', f.nomeEmpresarial, f.email, concat('/fornecedores/', cast(f.id as String))
+            )
+            FROM Fornecedor f
+            WHERE lower(f.nomeEmpresarial) LIKE lower(concat('%', :q, '%'))
+            ORDER BY f.nomeEmpresarial
+            LIMIT 5
+            """)
+    List<GlobalSearchResponseDTO> findByIdAndNomeEmpresarial(@Param("q") String q);
 
     Optional<Fornecedor> findByEmail(String email);
 

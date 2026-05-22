@@ -1,16 +1,17 @@
-﻿package com.finance.finance.modules.Lancamento.service;
+package com.finance.finance.modules.Lancamento.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.exceptions.ResourceNotFoundException;
+import com.finance.finance.modules.Lancamento.dto.LancamentoCsvRow;
 import com.finance.finance.modules.Lancamento.dto.LancamentoParceladoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoResponseDTO;
@@ -25,6 +27,7 @@ import com.finance.finance.modules.Lancamento.dto.LancamentoStatusResponseDTO;
 import com.finance.finance.modules.Lancamento.mapper.LancamentoMapper;
 import com.finance.finance.modules.Lancamento.model.Lancamento;
 import com.finance.finance.modules.Lancamento.repository.LancamentoRepository;
+import com.finance.finance.modules.Lancamento.utils.MapperText;
 import com.finance.finance.modules.categoria.model.Categoria;
 import com.finance.finance.modules.categoria.repository.CategoriaRepository;
 import com.finance.finance.modules.clientes.model.Cliente;
@@ -70,19 +73,6 @@ public class LancamentoService {
         return LancamentoMapper.toDto(salvo);
     }
 
-    private record CsvRow(
-            String descricao,
-            BigDecimal valor,
-            Integer totalParcelas,
-            LocalDateTime dataLancamento,
-            LocalDateTime dataVencimento,
-            Long contaId,
-            Long categoriaId,
-            Long clienteId,
-            Long fornecedorId,
-            TipoLancamento tipo) {
-    }
-
     @Transactional
     public BulkResponseDTO<LancamentoResponseDTO> criarBulk(MultipartFile file) {
         validarFicheiro(file);
@@ -101,7 +91,7 @@ public class LancamentoService {
             String identificador = "(linha " + pos + ")";
 
             try {
-                CsvRow row = parseLinha(linhas.get(i));
+                LancamentoCsvRow row = parseLinha(linhas.get(i));
                 if (row.descricao() != null && !row.descricao().isBlank()) {
                     identificador = row.descricao();
                 }
@@ -250,11 +240,13 @@ public class LancamentoService {
     }
 
     @Transactional(readOnly = true)
-    public List<LancamentoResponseDTO> listarTodos() {
-        return lancamentoRepository.findAll(PageRequest.of(0, 1000))
-                .stream()
-                .map(LancamentoMapper::toDto)
-                .toList();
+    public void exportarCsv(PrintWriter writer) {
+        writer.println(
+                "id,descricao,valor,parcela,totalParcela,dataLancamento,dataVencimento,situacao,tipo,conta,categoria,cliente,fornecedor");
+
+        try (Stream<Lancamento> stream = lancamentoRepository.streamAll()) {
+            stream.forEach(l -> writer.println(formatarLinhaCsv(l)));
+        }
     }
 
     @Transactional(readOnly = true)
@@ -377,7 +369,7 @@ public class LancamentoService {
         }
     }
 
-    private CsvRow parseLinha(String linha) {
+    private LancamentoCsvRow parseLinha(String linha) {
         String[] cols = linha.split(",", -1);
         if (cols.length < 7) {
             throw new IllegalArgumentException("Linha invalida (minimo 7 colunas): " + linha);
@@ -394,7 +386,29 @@ public class LancamentoService {
         TipoLancamento tipo = cols.length > 9 && !cols[9].isBlank()
                 ? TipoLancamento.valueOf(cols[9].trim().toUpperCase())
                 : null;
-        return new CsvRow(descricao, valor, totalParcelas, dataLancamento, dataVencimento,
+        return new LancamentoCsvRow(descricao, valor, totalParcelas, dataLancamento, dataVencimento,
                 contaId, categoriaId, clienteId, fornecedorId, tipo);
     }
+
+    private String formatarLinhaCsv(Lancamento l) {
+        String conta = l.getConta() != null ? MapperText.escape(l.getConta().getNome()) : "";
+        String categoria = l.getCategoria() != null ? MapperText.escape(l.getCategoria().getNome()) : "";
+        String cliente = l.getCliente() != null ? MapperText.escape(l.getCliente().getNomeEmpresarial()) : "";
+        String fornecedor = l.getFornecedor() != null ? MapperText.escape(l.getFornecedor().getNomeEmpresarial()) : "";
+
+        return l.getId() + ","
+                + MapperText.escape(l.getDescricao()) + ","
+                + l.getValor() + ","
+                + l.getParcela() + ","
+                + l.getTotalParcela() + ","
+                + l.getDataLancamento() + ","
+                + l.getDataVencimento() + ","
+                + l.getSituacao() + ","
+                + l.getTipo() + ","
+                + conta + ","
+                + categoria + ","
+                + cliente + ","
+                + fornecedor;
+    }
+
 }

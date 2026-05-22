@@ -1,5 +1,6 @@
-﻿package com.finance.finance.modules.Lancamento.controller;
+package com.finance.finance.modules.Lancamento.controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,12 +23,12 @@ import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -40,11 +41,11 @@ public class LancamentoController {
         private final LancamentoService service;
 
         @PostMapping
-        @Operation(summary = "Criar lancamento", description = "Cria um lancamento simples com parcela unica.")
+        @Operation(summary = "Criar lancamento")
         @ApiResponses({
-                        @ApiResponse(responseCode = "201", description = "Lancamento criado com sucesso", content = @Content(schema = @Schema(implementation = LancamentoResponseDTO.class))),
-                        @ApiResponse(responseCode = "400", description = "Dados invalidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-                        @ApiResponse(responseCode = "404", description = "Conta, categoria, cliente ou fornecedor nao encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+                        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = LancamentoResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                        @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
         })
         public ResponseEntity<LancamentoResponseDTO> criar(
                         @RequestBody @Validated(LancamentoRequestDto.Create.class) LancamentoRequestDto dto) {
@@ -52,19 +53,16 @@ public class LancamentoController {
         }
 
         @PostMapping("/bulk")
-        @Operation(summary = "Criar lancamentos em lote via CSV", description = "Processa um ficheiro CSV com lancamentos simples e parcelados. "
-                        + "Itens validos sao gravados; invalidos reportados em 'erros' sem bloquear os restantes. "
-                        + "Retorna 201 se todos criados, 207 se parcial, 422 se todos falharam.")
+        @Operation(summary = "Criar lancamentos em lote via CSV")
         @ApiResponses({
-                        @ApiResponse(responseCode = "201", description = "Todos os lancamentos criados com sucesso", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
-                        @ApiResponse(responseCode = "207", description = "Sucesso parcial", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
-                        @ApiResponse(responseCode = "400", description = "Ficheiro invalido", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-                        @ApiResponse(responseCode = "422", description = "Todos os itens falharam", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class)))
+                        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
+                        @ApiResponse(responseCode = "207", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                        @ApiResponse(responseCode = "422", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class)))
         })
         public ResponseEntity<BulkResponseDTO<LancamentoResponseDTO>> criarBulk(
                         @RequestParam("file") MultipartFile file) {
                 BulkResponseDTO<LancamentoResponseDTO> resultado = service.criarBulk(file);
-
                 if (resultado.erros().isEmpty()) {
                         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
                 } else if (resultado.criados().isEmpty()) {
@@ -75,11 +73,11 @@ public class LancamentoController {
         }
 
         @PostMapping("/parcelado")
-        @Operation(summary = "Criar lancamento parcelado", description = "Gera N registos de parcelas a partir de um valor total. O vencimento avanca um mes por parcela.")
+        @Operation(summary = "Criar lancamento parcelado")
         @ApiResponses({
-                        @ApiResponse(responseCode = "201", description = "Parcelas criadas com sucesso"),
-                        @ApiResponse(responseCode = "400", description = "Dados invalidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-                        @ApiResponse(responseCode = "404", description = "Conta, categoria, cliente ou fornecedor nao encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+                        @ApiResponse(responseCode = "201"),
+                        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                        @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
         })
         public ResponseEntity<List<LancamentoResponseDTO>> criarParcelado(
                         @RequestBody @Valid LancamentoParceladoRequestDto dto) {
@@ -87,56 +85,54 @@ public class LancamentoController {
         }
 
         @PatchMapping("/{id}")
-        @Operation(summary = "Atualizar lancamento", description = "Atualiza parcialmente um lancamento existente.")
+        @Operation(summary = "Atualizar lancamento")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Lancamento atualizado com sucesso", content = @Content(schema = @Schema(implementation = LancamentoResponseDTO.class))),
-                        @ApiResponse(responseCode = "400", description = "Dados invalidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-                        @ApiResponse(responseCode = "404", description = "Lancamento nao encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+                        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                        @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
         })
         public ResponseEntity<LancamentoResponseDTO> atualizar(
-                        @Parameter(description = "ID do lancamento", example = "1") @PathVariable Long id,
+                        @PathVariable Long id,
                         @RequestBody @Validated(LancamentoRequestDto.Update.class) LancamentoRequestDto dto) {
                 return ResponseEntity.ok(service.atualizar(id, dto));
         }
 
         @PatchMapping("/{id}/situacao")
-        @Operation(summary = "Alterar situacao do lancamento", description = "Alterna a situacao do lancamento entre PENDENTE e PAGO.")
+        @Operation(summary = "Alterar situacao do lancamento")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Situacao alterada com sucesso", content = @Content(schema = @Schema(implementation = LancamentoStatusResponseDTO.class))),
-                        @ApiResponse(responseCode = "404", description = "Lancamento nao encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+                        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoStatusResponseDTO.class))),
+                        @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
         })
-        public ResponseEntity<LancamentoStatusResponseDTO> atualizarSituacao(
-                        @Parameter(description = "ID do lancamento", example = "1") @PathVariable Long id) {
+        public ResponseEntity<LancamentoStatusResponseDTO> atualizarSituacao(@PathVariable Long id) {
                 return ResponseEntity.ok(service.atualizarSituacao(id));
         }
 
         @DeleteMapping("/{id}")
-        @Operation(summary = "Eliminar lancamento", description = "Remove permanentemente um lancamento pelo ID.")
+        @Operation(summary = "Eliminar lancamento")
         @ApiResponses({
-                        @ApiResponse(responseCode = "204", description = "Lancamento eliminado com sucesso"),
-                        @ApiResponse(responseCode = "404", description = "Lancamento nao encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+                        @ApiResponse(responseCode = "204"),
+                        @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
         })
-        public ResponseEntity<Void> deletar(
-                        @Parameter(description = "ID do lancamento", example = "1") @PathVariable Long id) {
+        public ResponseEntity<Void> deletar(@PathVariable Long id) {
                 service.deletar(id);
                 return ResponseEntity.noContent().build();
         }
 
         @GetMapping
-        @Operation(summary = "Listar lancamentos", description = "Lista lancamentos com filtros e paginacao.")
-        @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
+        @Operation(summary = "Listar lancamentos com filtros e paginacao")
+        @ApiResponse(responseCode = "200")
         public ResponseEntity<PageResponse<LancamentoResponseDTO>> listar(
-                        @Parameter(description = "Filtrar por descricao (parcial)") @RequestParam(required = false) String descricao,
-                        @Parameter(description = "Filtrar por situacao: PENDENTE ou PAGO") @RequestParam(required = false) PagamentoEnum situacao,
-                        @Parameter(description = "Filtrar por tipo: RECEITA ou DESPESA") @RequestParam(required = false) TipoLancamento tipo,
-                        @Parameter(description = "Filtrar por ID da conta") @RequestParam(required = false) Long contaId,
-                        @Parameter(description = "Filtrar por ID da categoria") @RequestParam(required = false) Long categoriaId,
-                        @Parameter(description = "Filtrar por ID do cliente") @RequestParam(required = false) Long clienteId,
-                        @Parameter(description = "Filtrar por ID do fornecedor") @RequestParam(required = false) Long fornecedorId,
-                        @Parameter(description = "Data de lancamento a partir de (ISO 8601)") @RequestParam(required = false) LocalDateTime dataLancamentoDe,
-                        @Parameter(description = "Data de lancamento ate (ISO 8601)") @RequestParam(required = false) LocalDateTime dataLancamentoAte,
-                        @Parameter(description = "Data de vencimento a partir de (ISO 8601)") @RequestParam(required = false) LocalDateTime dataVencimentoDe,
-                        @Parameter(description = "Data de vencimento ate (ISO 8601)") @RequestParam(required = false) LocalDateTime dataVencimentoAte,
+                        @RequestParam(required = false) String descricao,
+                        @RequestParam(required = false) PagamentoEnum situacao,
+                        @RequestParam(required = false) TipoLancamento tipo,
+                        @RequestParam(required = false) Long contaId,
+                        @RequestParam(required = false) Long categoriaId,
+                        @RequestParam(required = false) Long clienteId,
+                        @RequestParam(required = false) Long fornecedorId,
+                        @RequestParam(required = false) LocalDateTime dataLancamentoDe,
+                        @RequestParam(required = false) LocalDateTime dataLancamentoAte,
+                        @RequestParam(required = false) LocalDateTime dataVencimentoDe,
+                        @RequestParam(required = false) LocalDateTime dataVencimentoAte,
                         @ModelAttribute PaginationRequest pagination) {
                 return ResponseEntity.ok(service.listar(
                                 descricao, situacao, tipo, contaId, categoriaId, clienteId, fornecedorId,
@@ -145,13 +141,21 @@ public class LancamentoController {
         }
 
         @GetMapping("/{id}")
-        @Operation(summary = "Obter lancamento por ID", description = "Retorna os detalhes de um lancamento especifico.")
+        @Operation(summary = "Obter lancamento por ID")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Lancamento encontrado", content = @Content(schema = @Schema(implementation = LancamentoResponseDTO.class))),
-                        @ApiResponse(responseCode = "404", description = "Lancamento nao encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+                        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LancamentoResponseDTO.class))),
+                        @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
         })
-        public ResponseEntity<LancamentoResponseDTO> obterPorId(
-                        @Parameter(description = "ID do lancamento", example = "1") @PathVariable Long id) {
+        public ResponseEntity<LancamentoResponseDTO> obterPorId(@PathVariable Long id) {
                 return ResponseEntity.ok(service.obterPorId(id));
+        }
+
+        @GetMapping("/export/csv")
+        @Operation(summary = "Exportar lancamentos para CSV em streaming")
+        @ApiResponse(responseCode = "200")
+        public void exportarCsv(HttpServletResponse response) throws IOException {
+                response.setContentType("text/csv; charset=UTF-8");
+                response.setHeader("Content-Disposition", "attachment; filename=\"lancamentos.csv\"");
+                service.exportarCsv(response.getWriter());
         }
 }

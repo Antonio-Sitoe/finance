@@ -24,14 +24,8 @@ Muito importantes.
 * [x] Marcar como pago
 * [x] Marcar como pendente
 * [x]  criar/atualizar em lote (CSV/JSON), com validação por linha e resumo de erros
+* [x] `GET /lancamentos/export`: import/export CSV/Excel
 
-* [ ] `GET /lancamentos/export`: import/export CSV/Excel
 
-* [ ] `POST /lancamentos/batch-update-status`: atualizar status de múltiplos lançamentos (marcar como pago/pendente em massa)
-
-**Relatórios**
-* [ ] `GET /lancamentos/relatorio/mensal`: análise mensal (total de lançamentos e somatório por mês)
-* [ ]  `GET /lancamentos/relatorio/percentual`: percentual de lançamentos pagos vs pendentes
-* [ ]  `GET /lancamentos/relatorio/por-categoria`: resumo de lançamentos por categoria
 
 ---
