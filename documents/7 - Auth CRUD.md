@@ -1,14 +1,41 @@
 ## 1️⃣ Autenticação e usuários
 
-Funcionalidades básicas de segurança.
+Funcionalidades básicas de segurança com Spring Security e JWT.
+Dois perfis de acesso: **ADMIN** (acesso total) e **USER** (acesso limitado).
 
-### Login
+---
 
-* [ ] Login com email e senha
-* [ ] Logout
-* [ ] Sessão com token JWT
-* [ ] Expiração de token
+### Autenticação
 
-Com Spring Security.
+* [x] Login com email e senha
+* [ ] Logout (invalidar token no cliente)
+* [x] Sessão com token JWT
+* [ ] Expiração de token (refresh token)
+* [x] Role Based Access — ADMIN / USER
 
-* [ ] Implementar Role Based Acess
+---
+
+### Gestão de Utilizadores (apenas ADMIN)
+
+* [x] Criar utilizador (nome, email, senha, perfil, situação)
+* [x] Editar utilizador (todos os campos incluindo senha)
+* [x] Desativar utilizador (soft delete — muda situação para INATIVO)
+* [x] Listar utilizadores com paginação
+* [x] Ver detalhe de utilizador por ID
+
+---
+
+### Perfil do Utilizador (todos os roles)
+
+* [ ] Ver o próprio perfil (nome, email, perfil, situação, data de criação)
+* [ ] Editar o próprio nome e email
+* [ ] Alterar a própria password (campo senha actual + nova senha + confirmação)
+* [ ] Ver data e hora do último acesso
+
+---
+
+### UI — Estado dos prompts
+
+* [x] Tela de Login + Esqueci a Password → **prompt gerado**
+* [x] Gestão de Utilizadores (ADMIN) → **prompt gerado**
+* [x] Perfil do Utilizador → **prompt gerado**

@@ -4,6 +4,25 @@ Implementação de transações para garantir integridade e consistência dos da
 
 ---
 
+## Transferência entre Contas — UI ✅
+
+Funcionalidade que permite mover saldo de uma conta bancária para outra
+dentro do sistema de forma atómica — se algo falhar, nenhuma das contas
+é afectada. O utilizador selecciona a conta de origem, a conta de destino,
+o valor e uma descrição opcional. O sistema cria dois lançamentos
+automaticamente: uma despesa na conta de origem e uma receita na conta
+de destino, com a mesma data e valor.
+
+### Endpoint
+* [ ] `POST /transactions/transfer` — transferência atómica entre contas
+
+### UI
+* [x] Tela de Transferência entre Contas → **prompt gerado**
+
+---
+
+---
+
 ## Conceitos Fundamentais
 
 ### Propriedades ACID
