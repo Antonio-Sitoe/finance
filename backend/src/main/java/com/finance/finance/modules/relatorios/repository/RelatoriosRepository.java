@@ -19,8 +19,6 @@ import com.finance.finance.modules.relatorios.dto.RelatorioSituacaoDTO;
 @Repository
 public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, JpaSpecificationExecutor<Lancamento> {
 
-    // ── Relatórios nativos ────────────────────────────────────────────────────
-
     @Query(value = """
                 SELECT
                     CAST(EXTRACT(YEAR FROM l.data_lancamento) AS INTEGER) AS ano,
