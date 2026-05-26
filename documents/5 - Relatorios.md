@@ -1,205 +1,123 @@
+# 🔟 Relatórios
 
-# 🔟 Relatórios Exportação (Exportar CSV E Excel)
-
-Relatórios simples.
-
-### Relatório financeiro
-
-* [ ] Receitas por período
-* [ ] Despesas por período
-* [ ] RELATORIOS DE TITULOS VENCIDOS, (PARCELA E SOMA TOTAL)
+Dois destinos de UI:
+- **`/fluxo-de-caixa`** — análise operacional e projecções (página separada)
+- **`/relatorios`** — relatórios estatísticos, rankings e análises por módulo
 
 ---
 
-### Relatório por categoria
+## Página: `/fluxo-de-caixa`
 
-* [ ] Total gasto por categoria
-* [ ] 3️⃣ Média de Valor por Categoria - Mostre a média do valor dos lançamentos agrupada por categoria.
----
+> Prompt gerado (v2 — desktop, 5 abas). Ver `4 - Fluxo de caixa.md`.
 
-### Relatório por cliente
-
-* [ ] Total faturado por cliente
-* [ ] 1️⃣ Classificação por Nota - Crie uma consulta que liste todos os clientes classificando-os como NORMAL (nota 0–3) ou VIP (nota 3–5).
-* [ ] 2️⃣ Contagem de Clientes por Situação - ostre quantos clientes estão ATIVOS e quantos estão INATIVOS.
-
-
-## Relatório de Saldo por Conta
-
-Gere um relatório que mostre o saldo total de cada conta, considerando:
-
-- Nome da conta
-- Agência e conta corrente
-- Total de débitos (WHERE debito = true)
-- Total de créditos (WHERE credito = true)
-- Saldo final (créditos - débitos)
-
-## Relatório de Contas a Receber
-
-Gere um relatório de contas a receber com:
-
-- Nome do cliente
-- Descrição do lançamento
-- Valor pendente
-- Data de vencimento
-- Dias em atraso
-
-## Relatório de Contas a Pagar
-
-Gere um relatório de contas a pagar com:
-
-- Nome do fornecedor
-- Descrição do lançamento
-- Valor a pagar
-- Data de vencimento
-- Status de pagamento
-
-## Relatório de Movimentação por Categoria
-
-Gere um relatório de movimentações agrupadas por categoria com:
-
-- Nome da categoria
-- Total de movimentações
-- Soma dos valores
-- Tipo (Débito/Crédito)
-
-## Relatório Consolidado de Clientes
-
-Gere um relatório consolidado de clientes com:
-
-- Nome do cliente
-- Email e telefone
-- Total de lançamentos
-- Valor total devido (pendentes)
-- Valor total recebido (pagos)
-
-
-###  Relatórios de Gastos por Categorias
-Mostrar a categoria e o quanto a categoria gastou, mostrar a categoria e o gasto apenas.
-Por exemplo:
-| Categoria | Gasto |
-|-----------|-------|
-| Salário | 1400 |
-
-### Relatórios de Receitas por Cliente
-Mostrar o nome do cliente e o total de receitas recebidas, ordenado pelo maior valor.
-Por exemplo:
-| Cliente | Total Recebido |
-|---------|----------------|
-| Empresa A | 5000 |
-
-### Relatórios de Fornecedores com Maior Gasto
-Mostrar o nome do fornecedor e o valor total gasto com esse fornecedor, ordenado decrescente.
-Por exemplo:
-| Fornecedor | Total Gasto |
-|------------|-------------|
-| Fornecedor X | 3200 |
-
-### Relatórios de Contas Vencidas
-
-Mostrar a descrição do lançamento, o valor, a data de vencimento e quantos dias está em atraso, apenas os pendentes.
-Por exemplo:
-| Descrição | Valor | Data Vencimento | Dias em Atraso |
-|-----------|-------|-----------------|----------------|
-| Fatura 001 | 500 | 2025-11-15 | 17 |
-
-
-### Relatórios de Saldo por Conta Bancária
-Mostrar o nome da conta, agência, conta corrente e o saldo atual considerando todos os lançamentos.
-Por exemplo:
-| Conta | Agência | Conta Corrente | Saldo |
-|-------|---------|----------------|-------|
-| Conta Principal | 0001 | 123456-7 | 8750.50 |
+| Aba | O que mostra | Estado |
+|-----|-------------|--------|
+| Fluxo Diário | Entradas, saídas e saldo acumulado dia a dia | [ ] |
+| DRE | Receitas e despesas por categoria até ao resultado líquido | [ ] |
+| Capital de Giro | Activo circulante vs passivo circulante, índice de liquidez | [ ] |
+| Recebimentos vs Pagamentos | Previsto vs realizado, taxas de cobrança e pagamento | [ ] |
+| Projeção de Caixa | Saldo projectado para 30, 60 e 90 dias | [ ] |
 
 ---
 
-- [ ] LEVANTAMENTOS DE RELATORIOS DE TITULOS FUTUROS (PARCELA E SOMA TOTAL) - A EMPRESA QUER REALIZAR INVESTIMENTOS E QUER FAZER IMPRESTIMO BANCARIO E TER UM CAPITAL PARA INVESTIR EM UM PROJECTO, O BANCO SOLICITA TODOS OS RECEBIVEIS DA EMPRESA, OU SEJA TUDO AQUILO QUE OS CLIENTES SE COMPROMETEM EM PAGAR, CRIAR UMA LISTAGEM DE TUDO QUE PRECISA SER PAGO, PARA PODER ENTREGAR AO BANCO PARA PODER TER O INVESTIMENTO.
+## Página: `/relatorios`
 
+Página única com abas horizontais. Filtro de período global no topo (aplicado a todas as abas). Botão "Exportar" contextual à aba activa.
 
-- [ ] GERAR RELATORIOS DE MAIORES DEVEDORES E PAGADORES (QUER SE INICIAR UM PROCESSO DE COBRANCA PARA PESSOAS QUE ESTAO A DEVER, QUEREM PRIVILEGIAR OS CLIENTES QUE SEMPRE PAGAM EM DIA, OU DAR PRESENTE AOS CLIENTES QUE PAGEM EM DIA)
+### UI — Estado dos prompts
 
----
-
-## 📊 Relatórios Estatísticos Avançados
-
-### Relatório de Títulos / Recebíveis
-
-* [ ] Títulos vencidos - lista com id_cliente/id_fornecedor, número da parcela, data_vencimento e soma total
-* [ ] Títulos futuros (vencimento > hoje) - filtrar por situação PENDENTE, parcela e soma total por cliente
-* [ ] Maiores devedores - clientes com maior soma de valor pendente, ordenados do maior para o menor
-* [ ] Melhores pagadores - clientes com maior soma de valor pago (situação = PAGO), com parcelas liquidadas
-* [ ] Aging de títulos - agrupar pendentes por faixa de atraso (0–30, 31–60, 61–90, >90 dias)
-* [ ] Duplicatas/parcelas vencidas por cliente - listar clientes com >1 parcela vencida e soma total
-* [ ] Taxa de recuperação - clientes com parcelas vencidas que pagaram nos últimos 30 dias
+* [ ] Relatórios → prompt a gerar
 
 ---
 
-### Relatório de Fluxo de Caixa
+### Aba 1 — Títulos e Recebíveis
 
-* [ ] Fluxo de caixa previsto (recebíveis) - próximos 90 dias, soma diária/por mês por cliente
-* [ ] Fluxo de saída (pagamentos a fornecedores) - próximos 60 dias, soma por fornecedor e categoria
+> Cobranças, parcelas vencidas, devedores e recebíveis futuros.
 
----
-
-### Relatório de Fornecedores
-
-* [ ] Ranking de fornecedores por valor total a pagar - pendente, mostrando nome, soma e número de lançamentos
-* [ ] Fornecedores sem website ou sem email - lista com soma de pagamentos realizados e pendentes
-* [ ] Análise de parcelamento por fornecedor - média de parcelas e quantos optam por >3 parcelas
-
----
-
-### Relatório de Categorias
-
-* [ ] Distribuição de lançamentos por categoria - total débitos vs créditos, soma e percentuais
-* [ ] Média de valor por categoria - média dos lançamentos agrupada por categoria
-* [ ] Análise por categoria pai/filho - soma de valores por categoria pai e top 5 categorias
-* [ ] Percentual de lançamentos PAGO vs PENDENTE por categoria no último trimestre
-* [ ] Contas com lançamentos sem categoria - listar e soma por conta para mapear classificação pendente
+* [ ] **Contas a receber** — cliente, descrição, valor pendente, data vencimento, dias em atraso
+* [ ] **Contas a pagar** — fornecedor/descrição, valor a pagar, data vencimento, status de pagamento
+* [ ] **Títulos vencidos** — id cliente/fornecedor, número da parcela, data vencimento, soma total por cliente
+* [ ] **Títulos futuros para banco** — PENDENTE com vencimento > hoje; parcela, soma por cliente; para apresentar a banco em pedido de crédito/investimento
+* [ ] **Maiores devedores** — clientes com maior soma de valor pendente, ordenados decrescente
+* [ ] **Melhores pagadores** — clientes com maior soma de valor pago (situação = PAGO), parcelas liquidadas
+* [ ] **Aging de títulos** — pendentes agrupados por faixa: 0–30 dias / 31–60 dias / 61–90 dias / >90 dias
+* [ ] **Duplicatas vencidas por cliente** — clientes com >1 parcela vencida, soma total
+* [ ] **Taxa de recuperação** — clientes com parcelas vencidas que pagaram nos últimos 30 dias
 
 ---
 
-### Relatório de Clientes - Análise Geral
+### Aba 2 — Clientes
 
-* [ ] Percentual de clientes ATIVO vs INATIVO - contagem e média de nota por situação
-* [ ] Classificação por nota - clientes NORMAL (0–3) vs VIP (4–5), contagem e recebíveis pendentes
-* [ ] Clientes com dados incompletos - sem email ou sem telefone, com quantidade de lançamentos
-* [ ] Clientes com múltiplos contactos sem contato principal - listar para ação comercial
-* [ ] Contagem de clientes por situação - quantos ATIVOS e quantos INATIVOS
+> Perfil e comportamento financeiro dos clientes.
 
----
+**Análise geral**
 
-### Relatório de Clientes - Análise Financeira
+* [ ] **Clientes ATIVO vs INATIVO** — contagem e percentual por situação
+* [ ] **Classificação por nota** — NORMAL (nota 0–3) vs VIP (nota 4–5): contagem e recebíveis pendentes por grupo
+* [ ] **Clientes com dados incompletos** — sem email ou sem telefone, com quantidade de lançamentos associados
+* [ ] **Clientes com múltiplos contactos sem principal** — listar para acção comercial
 
-* [ ] Tempo médio de pagamento por cliente - média de dias entre data_lancamento e data_vencimento (PAGO)
-* [ ] DSO (Days Sales Outstanding) - calcular média ponderada de dias de recebimento para clientes
-* [ ] Total faturado por cliente - receitas totais ordenadas pelo maior valor
-* [ ] Valor total devido por cliente (pendentes) e valor total recebido (pagos)
-* [ ] Evolução mensal de recebimentos - últimos 12 meses com soma por mês e variação %
+**Análise financeira**
 
----
-
-### Relatório de Contactos
-
-* [ ] Top 10 clientes por quantidade de contactos - incluir email e telefone dos contactos principais
+* [ ] **Total faturado por cliente** — receitas totais ordenadas do maior para o menor
+* [ ] **Valor devido vs recebido** — por cliente: total pendente e total pago lado a lado
+* [ ] **Consolidado de clientes** — nome, email, telefone, total lançamentos, valor devido, valor recebido
+* [ ] **Tempo médio de pagamento** — média de dias entre data_lancamento e data_vencimento nos lançamentos PAGO
+* [ ] **DSO (Days Sales Outstanding)** — média ponderada de dias até recebimento por cliente
+* [ ] **Evolução mensal de recebimentos** — últimos 12 meses: soma por mês e variação % mês a mês
 
 ---
 
-### Relatório de Contas Bancárias
+### Aba 3 — Fornecedores
 
-* [ ] Saldo por conta - soma de lançamentos (entradas/saídas) com saldo calculado por conta
+> Gastos com fornecedores e análise de parcelamento.
 
----
-
-### Relatório de Lançamentos
-
-* [ ] Lançamentos grandes - todos com valor acima da média + 2*desvio padrão; incluir cliente/fornecedor e categoria
-* [ ] Evolução mensal de pagamentos a fornecedores - últimos 12 meses com soma por mês e top 3 categorias
-* [ ] Relatório de cancelamentos/alterações - contar clientes/fornecedores que mudaram situação no último ano
+* [ ] **Fornecedores com maior gasto** — nome e valor total gasto, ordenado decrescente
+* [ ] **Ranking por valor a pagar (pendente)** — nome, soma pendente, número de lançamentos
+* [ ] **Análise de parcelamento** — média de parcelas por fornecedor e quantos optam por >3 parcelas
+* [ ] **Fornecedores sem website ou sem email** — lista com soma de pagamentos realizados e pendentes
+* [ ] **Evolução mensal de pagamentos** — últimos 12 meses, soma por mês, top 3 categorias associadas
 
 ---
 
-### Relatório de Risco
+### Aba 4 — Categorias
 
-* [ ] Score de risco - combinar nota do cliente e atraso médio (baixa nota + alto atraso = alto risco)
-* [ ] Clientes por nível de risco - listar clientes em cada nível (baixo, médio, alto)
+> Onde o dinheiro é gasto e como as categorias se distribuem.
+
+* [ ] **Gastos por categoria** — nome da categoria e valor total gasto, tabela simples ordenada decrescente
+* [ ] **Distribuição débitos vs créditos** — por categoria: total débito, total crédito, saldo e percentuais
+* [ ] **Média de valor por lançamento** — média do valor agrupada por categoria
+* [ ] **Movimentação por categoria** — total de movimentações, soma dos valores, tipo (débito/crédito)
+* [ ] **Análise pai/filho** — soma por categoria pai e top 5 categorias filhas com maior volume
+* [ ] **PAGO vs PENDENTE por categoria** — no último trimestre: percentual de cada situação por categoria
+* [ ] **Lançamentos sem categoria** — listar e somar por conta para mapear classificações pendentes
+
+---
+
+### Aba 5 — Contas Bancárias
+
+> Saldo real de cada conta bancária.
+
+* [ ] **Saldo por conta** — nome, agência, conta corrente, total entradas, total saídas, saldo final
+* [ ] **Fluxo previsto por conta** — próximos 30 dias: entradas e saídas pendentes agrupadas por conta
+
+---
+
+### Aba 6 — Lançamentos
+
+> Anomalias e tendências nos lançamentos registados.
+
+* [ ] **Contas vencidas** — descrição, valor, data vencimento, dias em atraso (PENDENTE + vencimento < hoje)
+* [ ] **Receitas por período** — soma de RECEITA agrupada por mês/período seleccionado
+* [ ] **Despesas por período** — soma de DESPESA agrupada por mês/período seleccionado
+* [ ] **Lançamentos grandes (outliers)** — valor acima da média + 2× desvio padrão; incluir cliente/fornecedor e categoria
+* [ ] **Evolução mensal de pagamentos a fornecedores** — últimos 12 meses, soma por mês, top 3 categorias
+
+---
+
+### Aba 7 — Risco
+
+> Identificar clientes de risco para cobrança ou fidelização.
+
+* [ ] **Score de risco por cliente** — nota do cliente + atraso médio → nível: Baixo / Médio / Alto
+* [ ] **Clientes por nível de risco** — lista por nível com soma de pendentes e dias médios de atraso

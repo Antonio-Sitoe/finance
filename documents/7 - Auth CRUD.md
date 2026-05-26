@@ -7,11 +7,11 @@ Dois perfis de acesso: **ADMIN** (acesso total) e **USER** (acesso limitado).
 
 ### Autenticação
 
-* [x] Login com email e senha
+* [ ] Login com email e senha
 * [ ] Logout (invalidar token no cliente)
-* [x] Sessão com token JWT
+* [ ] Sessão com token JWT
 * [ ] Expiração de token (refresh token)
-* [x] Role Based Access — ADMIN / USER
+* [ ] Role Based Access — ADMIN / USER
 
 ---
 
@@ -36,6 +36,6 @@ Dois perfis de acesso: **ADMIN** (acesso total) e **USER** (acesso limitado).
 
 ### UI — Estado dos prompts
 
-* [x] Tela de Login + Esqueci a Password → **prompt gerado**
-* [x] Gestão de Utilizadores (ADMIN) → **prompt gerado**
-* [x] Perfil do Utilizador → **prompt gerado**
+* [x] Tela de Login + Esqueci a Password
+* [x] Gestão de Utilizadores (ADMIN)
+* [x] Perfil do Utilizador
