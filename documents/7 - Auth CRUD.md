@@ -39,3 +39,17 @@ Dois perfis de acesso: **ADMIN** (acesso total) e **USER** (acesso limitado).
 * [x] Tela de Login + Esqueci a Password
 * [x] Gestão de Utilizadores (ADMIN)
 * [x] Perfil do Utilizador
+
+
+
+
+Permissões:
+
+ADMIN
+
+* gerenciar usuários
+* acesso total
+
+USER
+
+* acessar sistema financeiro

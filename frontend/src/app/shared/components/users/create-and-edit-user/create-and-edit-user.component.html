@@ -1,192 +1,167 @@
 <app-drawer
   [open]="open"
   (openChange)="openChange.emit($event)"
-  size="lg"
+  size="md"
   [showFooter]="true"
 >
-  <!-- Slot do cabeçalho -->
-  <span
-    drawer-header
-    class="text-base font-semibold text-gray-800 dark:text-white"
-  >
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
     Novo Utilizador
   </span>
-  <span drawer-header class="text-sm text-gray-500"
-    >Preencha os dados abaixo</span
-  >
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    Preencha os dados abaixo para criar uma nova conta
+  </span>
 
-  <section>
-    <form>
-      <div class="flex-1 overflow-y-auto px-8 py-8 space-y-10">
-        <section class="space-y-6">
-          <h4
-            class="text-label-md font-label-md text-on-primary-container tracking-widest uppercase flex items-center gap-2"
-          >
-            <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
-            Informação Pessoal
-          </h4>
-          <div class="space-y-5">
-            <!-- Nome Completo -->
-            <div class="space-y-1.5">
-              <label
-                class="font-label-md text-label-md text-on-surface-variant ml-1"
-                >Nome Completo</label
-              >
-              <input
-                class="w-full bg-surface-container-low border border-outline-variant px-4 py-3 rounded-lg font-body-md focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all placeholder:text-outline"
-                type="text"
-                value="Ana Marques"
-              />
-            </div>
-            <!-- Email -->
-            <div class="space-y-1.5">
-              <label
-                class="font-label-md text-label-md text-on-surface-variant ml-1"
-                >Email</label
-              >
-              <div class="relative">
-                <input
-                  class="w-full bg-surface-container-low border border-outline-variant px-4 py-3 pr-10 rounded-lg font-body-md focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all placeholder:text-outline"
-                  type="email"
-                  value="ana@financecorp.pt"
-                />
-                <span
-                  class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-tertiary-container"
-                  data-weight="fill"
-                  >check_circle</span
-                >
-              </div>
-            </div>
-          </div>
-        </section>
-        <!-- ACESSO E SEGURANÇA Section -->
-        <section class="space-y-6">
-          <h4
-            class="text-label-md font-label-md text-on-primary-container tracking-widest uppercase flex items-center gap-2"
-          >
-            <span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
-            Acesso e Segurança
-          </h4>
-          <div class="space-y-5">
-            <!-- Perfil Select -->
-            <div class="space-y-1.5">
-              <label
-                class="font-label-md text-label-md text-on-surface-variant ml-1"
-                >Perfil</label
-              >
-              <div
-                class="w-full p-4 rounded-lg bg-surface-container-high border border-secondary/20 flex items-center gap-4 cursor-pointer hover:bg-surface-container-highest transition-colors"
-              >
-                <div
-                  class="w-10 h-10 rounded-lg bg-on-secondary-fixed-variant/10 flex items-center justify-center text-on-secondary-fixed-variant"
-                >
-                  <span class="material-symbols-outlined">shield</span>
-                </div>
-                <div class="flex-1">
-                  <p class="font-body-md font-bold text-on-surface">ADMIN</p>
-                  <p class="text-label-sm text-on-surface-variant">
-                    Acesso total ao sistema
-                  </p>
-                </div>
-                <span class="material-symbols-outlined text-on-surface-variant"
-                  >expand_more</span
-                >
-              </div>
-            </div>
-            <!-- Password -->
-            <div class="space-y-1.5">
-              <label
-                class="font-label-md text-label-md text-on-surface-variant ml-1"
-                >Palavra-passe</label
-              >
-              <div class="relative">
-                <input
-                  class="w-full bg-surface-container-low border border-outline-variant px-4 py-3 pr-10 rounded-lg font-body-md focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all"
-                  type="password"
-                  value="********"
-                />
-                <button
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
-                >
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
-              <!-- Password Strength Meter -->
-              <div class="pt-2 px-1 space-y-2">
-                <div class="flex gap-1">
-                  <div
-                    class="h-1.5 flex-1 bg-on-tertiary-container rounded-full"
-                  ></div>
-                  <div
-                    class="h-1.5 flex-1 bg-on-tertiary-container rounded-full"
-                  ></div>
-                  <div
-                    class="h-1.5 flex-1 bg-on-tertiary-container rounded-full"
-                  ></div>
-                  <div
-                    class="h-1.5 flex-1 bg-on-tertiary-container rounded-full"
-                  ></div>
-                </div>
-                <p
-                  class="text-label-sm font-semibold text-on-tertiary-container flex items-center gap-1"
-                >
-                  <span class="material-symbols-outlined text-[14px]"
-                    >bolt</span
-                  >
-                  Forte
-                </p>
-              </div>
-            </div>
-            <!-- Confirm Password -->
-            <div class="space-y-1.5">
-              <label
-                class="font-label-md text-label-md text-on-surface-variant ml-1"
-                >Confirmar Palavra-passe</label
-              >
-              <input
-                class="w-full bg-surface-container-low border border-outline-variant px-4 py-3 rounded-lg font-body-md focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all"
-                type="password"
-                value="********"
-              />
-            </div>
-            <!-- Estado Toggle -->
-            <div
-              class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant"
-            >
-              <div>
-                <p class="font-label-md text-label-md text-on-surface">
-                  Estado da Conta
-                </p>
-                <p class="text-label-sm text-on-surface-variant">
-                  O utilizador pode aceder imediatamente
-                </p>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="font-label-md text-on-tertiary-container"
-                  >ATIVO</span
-                >
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input
-                    checked=""
-                    class="sr-only peer"
-                    type="checkbox"
-                    value=""
-                  />
-                  <div
-                    class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-on-tertiary-container"
-                  ></div>
-                </label>
-              </div>
-            </div>
-          </div>
-        </section>
+  <!-- Body -->
+  <form class="space-y-10" (ngSubmit)="$event.preventDefault()">
+
+    <!-- ── Secção 1: Informação Pessoal ── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-brand-500">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.25C6.615 2.25 2.25 6.615 2.25 12S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25ZM11.9991 7.25c-1.1144 0-2.0178.9034-2.0178 2.0178 0 1.1145.9034 2.0179 2.0178 2.0179 1.1144 0 2.0178-.9034 2.0178-2.0179C14.017 8.1534 13.1135 7.25 11.999 7.25ZM8.481 9.268c0-1.9428 1.575-3.518 3.518-3.518s3.518 1.5752 3.518 3.518c0 1.9428-1.575 3.5178-3.518 3.5178s-3.518-1.575-3.518-3.5178ZM10.725 13.5955H13.275c2.476 0 4.552 1.7145 5.105 4.021C19.6996 16.119 20.5 14.153 20.5 12c0-4.694-3.806-8.5-8.5-8.5S3.5 7.306 3.5 12c0 2.1526.8002 4.1184 2.119 5.616.554-2.306 2.63-4.0205 5.106-4.0205Z" fill="currentColor"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Informação Pessoal
+        </h4>
       </div>
-    </form>
-  </section>
 
-  <!-- Slot do rodapé (só aparece com [showFooter]="true") -->
-  <div drawer-footer class="flex gap-3">
-    <button>Cancelar</button>
-    <button>Guardar</button>
+      <div class="space-y-4">
+        <div class="space-y-1.5">
+          <app-label>Nome Completo</app-label>
+          <app-input-field
+            type="text"
+            placeholder="Ex: João Silva"
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <app-label>Endereço de Email</app-label>
+          <app-input-field
+            type="email"
+            placeholder="utilizador@empresa.ao"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Secção 2: Acesso e Segurança ── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-brand-500">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C8.82 1.25 6.25 3.82 6.25 7v.764A3.251 3.251 0 0 0 3.25 11v8A3.25 3.25 0 0 0 6.5 22.25h11a3.25 3.25 0 0 0 3.25-3.25v-8a3.251 3.251 0 0 0-3-3.236V7c0-3.18-2.57-5.75-5.75-5.75Zm4.25 6.512V7a4.25 4.25 0 0 0-8.5 0v.75h8.5v.012ZM12 13.25a.75.75 0 0 1 .75.75v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 1 .75-.75Z" fill="currentColor"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Acesso e Segurança
+        </h4>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Perfil de acesso -->
+        <div class="space-y-1.5">
+          <app-label>Perfil de Acesso</app-label>
+          <app-select
+            placeholder="Seleccionar perfil"
+            [options]="roleOptions"
+            [value]="selectedRole"
+            (valueChange)="selectedRole = $event"
+          />
+        </div>
+
+        <!-- Palavra-passe -->
+        <div class="space-y-1.5">
+          <app-label>Palavra-passe</app-label>
+          <div class="relative">
+            <app-input-field
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Mínimo 8 caracteres"
+              className="pr-10"
+              (valueChange)="password = $event.toString()"
+            />
+            <button
+              type="button"
+              (click)="showPassword = !showPassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <ng-container [solarIcon]="showPassword ? EyeClosedBold : EyeBold" [size]="18" />
+            </button>
+          </div>
+
+          <!-- Indicador de força -->
+          @if (password) {
+            <div class="mt-2 space-y-1.5 px-0.5">
+              <div class="flex gap-1">
+                @for (i of [1, 2, 3, 4]; track i) {
+                  <div
+                    class="h-1.5 flex-1 rounded-full transition-colors duration-300"
+                    [class]="i <= passwordStrength ? strengthInfo.barColor : 'bg-gray-200 dark:bg-gray-700'"
+                  ></div>
+                }
+              </div>
+              <p class="flex items-center gap-1 text-xs font-semibold" [class]="strengthInfo.textColor">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.25 4.533A9.707 9.707 0 0 0 6 3a9.735 9.735 0 0 0-3.25.555.75.75 0 0 0-.5.707v14.25a.75.75 0 0 0 1 .707A8.237 8.237 0 0 1 6 18.75c1.995 0 3.823.707 5.25 1.886V4.533ZM12.75 20.636A8.214 8.214 0 0 1 18 18.75c.966 0 1.89.166 2.75.47a.75.75 0 0 0 1-.708V4.262a.75.75 0 0 0-.5-.707A9.735 9.735 0 0 0 18 3a9.707 9.707 0 0 0-5.25 1.533v16.103Z" />
+                </svg>
+                {{ strengthInfo.text }}
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- Confirmar Palavra-passe -->
+        <div class="space-y-1.5">
+          <app-label>Confirmar Palavra-passe</app-label>
+          <div class="relative">
+            <app-input-field
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              placeholder="Repita a palavra-passe"
+              className="pr-10"
+            />
+            <button
+              type="button"
+              (click)="showConfirmPassword = !showConfirmPassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <ng-container [solarIcon]="showConfirmPassword ? EyeClosedBold : EyeBold" [size]="18" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Estado da conta -->
+        <div class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.02]">
+          <div>
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado da Conta</p>
+            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+              O utilizador pode aceder imediatamente após a criação
+            </p>
+          </div>
+          <app-switch
+            label=""
+            [defaultChecked]="true"
+            (valueChange)="accountActive = $event"
+          />
+        </div>
+      </div>
+    </section>
+
+  </form>
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full gap-3">
+    <app-button
+      variant="outline"
+      class="flex-1"
+      className="w-full justify-center"
+      (btnClick)="openChange.emit(false)"
+    >
+      Cancelar
+    </app-button>
+    <app-button
+      variant="primary"
+      class="flex-1"
+      className="w-full justify-center"
+    >
+      Guardar
+    </app-button>
   </div>
 </app-drawer>

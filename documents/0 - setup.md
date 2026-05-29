@@ -32,23 +32,18 @@
 
 # ✅ Checklist completo de funcionalidades
 
-### Gestão de usuários
+### Backend: Gestão de usuários
 * [x] Criar usuário
 * [x] Editar usuário
 * [x] Desativar usuário
 * [x] Listar usuários
 
-### Perfis de acesso
+--- Perfis de acesso
 * [x] ADMIN
 * [x] USER
 
-Permissões:
-
-ADMIN
-
-* gerenciar usuários
-* acesso total
-
-USER
-
-* acessar sistema financeiro
+### Frontend
+* [ ] Criar usuário
+* [ ] Editar usuário
+* [ ] Desativar usuário
+* [ ] Listar usuários

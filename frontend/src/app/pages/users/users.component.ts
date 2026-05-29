@@ -11,6 +11,7 @@ import { CheckboxComponent } from "@/shared/components/ui/input/checkbox.compone
 import { InputFieldComponent } from "@/shared/components/ui/input/input-field.component";
 import { SelectComponent } from "@/shared/components/ui/select/select.component";
 import { CreateAndEditUserComponent } from "@/shared/components/users/create-and-edit-user/create-and-edit-user.component";
+import { UserDetailDrawerComponent } from "@/shared/components/users/user-detail-drawer/user-detail-drawer.component";
 
 export interface UserRow {
   id: string;
@@ -33,11 +34,15 @@ export interface UserRow {
     InputFieldComponent,
     SelectComponent,
     CreateAndEditUserComponent,
+    UserDetailDrawerComponent,
   ],
   templateUrl: "./users.component.html",
 })
 export class UsersComponent {
   readonly toogleDrawer = signal(false);
+  readonly toogleDetailDrawer = signal(false);
+  readonly selectedUser = signal({} as UserRow);
+  buttonIcon = `<svg solarPenBoldDuotone [size]="64" [color]="'#0f4159'" />`;
 
   columns: ColumnDef[] = [
     { id: "user", label: "Utilizador" },
@@ -242,6 +247,16 @@ export class UsersComponent {
     if (status === "Activo") return "success";
     if (status === "Pendente") return "warning";
     return "error";
+  }
+  handleEdit(user: UserRow): void {
+    console.log("Edit user", user);
+    this.toogleDrawer.set(true);
+  }
+
+  handleDeactivate(user: UserRow): void {
+    console.log("Deactivate user", user);
+    this.selectedUser.set(user);
+    this.toogleDetailDrawer.set(true);
   }
 
   get totalActive(): number {

@@ -9,7 +9,7 @@ layer(base);
 @theme {
   --font-*: initial;
   --font-inter: Inter, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-mono: "JetBrains Mono", monospace;
 
   --breakpoint-*: initial;
   --breakpoint-2xsm: 375px;
@@ -43,6 +43,7 @@ layer(base);
   --color-transparent: transparent;
   --color-white: #ffffff;
   --color-black: #191c1e;
+  --color-primary: #10b981;
 
   /* Brand — Emerald Green */
   --color-brand-25: #f0fdf8;
@@ -145,21 +146,25 @@ layer(base);
 
   /* Shadows — ambient/tonal, no heavy drop shadows */
   --shadow-theme-xs: 0px 1px 2px 0px rgba(15, 23, 42, 0.04);
-  --shadow-theme-sm: 0px 1px 3px 0px rgba(15, 23, 42, 0.06),
+  --shadow-theme-sm:
+    0px 1px 3px 0px rgba(15, 23, 42, 0.06),
     0px 1px 2px 0px rgba(15, 23, 42, 0.04);
   --shadow-theme-md: 0px 4px 12px rgba(15, 23, 42, 0.03);
   --shadow-theme-lg: 0px 8px 20px rgba(15, 23, 42, 0.06);
-  --shadow-theme-xl: 0px 20px 24px -4px rgba(15, 23, 42, 0.06),
+  --shadow-theme-xl:
+    0px 20px 24px -4px rgba(15, 23, 42, 0.06),
     0px 8px 8px -4px rgba(15, 23, 42, 0.02);
   --shadow-datepicker: -5px 0 0 #2d3133, 5px 0 0 #2d3133;
   --shadow-focus-ring: 0px 0px 0px 4px rgba(16, 185, 129, 0.16);
-  --shadow-slider-navigation: 0px 1px 2px 0px rgba(15, 23, 42, 0.06),
+  --shadow-slider-navigation:
+    0px 1px 2px 0px rgba(15, 23, 42, 0.06),
     0px 1px 3px 0px rgba(15, 23, 42, 0.06);
-  --shadow-tooltip: 0px 4px 6px -2px rgba(15, 23, 42, 0.04),
+  --shadow-tooltip:
+    0px 4px 6px -2px rgba(15, 23, 42, 0.04),
     -8px 0px 20px 8px rgba(15, 23, 42, 0.04);
 
-  --drop-shadow-4xl: 0 35px 35px rgba(0, 0, 0, 0.25),
-    0 45px 65px rgba(0, 0, 0, 0.15);
+  --drop-shadow-4xl:
+    0 35px 35px rgba(0, 0, 0, 0.25), 0 45px 65px rgba(0, 0, 0, 0.15);
 
   --z-index-1: 1;
   --z-index-9: 9;
@@ -500,7 +505,9 @@ span.flatpickr-weekday,
   @apply !bg-none;
 }
 .flatpickr-day.inRange {
-  box-shadow: -5px 0 0 #f7f9fb, 5px 0 0 #f7f9fb !important;
+  box-shadow:
+    -5px 0 0 #f7f9fb,
+    5px 0 0 #f7f9fb !important;
   @apply dark:!shadow-datepicker;
 }
 .flatpickr-day.inRange,
@@ -779,7 +786,8 @@ span.flatpickr-weekday,
 
 .task {
   border-radius: 0.75rem;
-  box-shadow: 0px 1px 3px 0px rgba(16, 24, 40, 0.1),
+  box-shadow:
+    0px 1px 3px 0px rgba(16, 24, 40, 0.1),
     0px 1px 2px 0px rgba(16, 24, 40, 0.06);
   opacity: 0.8;
   cursor: grabbing; /* Changes the cursor to indicate dragging */

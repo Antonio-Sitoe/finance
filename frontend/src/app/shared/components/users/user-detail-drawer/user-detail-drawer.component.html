@@ -1,0 +1,251 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="sm"
+  [showFooter]="!!user"
+>
+  <span
+    drawer-header
+    class="text-base font-semibold text-gray-800 dark:text-white/90"
+  >
+    {{ user?.name ?? "Detalhes" }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ user?.email }}
+  </span>
+
+  @if (user) {
+    <!-- Perfil hero -->
+    <div
+      class="-mx-6 -mt-5 mb-6 flex flex-col items-center gap-3 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 pb-6 pt-8 text-center dark:border-white/[0.05] dark:from-gray-800/40 dark:to-transparent"
+    >
+      <!-- Avatar -->
+      <div
+        [class]="
+          'flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold ring-4 ring-white dark:ring-gray-900 ' +
+          avatarColor
+        "
+      >
+        {{ initials }}
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white/90">
+          {{ user.name }}
+        </h3>
+        <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+          {{ user.email }}
+        </p>
+      </div>
+
+      <div class="flex gap-2">
+        <app-badge variant="solid" [color]="roleColor(user.role)" size="sm">
+          {{ user.role }}
+        </app-badge>
+        <app-badge variant="solid" [color]="statusColor(user.status)" size="sm">
+          {{ user.status }}
+        </app-badge>
+      </div>
+    </div>
+
+    <!-- Secção: Informação -->
+    <section class="mb-8">
+      <div class="mb-4 flex items-center gap-2">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          class="text-gray-400"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12 2.25C6.615 2.25 2.25 6.615 2.25 12S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25ZM12 8.25a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm-.75 3a.75.75 0 0 1 1.5 0v5.25a.75.75 0 0 1-1.5 0V11.25Z"
+            fill="currentColor"
+          />
+        </svg>
+        <h4
+          class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500"
+        >
+          Informação
+        </h4>
+      </div>
+
+      <div
+        class="divide-y divide-dashed divide-gray-100 dark:divide-white/[0.05]"
+      >
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400"
+            >Perfil de Acesso</span
+          >
+          <app-badge variant="light" [color]="roleColor(user.role)" size="sm">
+            {{ user.role }}
+          </app-badge>
+        </div>
+
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400"
+            >Status da Conta</span
+          >
+          <app-badge
+            variant="light"
+            [color]="statusColor(user.status)"
+            size="sm"
+          >
+            {{ user.status }}
+          </app-badge>
+        </div>
+
+        <div class="py-3">
+          <span class="text-xs font-medium text-gray-400 dark:text-gray-500"
+            >Membro desde</span
+          >
+          <p
+            class="mt-0.5 text-sm font-semibold text-gray-700 dark:text-gray-300"
+          >
+            {{ formatDate(user.createdAt) }}
+          </p>
+        </div>
+
+        <div class="py-3">
+          <span class="text-xs font-medium text-gray-400 dark:text-gray-500"
+            >Último acesso</span
+          >
+          <div class="mt-0.5 flex items-center gap-2">
+            <span
+              class="h-2 w-2 animate-pulse rounded-full"
+              [class.bg-success-500]="user.status === 'Activo'"
+              [class.bg-gray-400]="user.status !== 'Activo'"
+            >
+            </span>
+            <span
+              class="text-sm font-semibold text-gray-700 dark:text-gray-300"
+            >
+              {{ user.status === "Activo" ? "Recentemente" : "Inactivo" }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Secção: Atividade Recente -->
+    <section>
+      <div class="mb-4 flex items-center gap-2">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          class="text-gray-400"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12 2.25A9.75 9.75 0 1 0 21.75 12 9.76 9.76 0 0 0 12 2.25Zm.75 5.25a.75.75 0 0 0-1.5 0V12c0 .199.079.39.22.53l3 3a.75.75 0 1 0 1.06-1.06l-2.78-2.78V7.5Z"
+            fill="currentColor"
+          />
+        </svg>
+        <h4
+          class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500"
+        >
+          Atividade Recente
+        </h4>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Entrada de exemplo (num app real viriam da API) -->
+        <div class="flex gap-3">
+          <div
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="text-brand-500"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M12 2.25C6.615 2.25 2.25 6.615 2.25 12S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              Conta criada no sistema
+            </p>
+            <p class="text-xs text-gray-400 dark:text-gray-500">
+              {{ formatDate(user.createdAt) }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <div
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="text-gray-500"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M15.75 1.5a6.75 6.75 0 0 0-6.593 8.166l-6.182 6.183a3 3 0 0 0-.878 2.122V19.5A1.5 1.5 0 0 0 3.6 21h1.528a3 3 0 0 0 2.121-.879l.97-.97.97.97A1.5 1.5 0 0 0 10.25 21h.75a.75.75 0 0 0 .75-.75v-2.19l.867-.867A6.75 6.75 0 1 0 15.75 1.5Zm0 3a.75.75 0 0 1 0 1.5 2.25 2.25 0 1 0 0 4.5.75.75 0 0 1 0 1.5 3.75 3.75 0 1 1 0-7.5Z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              Função atribuída: <span class="font-medium">{{ user.role }}</span>
+            </p>
+            <p class="text-xs text-gray-400 dark:text-gray-500">
+              {{ formatDate(user.createdAt) }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Footer: acções -->
+  <div drawer-footer class="flex w-full flex-col gap-3">
+    <button
+      (click)="user && edit.emit(user)"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-600 active:scale-[0.98]"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M13.5 6.5L17.5 10.5M4 20H8L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16V20Z"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      Editar utilizador
+    </button>
+    <button
+      (click)="user && deactivate.emit(user)"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 active:scale-[0.98] dark:border-gray-700 dark:bg-transparent dark:text-gray-400 dark:hover:bg-white/[0.03]"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M12 2.25C6.615 2.25 2.25 6.615 2.25 12S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25ZM8.47 8.47a.75.75 0 0 1 1.06 0L12 10.94l2.47-2.47a.75.75 0 1 1 1.06 1.06L13.06 12l2.47 2.47a.75.75 0 1 1-1.06 1.06L12 13.06l-2.47 2.47a.75.75 0 0 1-1.06-1.06L10.94 12 8.47 9.53a.75.75 0 0 1 0-1.06Z"
+          fill="currentColor"
+        />
+      </svg>
+      Desativar
+    </button>
+  </div>
+</app-drawer>
