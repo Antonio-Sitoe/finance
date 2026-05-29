@@ -1,97 +1,145 @@
-<div class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:gap-6">
-  <app-card-icon-one></app-card-icon-one>
-  <app-card-icon-two></app-card-icon-two>
-  <app-card-with-link-example></app-card-with-link-example>
-  <app-horizontal-card-with-image></app-horizontal-card-with-image>
-  <!-- Metric Item Start -->
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+<app-page-header
+  title="Utilizadores"
+  description="Gerencie os acessos ao sistema e controle permissões institucionais."
+  [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Utilizadores' }]"
+>
+  <button
+    class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
   >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.groupIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Customers</span>
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          3,782
-        </h4>
-      </div>
-      <app-badge color="success">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        CEO%
-      </app-badge>
-    </div>
-  </div>
+    <span class="text-base leading-none">+</span>
+    Novo Utilizador
+  </button>
+</app-page-header>
 
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          5,359
-        </h4>
-      </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
-      </app-badge>
-    </div>
-  </div>
+<div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-4 md:gap-6">
+  <app-card-stat
+    icon="UsersGroupRoundedBold"
+    title="Total"
+    description="Utilizadores registados"
+    [value]="sourceUsers.length.toString()"
+  />
+  <app-card-stat
+    icon="UserCheckRoundedBold"
+    title="Activos"
+    description="Com acesso activo"
+    [value]="totalActive.toString()"
+  />
+  <app-card-stat
+    icon="UserBlockRoundedBold"
+    title="Inactivos"
+    description="Acessos revogados"
+    [value]="totalInactive.toString()"
+  />
+  <app-card-stat
+    icon="ShieldUserBold"
+    title="Administradores"
+    description="Permissões especiais"
+    [value]="totalAdmins.toString()"
+  />
+</div>
 
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          5,359
-        </h4>
+<div class="w-full">
+  <app-datatable
+    [columns]="columns"
+    [data]="pagedUsers"
+    [rowTemplate]="userRow"
+    [filtersTemplate]="userFilters"
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    [totalElements]="filteredUsers.length"
+    [rowsPerPage]="rowsPerPage"
+    (nextPage)="nextPage()"
+    (previousPage)="previousPage()"
+  />
+
+  <ng-template #userFilters>
+    <div class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]">
+      <div class="relative flex-1">
+        <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667ZM14 14l-2.9-2.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <app-input-field
+          placeholder="Pesquisar por nome ou email..."
+          className="pl-9"
+          [value]="searchTerm"
+          (valueChange)="onSearch($event)"
+        />
       </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
-      </app-badge>
+      <app-select
+        placeholder="Todos os estados"
+        [options]="statusOptions"
+        [value]="filterStatus"
+        (valueChange)="onFilterStatus($event)"
+        className="w-full sm:w-44"
+      />
+      <app-select
+        placeholder="Todas as funções"
+        [options]="roleOptions"
+        [value]="filterRole"
+        (valueChange)="onFilterRole($event)"
+        className="w-full sm:w-44"
+      />
     </div>
-  </div>
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
+  </ng-template>
+
+  <ng-template #userRow let-row>
+    <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
+      <td class="px-5 py-3.5">
+        <div class="flex items-center gap-3">
+          <app-checkbox
+            [checked]="selectedRows.includes(row.id)"
+            (checkedChange)="handleRowSelect(row.id)"
+          />
+          <app-avatar-text [name]="row.name" />
+          <div>
+            <span
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >{{ row.name }}</span
+            >
+            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+              row.email
+            }}</span>
+          </div>
+        </div>
+      </td>
+      <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
+        {{ row.role }}
+      </td>
+      <td class="px-5 py-3.5 text-center">
+        <app-badge
+          variant="light"
+          [color]="getBadgeColor(row.status)"
+          size="sm"
         >
-          5,359
-        </h4>
-      </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
-      </app-badge>
-    </div>
-  </div>
+          {{ row.status }}
+        </app-badge>
+      </td>
+      <td class="px-5 py-3.5 text-sm text-gray-500 dark:text-gray-400">
+        {{ row.createdAt }}
+      </td>
+      <td class="px-5 py-3.5 text-right">
+        <button
+          class="text-gray-400 hover:text-error-500 dark:hover:text-error-400"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-[18px]"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M6.54142 3.7915C6.54142 2.54886 7.54878 1.5415 8.79142 1.5415H11.2081C12.4507 1.5415 13.4581 2.54886 13.4581 3.7915V4.0415H15.6252H16.666C17.0802 4.0415 17.416 4.37729 17.416 4.7915C17.416 5.20572 17.0802 5.5415 16.666 5.5415H16.3752V8.24638V13.2464V16.2082C16.3752 17.4508 15.3678 18.4582 14.1252 18.4582H5.87516C4.63252 18.4582 3.62516 17.4508 3.62516 16.2082V13.2464V8.24638V5.5415H3.3335C2.91928 5.5415 2.5835 5.20572 2.5835 4.7915C2.5835 4.37729 2.91928 4.0415 3.3335 4.0415H4.37516H6.54142V3.7915ZM14.8752 13.2464V8.24638V5.5415H13.4581H12.7081H7.29142H6.54142H5.12516V8.24638V13.2464V16.2082C5.12516 16.6224 5.46095 16.9582 5.87516 16.9582H14.1252C14.5394 16.9582 14.8752 16.6224 14.8752 16.2082V13.2464ZM8.04142 4.0415H11.9581V3.7915C11.9581 3.37729 11.6223 3.0415 11.2081 3.0415H8.79142C8.37721 3.0415 8.04142 3.37729 8.04142 3.7915V4.0415ZM8.3335 7.99984C8.74771 7.99984 9.0835 8.33562 9.0835 8.74984V13.7498C9.0835 14.1641 8.74771 14.4998 8.3335 14.4998C7.91928 14.4998 7.5835 14.1641 7.5835 13.7498V8.74984C7.5835 8.33562 7.91928 7.99984 8.3335 7.99984ZM12.4168 8.74984C12.4168 8.33562 12.081 7.99984 11.6668 7.99984C11.2526 7.99984 10.9168 8.33562 10.9168 8.74984V13.7498C10.9168 14.1641 11.2526 14.4998 11.6668 14.4998C12.081 14.4998 12.4168 14.1641 12.4168 13.7498V8.74984Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+      </td>
+    </tr>
+  </ng-template>
 </div>

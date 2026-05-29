@@ -1,14 +1,14 @@
 
 import { Component } from '@angular/core';
 import { BarChartOneComponent } from '../../../shared/components/charts/bar/bar-chart-one/bar-chart-one.component';
-import { PageBreadcrumbComponent } from '../../../shared/components/common/page-breadcrumb/page-breadcrumb.component';
+import { PageHeaderComponent } from '../../../shared/components/common/page-header/page-header.component';
 import { ComponentCardComponent } from '../../../shared/components/common/component-card/component-card.component';
 
 @Component({
   selector: 'app-bar-chart',
   imports: [
     ComponentCardComponent,
-    PageBreadcrumbComponent,
+    PageHeaderComponent,
     BarChartOneComponent
 ],
   templateUrl: './bar-chart.component.html',

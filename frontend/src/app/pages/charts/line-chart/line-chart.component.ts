@@ -1,6 +1,6 @@
 
 import { Component } from '@angular/core';
-import { PageBreadcrumbComponent } from '../../../shared/components/common/page-breadcrumb/page-breadcrumb.component';
+import { PageHeaderComponent } from '../../../shared/components/common/page-header/page-header.component';
 import { ComponentCardComponent } from '../../../shared/components/common/component-card/component-card.component';
 import { LineChartOneComponent } from '../../../shared/components/charts/line/line-chart-one/line-chart-one.component';
 
@@ -8,7 +8,7 @@ import { LineChartOneComponent } from '../../../shared/components/charts/line/li
 @Component({
   selector: 'app-line-chart',
   imports: [
-    PageBreadcrumbComponent,
+    PageHeaderComponent,
     ComponentCardComponent,
     LineChartOneComponent
 ],

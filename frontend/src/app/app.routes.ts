@@ -13,8 +13,6 @@ import { AlertsComponent } from "./pages/ui-elements/alerts/alerts.component";
 import { AvatarElementComponent } from "./pages/ui-elements/avatar-element/avatar-element.component";
 import { BadgesComponent } from "./pages/ui-elements/badges/badges.component";
 import { ButtonsComponent } from "./pages/ui-elements/buttons/buttons.component";
-import { ImagesComponent } from "./pages/ui-elements/images/images.component";
-import { VideosComponent } from "./pages/ui-elements/videos/videos.component";
 import { SignInComponent } from "./pages/auth-pages/sign-in/sign-in.component";
 import { SignUpComponent } from "./pages/auth-pages/sign-up/sign-up.component";
 import { CalenderComponent } from "./pages/calender/calender.component";
@@ -99,16 +97,6 @@ export const routes: Routes = [
         path: "buttons",
         component: ButtonsComponent,
         title: "Angular Buttons Dashboard | FinanceApp Administrative Panel",
-      },
-      {
-        path: "images",
-        component: ImagesComponent,
-        title: "Angular Images Dashboard | FinanceApp Administrative Panel",
-      },
-      {
-        path: "videos",
-        component: VideosComponent,
-        title: "Angular Videos Dashboard | FinanceApp Administrative Panel",
       },
     ],
   },

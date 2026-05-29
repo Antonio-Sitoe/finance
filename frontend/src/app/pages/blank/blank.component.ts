@@ -1,12 +1,10 @@
 
 import { Component } from '@angular/core';
-import { PageBreadcrumbComponent } from '../../shared/components/common/page-breadcrumb/page-breadcrumb.component';
+import { PageHeaderComponent } from '../../shared/components/common/page-header/page-header.component';
 
 @Component({
   selector: 'app-blank',
-  imports: [
-    PageBreadcrumbComponent
-],
+  imports: [PageHeaderComponent],
   templateUrl: './blank.component.html',
   styles: ``
 })
