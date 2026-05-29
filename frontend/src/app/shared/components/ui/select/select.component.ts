@@ -1,7 +1,14 @@
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+} from '@angular/core';
 
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-
-export interface Option {
+export interface SelectOption {
   value: string;
   label: string;
 }
@@ -11,24 +18,39 @@ export interface Option {
   imports: [],
   templateUrl: './select.component.html',
 })
-export class SelectComponent implements OnInit {
-  @Input() options: Option[] = [];
-  @Input() placeholder: string = 'Select an option';
-  @Input() className: string = '';
-  @Input() defaultValue: string = '';
-  @Input() value: string = '';
+export class SelectComponent implements OnChanges {
+  @Input() options: SelectOption[] = [];
+  @Input() placeholder = 'Seleccionar';
+  @Input() className = '';
+  @Input() defaultValue = '';
+  @Input() value = '';
 
   @Output() valueChange = new EventEmitter<string>();
 
-  ngOnInit() {
+  isOpen = signal(false);
+
+  ngOnChanges(): void {
     if (!this.value && this.defaultValue) {
       this.value = this.defaultValue;
     }
   }
 
-  onChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    this.value = value;
-    this.valueChange.emit(value);
+  get selectedLabel(): string {
+    return this.options.find((o) => o.value === this.value)?.label ?? '';
+  }
+
+  toggle(): void {
+    this.isOpen.update((v) => !v);
+  }
+
+  select(option: SelectOption): void {
+    this.value = option.value;
+    this.valueChange.emit(option.value);
+    this.isOpen.set(false);
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.isOpen.set(false);
   }
 }
