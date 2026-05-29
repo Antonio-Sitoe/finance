@@ -1,0 +1,192 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="lg"
+  [showFooter]="true"
+>
+  <!-- Slot do cabeçalho -->
+  <span
+    drawer-header
+    class="text-base font-semibold text-gray-800 dark:text-white"
+  >
+    Novo Utilizador
+  </span>
+  <span drawer-header class="text-sm text-gray-500"
+    >Preencha os dados abaixo</span
+  >
+
+  <section>
+    <form>
+      <div class="flex-1 overflow-y-auto px-8 py-8 space-y-10">
+        <section class="space-y-6">
+          <h4
+            class="text-label-md font-label-md text-on-primary-container tracking-widest uppercase flex items-center gap-2"
+          >
+            <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+            Informação Pessoal
+          </h4>
+          <div class="space-y-5">
+            <!-- Nome Completo -->
+            <div class="space-y-1.5">
+              <label
+                class="font-label-md text-label-md text-on-surface-variant ml-1"
+                >Nome Completo</label
+              >
+              <input
+                class="w-full bg-surface-container-low border border-outline-variant px-4 py-3 rounded-lg font-body-md focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all placeholder:text-outline"
+                type="text"
+                value="Ana Marques"
+              />
+            </div>
+            <!-- Email -->
+            <div class="space-y-1.5">
+              <label
+                class="font-label-md text-label-md text-on-surface-variant ml-1"
+                >Email</label
+              >
+              <div class="relative">
+                <input
+                  class="w-full bg-surface-container-low border border-outline-variant px-4 py-3 pr-10 rounded-lg font-body-md focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all placeholder:text-outline"
+                  type="email"
+                  value="ana@financecorp.pt"
+                />
+                <span
+                  class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-tertiary-container"
+                  data-weight="fill"
+                  >check_circle</span
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- ACESSO E SEGURANÇA Section -->
+        <section class="space-y-6">
+          <h4
+            class="text-label-md font-label-md text-on-primary-container tracking-widest uppercase flex items-center gap-2"
+          >
+            <span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
+            Acesso e Segurança
+          </h4>
+          <div class="space-y-5">
+            <!-- Perfil Select -->
+            <div class="space-y-1.5">
+              <label
+                class="font-label-md text-label-md text-on-surface-variant ml-1"
+                >Perfil</label
+              >
+              <div
+                class="w-full p-4 rounded-lg bg-surface-container-high border border-secondary/20 flex items-center gap-4 cursor-pointer hover:bg-surface-container-highest transition-colors"
+              >
+                <div
+                  class="w-10 h-10 rounded-lg bg-on-secondary-fixed-variant/10 flex items-center justify-center text-on-secondary-fixed-variant"
+                >
+                  <span class="material-symbols-outlined">shield</span>
+                </div>
+                <div class="flex-1">
+                  <p class="font-body-md font-bold text-on-surface">ADMIN</p>
+                  <p class="text-label-sm text-on-surface-variant">
+                    Acesso total ao sistema
+                  </p>
+                </div>
+                <span class="material-symbols-outlined text-on-surface-variant"
+                  >expand_more</span
+                >
+              </div>
+            </div>
+            <!-- Password -->
+            <div class="space-y-1.5">
+              <label
+                class="font-label-md text-label-md text-on-surface-variant ml-1"
+                >Palavra-passe</label
+              >
+              <div class="relative">
+                <input
+                  class="w-full bg-surface-container-low border border-outline-variant px-4 py-3 pr-10 rounded-lg font-body-md focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all"
+                  type="password"
+                  value="********"
+                />
+                <button
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
+                >
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+              <!-- Password Strength Meter -->
+              <div class="pt-2 px-1 space-y-2">
+                <div class="flex gap-1">
+                  <div
+                    class="h-1.5 flex-1 bg-on-tertiary-container rounded-full"
+                  ></div>
+                  <div
+                    class="h-1.5 flex-1 bg-on-tertiary-container rounded-full"
+                  ></div>
+                  <div
+                    class="h-1.5 flex-1 bg-on-tertiary-container rounded-full"
+                  ></div>
+                  <div
+                    class="h-1.5 flex-1 bg-on-tertiary-container rounded-full"
+                  ></div>
+                </div>
+                <p
+                  class="text-label-sm font-semibold text-on-tertiary-container flex items-center gap-1"
+                >
+                  <span class="material-symbols-outlined text-[14px]"
+                    >bolt</span
+                  >
+                  Forte
+                </p>
+              </div>
+            </div>
+            <!-- Confirm Password -->
+            <div class="space-y-1.5">
+              <label
+                class="font-label-md text-label-md text-on-surface-variant ml-1"
+                >Confirmar Palavra-passe</label
+              >
+              <input
+                class="w-full bg-surface-container-low border border-outline-variant px-4 py-3 rounded-lg font-body-md focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all"
+                type="password"
+                value="********"
+              />
+            </div>
+            <!-- Estado Toggle -->
+            <div
+              class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant"
+            >
+              <div>
+                <p class="font-label-md text-label-md text-on-surface">
+                  Estado da Conta
+                </p>
+                <p class="text-label-sm text-on-surface-variant">
+                  O utilizador pode aceder imediatamente
+                </p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="font-label-md text-on-tertiary-container"
+                  >ATIVO</span
+                >
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input
+                    checked=""
+                    class="sr-only peer"
+                    type="checkbox"
+                    value=""
+                  />
+                  <div
+                    class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-on-tertiary-container"
+                  ></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </form>
+  </section>
+
+  <!-- Slot do rodapé (só aparece com [showFooter]="true") -->
+  <div drawer-footer class="flex gap-3">
+    <button>Cancelar</button>
+    <button>Guardar</button>
+  </div>
+</app-drawer>

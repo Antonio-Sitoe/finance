@@ -4,6 +4,7 @@
   [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Utilizadores' }]"
 >
   <button
+    (click)="toogleDrawer.set(true)"
     class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
   >
     <span class="text-base leading-none">+</span>
@@ -53,11 +54,21 @@
   />
 
   <ng-template #userFilters>
-    <div class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]">
+    <div
+      class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]"
+    >
       <div class="relative flex-1">
-        <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
+        <span
+          class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
+        >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667ZM14 14l-2.9-2.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667ZM14 14l-2.9-2.9"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </span>
         <app-input-field
@@ -143,3 +154,8 @@
     </tr>
   </ng-template>
 </div>
+
+<app-create-and-edit-user
+  [open]="toogleDrawer()"
+  (openChange)="toogleDrawer.set($event)"
+/>

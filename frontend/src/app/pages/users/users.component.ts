@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
 import { CardStatComponent } from "@/shared/components/common/card-stat/card-stat.component";
 import { PageHeaderComponent } from "@/shared/components/common/page-header/page-header.component";
 import {
@@ -10,6 +10,7 @@ import { AvatarTextComponent } from "@/shared/components/ui/avatar/avatar-text.c
 import { CheckboxComponent } from "@/shared/components/ui/input/checkbox.component";
 import { InputFieldComponent } from "@/shared/components/ui/input/input-field.component";
 import { SelectComponent } from "@/shared/components/ui/select/select.component";
+import { CreateAndEditUserComponent } from "@/shared/components/users/create-and-edit-user/create-and-edit-user.component";
 
 export interface UserRow {
   id: string;
@@ -31,10 +32,13 @@ export interface UserRow {
     CheckboxComponent,
     InputFieldComponent,
     SelectComponent,
+    CreateAndEditUserComponent,
   ],
   templateUrl: "./users.component.html",
 })
 export class UsersComponent {
+  readonly toogleDrawer = signal(false);
+
   columns: ColumnDef[] = [
     { id: "user", label: "Utilizador" },
     { id: "role", label: "Função", sortable: true },
