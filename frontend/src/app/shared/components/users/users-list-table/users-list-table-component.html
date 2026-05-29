@@ -1,0 +1,123 @@
+<app-datatable
+  [columns]="facade.columns"
+  [data]="facade.list.items()"
+  [rowTemplate]="userRow"
+  [filtersTemplate]="userFilters"
+  [currentPage]="facade.list.query().page"
+  [totalPages]="facade.list.totalPages()"
+  [totalElements]="facade.list.total()"
+  [rowsPerPage]="facade.list.query().size"
+  (nextPage)="facade.list.nextPage()"
+  (previousPage)="facade.list.previousPage()"
+/>
+
+<ng-template #userFilters>
+  <div
+    class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]"
+  >
+    <div class="relative flex-1">
+      <span
+        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path
+            d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667ZM14 14l-2.9-2.9"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
+      <app-input-field
+        placeholder="Pesquisar por nome ou email..."
+        className="pl-9"
+        [value]="facade.searchTerm()"
+        (valueChange)="facade.search($event.toString())"
+      />
+    </div>
+    <app-select
+      placeholder="Todos os estados"
+      [options]="facade.statusOptions"
+      [value]="facade.filterStatus()"
+      (valueChange)="facade.filterBySituacao($event)"
+      className="w-full sm:w-44"
+    />
+    <app-select
+      placeholder="Todas as funções"
+      [options]="facade.roleOptions"
+      [value]="facade.filterRole()"
+      (valueChange)="facade.filterByPerfil($event)"
+      className="w-full sm:w-44"
+    />
+  </div>
+</ng-template>
+
+<ng-template #userRow let-row>
+  <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
+    <td class="px-5 py-3.5">
+      <div class="flex items-center gap-3">
+        <app-checkbox
+          [checked]="facade.selectedRows().includes(row.id)"
+          (checkedChange)="facade.toggleRowSelect(row.id)"
+        />
+        <app-avatar-text [name]="row.nome" />
+        <div>
+          <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ row.nome }}
+          </span>
+          <span class="text-xs text-gray-500 dark:text-gray-400">
+            {{ row.email }}
+          </span>
+        </div>
+      </div>
+    </td>
+    <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
+      {{ row.perfil }}
+    </td>
+    <td class="px-5 py-3.5 text-center">
+      <app-badge variant="light" [color]="facade.badgeColor(row.situacao)" size="sm">
+        {{ row.situacao }}
+      </app-badge>
+    </td>
+    <td class="px-5 py-3.5 text-sm text-gray-500 dark:text-gray-400">
+      {{ row.createdAt }}
+    </td>
+    <td class="px-5 py-3.5">
+      <div class="flex items-center justify-end gap-4">
+        <button
+          (click)="openEdit(row)"
+          class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" class="size-[18px]">
+            <path opacity="0.5" d="M20.8487 8.71306C22.3844 7.17735 22.3844 4.68748 20.8487 3.15178C19.313 1.61607 16.8231 1.61607 15.2874 3.15178L14.4004 4.03882C14.4125 4.0755 14.4251 4.11268 14.4382 4.15035C14.7633 5.0875 15.3768 6.31601 16.5308 7.47002C17.6848 8.62403 18.9133 9.23749 19.8505 9.56262C19.888 9.57563 19.925 9.58817 19.9615 9.60026L20.8487 8.71306Z" fill="currentColor"></path>
+            <path d="M14.4386 4L14.4004 4.03819C14.4125 4.07487 14.4251 4.11206 14.4382 4.14973C14.7633 5.08687 15.3768 6.31538 16.5308 7.4694C17.6848 8.62341 18.9133 9.23686 19.8505 9.56199C19.8876 9.57489 19.9243 9.58733 19.9606 9.59933L11.4001 18.1598C10.823 18.7369 10.5343 19.0255 10.2162 19.2737C9.84082 19.5665 9.43469 19.8175 9.00498 20.0223C8.6407 20.1959 8.25351 20.3249 7.47918 20.583L3.39584 21.9442C3.01478 22.0712 2.59466 21.972 2.31063 21.688C2.0266 21.4039 1.92743 20.9838 2.05445 20.6028L3.41556 16.5194C3.67368 15.7451 3.80273 15.3579 3.97634 14.9936C4.18114 14.5639 4.43213 14.1578 4.7249 13.7824C4.97307 13.4643 5.26165 13.1757 5.83874 12.5986L14.4386 4Z" fill="currentColor"></path>
+          </svg>
+        </button>
+
+        <button
+          class="text-gray-400 hover:text-error-500 dark:hover:text-error-400"
+          (click)="openDetail(row)"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" class="size-[18px]" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 8.25C9.92893 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92893 15.75 12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25ZM9.75 12C9.75 10.7574 10.7574 9.75 12 9.75C13.2426 9.75 14.25 10.7574 14.25 12C14.25 13.2426 13.2426 14.25 12 14.25C10.7574 14.25 9.75 13.2426 9.75 12Z" fill="currentColor"></path>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.25C7.48587 3.25 4.44529 5.9542 2.68057 8.24686L2.64874 8.2882C2.24964 8.80653 1.88206 9.28392 1.63269 9.8484C1.36564 10.4529 1.25 11.1117 1.25 12C1.25 12.8883 1.36564 13.5471 1.63269 14.1516C1.88206 14.7161 2.24964 15.1935 2.64875 15.7118L2.68057 15.7531C4.44529 18.0458 7.48587 20.75 12 20.75C16.5141 20.75 19.5547 18.0458 21.3194 15.7531L21.3512 15.7118C21.7504 15.1935 22.1179 14.7161 22.3673 14.1516C22.6344 13.5471 22.75 12.8883 22.75 12C22.75 11.1117 22.6344 10.4529 22.3673 9.8484C22.1179 9.28391 21.7504 8.80652 21.3512 8.28818L21.3194 8.24686C19.5547 5.9542 16.5141 3.25 12 3.25ZM3.86922 9.1618C5.49864 7.04492 8.15036 4.75 12 4.75C15.8496 4.75 18.5014 7.04492 20.1308 9.1618C20.5694 9.73159 20.8263 10.0721 20.9952 10.4545C21.1532 10.812 21.25 11.2489 21.25 12C21.25 12.7511 21.1532 13.188 20.9952 13.5455C20.8263 13.9279 20.5694 14.2684 20.1308 14.8382C18.5014 16.9551 15.8496 19.25 12 19.25C8.15036 19.25 5.49864 16.9551 3.86922 14.8382C3.43064 14.2684 3.17374 13.9279 3.00476 13.5455C2.84684 13.188 2.75 12.7511 2.75 12C2.75 11.2489 2.84684 10.812 3.00476 10.4545C3.17374 10.0721 3.43063 9.73159 3.86922 9.1618Z" fill="currentColor"></path>
+          </svg>
+        </button>
+      </div>
+    </td>
+  </tr>
+</ng-template>
+
+<app-create-and-edit-user
+  [open]="drawerOpen()"
+  (openChange)="drawerOpen.set($event)"
+/>
+
+<app-user-detail-drawer
+  [open]="detailDrawerOpen()"
+  [user]="selectedUser()"
+  (openChange)="detailDrawerOpen.set($event)"
+  (deactivate)="openDetail($event)"
+  (edit)="openEdit($event)"
+/>

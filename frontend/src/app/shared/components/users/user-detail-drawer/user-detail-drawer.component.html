@@ -8,7 +8,7 @@
     drawer-header
     class="text-base font-semibold text-gray-800 dark:text-white/90"
   >
-    {{ user?.name ?? "Detalhes" }}
+    {{ user?.nome ?? "Detalhes" }}
   </span>
   <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
     {{ user?.email }}
@@ -31,7 +31,7 @@
 
       <div>
         <h3 class="text-lg font-bold text-gray-800 dark:text-white/90">
-          {{ user.name }}
+          {{ user.nome }}
         </h3>
         <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
           {{ user.email }}
@@ -39,11 +39,11 @@
       </div>
 
       <div class="flex gap-2">
-        <app-badge variant="solid" [color]="roleColor(user.role)" size="sm">
-          {{ user.role }}
+        <app-badge variant="solid" [color]="roleColor(user.perfil)" size="sm">
+          {{ user.perfil }}
         </app-badge>
-        <app-badge variant="solid" [color]="statusColor(user.status)" size="sm">
-          {{ user.status }}
+        <app-badge variant="solid" [color]="statusColor(user.situacao)" size="sm">
+          {{ user.situacao }}
         </app-badge>
       </div>
     </div>
@@ -79,8 +79,8 @@
           <span class="text-sm text-gray-500 dark:text-gray-400"
             >Perfil de Acesso</span
           >
-          <app-badge variant="light" [color]="roleColor(user.role)" size="sm">
-            {{ user.role }}
+          <app-badge variant="light" [color]="roleColor(user.perfil)" size="sm">
+            {{ user.perfil }}
           </app-badge>
         </div>
 
@@ -90,10 +90,10 @@
           >
           <app-badge
             variant="light"
-            [color]="statusColor(user.status)"
+            [color]="statusColor(user.situacao)"
             size="sm"
           >
-            {{ user.status }}
+            {{ user.situacao }}
           </app-badge>
         </div>
 
@@ -115,14 +115,14 @@
           <div class="mt-0.5 flex items-center gap-2">
             <span
               class="h-2 w-2 animate-pulse rounded-full"
-              [class.bg-success-500]="user.status === 'Activo'"
-              [class.bg-gray-400]="user.status !== 'Activo'"
+              [class.bg-success-500]="user.situacao === SITUATION.ATIVO"
+              [class.bg-gray-400]="user.situacao !== SITUATION.ATIVO"
             >
             </span>
             <span
               class="text-sm font-semibold text-gray-700 dark:text-gray-300"
             >
-              {{ user.status === "Activo" ? "Recentemente" : "Inactivo" }}
+              {{ user.situacao === SITUATION.ATIVO ? "Recentemente" : "Inactivo" }}
             </span>
           </div>
         </div>
@@ -205,7 +205,7 @@
           </div>
           <div>
             <p class="text-sm text-gray-700 dark:text-gray-300">
-              Função atribuída: <span class="font-medium">{{ user.role }}</span>
+              Função atribuída: <span class="font-medium">{{ user.perfil }}</span>
             </p>
             <p class="text-xs text-gray-400 dark:text-gray-500">
               {{ formatDate(user.createdAt) }}

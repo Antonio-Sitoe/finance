@@ -1,15 +1,8 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { DrawerComponent } from "../../ui/drawer/drawer.component";
 import { BadgeComponent } from "../../ui/badge/badge.component";
-
-export interface UserDetail {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  status: "Activo" | "Inactivo" | "Pendente";
-  createdAt: string;
-}
+import { IUsuario } from "@/shared/interfaces/users.dto";
+import { PROFILE, SITUATION } from "@/shared/interfaces/enum.dto";
 
 type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light";
 
@@ -19,15 +12,17 @@ type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light"
   templateUrl: "./user-detail-drawer.component.html",
 })
 export class UserDetailDrawerComponent {
-  @Input() user: UserDetail | null = null;
+  @Input() user: IUsuario | null = null;
+
+  readonly SITUATION = SITUATION;
   @Input() open = false;
   @Output() openChange = new EventEmitter<boolean>();
-  @Output() edit = new EventEmitter<UserDetail>();
-  @Output() deactivate = new EventEmitter<UserDetail>();
+  @Output() edit = new EventEmitter<IUsuario>();
+  @Output() deactivate = new EventEmitter<IUsuario>();
 
   get initials(): string {
-    if (!this.user?.name) return "";
-    return this.user.name
+    if (!this.user?.nome) return "";
+    return this.user.nome
       .split(" ")
       .map((w) => w[0])
       .join("")
@@ -44,30 +39,26 @@ export class UserDetailDrawerComponent {
       "bg-green-100 text-green-600",
       "bg-purple-100 text-purple-600",
     ];
-    if (!this.user?.name) return colors[0];
-    const idx = this.user.name
+    if (!this.user?.nome) return colors[0];
+    const idx = this.user.nome
       .split("")
       .reduce((acc, c) => acc + c.charCodeAt(0), 0);
     return colors[idx % colors.length];
   }
 
-  statusColor(status: string): BadgeColor {
-    if (status === "Activo") return "success";
-    if (status === "Pendente") return "warning";
+  statusColor(situacao: string): BadgeColor {
+    if (situacao === SITUATION.ATIVO) return "success";
     return "error";
   }
 
-  roleColor(role: string): BadgeColor {
-    if (role === "Administrador") return "primary";
-    if (role === "Gestor") return "info";
-    if (role === "Auditor") return "warning";
+  roleColor(perfil: string): BadgeColor {
+    if (perfil === PROFILE.ADMIN) return "primary";
     return "light";
   }
 
   formatDate(date: string): string {
     if (!date) return "";
-    const d = new Date(date);
-    return d.toLocaleDateString("pt-PT", {
+    return new Date(date).toLocaleDateString("pt-PT", {
       day: "numeric",
       month: "long",
       year: "numeric",
