@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-switch',
@@ -30,7 +30,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
     </label>
   `
 })
-export class SwitchComponent {
+export class SwitchComponent implements OnInit, OnChanges {
 
   @Input() label!: string;
   @Input() defaultChecked: boolean = false;
@@ -43,6 +43,12 @@ export class SwitchComponent {
 
   ngOnInit() {
     this.isChecked = this.defaultChecked;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['defaultChecked'] && !changes['defaultChecked'].firstChange) {
+      this.isChecked = this.defaultChecked;
+    }
   }
 
   handleToggle() {

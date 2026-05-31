@@ -10,6 +10,12 @@ import { USERS_COLUMNS } from "@/shared/constants/users.columns";
 export class UserFacadeService {
   private api = inject(UsersApiService);
 
+  readonly editingUser = signal<IUsuario | null>(null);
+
+  setEditingUser(user: IUsuario | null): void {
+    this.editingUser.set(user);
+  }
+
   readonly list = new ListStore<IUsuario>();
   readonly selectedRows = signal<number[]>([]);
 

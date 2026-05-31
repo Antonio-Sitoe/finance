@@ -7,10 +7,16 @@
     variantClasses + ' ' +
     disabledClasses
   "
-  [disabled]="disabled"
+  [disabled]="disabled || loading"
   (click)="onClick($event)"
 >
-  @if (startIcon) {
+  @if (loading) {
+    <svg class="animate-spin size-4" viewBox="0 0 24 24" fill="none">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"/>
+    </svg>
+  }
+  @if (startIcon && !loading) {
   <span class="flex items-center" [innerHTML]="startIcon | safeHtml"></span>
   }
   <ng-content></ng-content>

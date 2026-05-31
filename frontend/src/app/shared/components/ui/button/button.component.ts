@@ -19,6 +19,7 @@ export class ButtonComponent {
   @Input() size: 'sm' | 'md' = 'md';
   @Input() variant: 'primary' | 'outline' = 'primary';
   @Input() disabled = false;
+  @Input() loading = false;
   @Input() className = '';
   @Input() startIcon?: string; // SVG or icon class, or use ng-content for more flexibility
   @Input() endIcon?: string;
@@ -38,11 +39,11 @@ export class ButtonComponent {
   }
 
   get disabledClasses(): string {
-    return this.disabled ? 'cursor-not-allowed opacity-50' : '';
+    return this.disabled || this.loading ? 'cursor-not-allowed opacity-50' : '';
   }
 
   onClick(event: Event) {
-    if (!this.disabled) {
+    if (!this.disabled && !this.loading) {
       this.btnClick.emit(event);
     }
   }

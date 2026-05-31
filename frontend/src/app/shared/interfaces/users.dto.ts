@@ -10,4 +10,20 @@ export interface IUsuario {
   createdAt: string;
 }
 
+export interface CreateUsuarioDto {
+  nome: string;
+  email: string;
+  perfil: string;
+  situacao: string;
+  senha: string;
+}
+
+export interface UpdateUsuarioDto {
+  nome: string;
+  email: string;
+  perfil: string;
+  situacao: string;
+  senha?: string;
+}
+
 export type UsuariosResponse = PageResult<IUsuario>;

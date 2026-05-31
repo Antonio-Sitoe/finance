@@ -6,20 +6,20 @@
 >
   <!-- Header -->
   <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
-    Novo Utilizador
+    {{ isEditing() ? 'Editar Utilizador' : 'Novo Utilizador' }}
   </span>
   <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
-    Preencha os dados abaixo para criar uma nova conta
+    {{ isEditing() ? 'Actualize os dados do utilizador' : 'Preencha os dados abaixo para criar uma nova conta' }}
   </span>
 
   <!-- Body -->
-  <form class="space-y-10" (ngSubmit)="$event.preventDefault()">
+  <form class="space-y-10" [formGroup]="userForm.form" (ngSubmit)="submit()">
 
     <!-- ── Secção 1: Informação Pessoal ── -->
     <section class="space-y-5">
       <div class="flex items-center gap-2.5">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-brand-500">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.25C6.615 2.25 2.25 6.615 2.25 12S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25ZM11.9991 7.25c-1.1144 0-2.0178.9034-2.0178 2.0178 0 1.1145.9034 2.0179 2.0178 2.0179 1.1144 0 2.0178-.9034 2.0178-2.0179C14.017 8.1534 13.1135 7.25 11.999 7.25ZM8.481 9.268c0-1.9428 1.575-3.518 3.518-3.518s3.518 1.5752 3.518 3.518c0 1.9428-1.575 3.5178-3.518 3.5178s-3.518-1.575-3.518-3.5178ZM10.725 13.5955H13.275c2.476 0 4.552 1.7145 5.105 4.021C19.6996 16.119 20.5 14.153 20.5 12c0-4.694-3.806-8.5-8.5-8.5S3.5 7.306 3.5 12c0 2.1526.8002 4.1184 2.119 5.616.554-2.306 2.63-4.0205 5.106-4.0205Z" fill="currentColor"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.25C6.615 2.25 2.25 6.615 2.25 12S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25ZM11.9991 7.25c-1.1144 0-2.0178.9034-2.0178 2.0178 0 1.1145.9034 2.0179 2.0178 2.0179 1.1144 0 2.0178-.9034 2.0178-2.0179C14.017 8.1534 13.1135 7.25 11.999 7.25ZM8.481 9.268c0-1.9428 1.575-3.518 3.518-3.518s3.518 1.5752 3.518 3.518c0 1.9428-1.575 3.5178-3.518 3.5178s-3.518-1.575-3.518-3.5178ZM10.725 13.5955H13.275c2.476 0 4.552 1.7145 5.105 4.021C19.6996 16.119 20.5 14.153 20.5 12c0-4.694-3.806-8.5-8.5-8.5S3.5 7.306 3.5 12c0 2.1526.8002 4.1184 2.119 5.616.554-2.306 2.63-4.0205 5.106-4.0205Z" fill="currentColor" />
         </svg>
         <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
           Informação Pessoal
@@ -27,20 +27,44 @@
       </div>
 
       <div class="space-y-4">
+        <!-- Nome -->
         <div class="space-y-1.5">
           <app-label>Nome Completo</app-label>
           <app-input-field
             type="text"
             placeholder="Ex: João Silva"
+            [value]="userForm.nome.value ?? ''"
+            [error]="userForm.nome.invalid && userForm.nome.touched"
+            (valueChange)="userForm.nome.setValue($event.toString())"
           />
+          @if (userForm.nome.invalid && userForm.nome.touched) {
+            @if (userForm.nome.hasError('required')) {
+              <p class="text-xs text-error-500">Campo obrigatório</p>
+            } @else if (userForm.nome.hasError('minlength')) {
+              <p class="text-xs text-error-500">Mínimo 3 caracteres</p>
+            } @else if (userForm.nome.hasError('maxlength')) {
+              <p class="text-xs text-error-500">Máximo 100 caracteres</p>
+            }
+          }
         </div>
 
+        <!-- Email -->
         <div class="space-y-1.5">
           <app-label>Endereço de Email</app-label>
           <app-input-field
             type="email"
             placeholder="utilizador@empresa.ao"
+            [value]="userForm.email.value ?? ''"
+            [error]="userForm.email.invalid && userForm.email.touched"
+            (valueChange)="userForm.email.setValue($event.toString())"
           />
+          @if (userForm.email.invalid && userForm.email.touched) {
+            @if (userForm.email.hasError('required')) {
+              <p class="text-xs text-error-500">Campo obrigatório</p>
+            } @else if (userForm.email.hasError('email')) {
+              <p class="text-xs text-error-500">Email inválido</p>
+            }
+          }
         </div>
       </div>
     </section>
@@ -49,7 +73,7 @@
     <section class="space-y-5">
       <div class="flex items-center gap-2.5">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-brand-500">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C8.82 1.25 6.25 3.82 6.25 7v.764A3.251 3.251 0 0 0 3.25 11v8A3.25 3.25 0 0 0 6.5 22.25h11a3.25 3.25 0 0 0 3.25-3.25v-8a3.251 3.251 0 0 0-3-3.236V7c0-3.18-2.57-5.75-5.75-5.75Zm4.25 6.512V7a4.25 4.25 0 0 0-8.5 0v.75h8.5v.012ZM12 13.25a.75.75 0 0 1 .75.75v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 1 .75-.75Z" fill="currentColor"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C8.82 1.25 6.25 3.82 6.25 7v.764A3.251 3.251 0 0 0 3.25 11v8A3.25 3.25 0 0 0 6.5 22.25h11a3.25 3.25 0 0 0 3.25-3.25v-8a3.251 3.251 0 0 0-3-3.236V7c0-3.18-2.57-5.75-5.75-5.75Zm4.25 6.512V7a4.25 4.25 0 0 0-8.5 0v.75h8.5v.012ZM12 13.25a.75.75 0 0 1 .75.75v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 1 .75-.75Z" fill="currentColor" />
         </svg>
         <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
           Acesso e Segurança
@@ -57,75 +81,106 @@
       </div>
 
       <div class="space-y-4">
+
         <!-- Perfil de acesso -->
         <div class="space-y-1.5">
           <app-label>Perfil de Acesso</app-label>
           <app-select
             placeholder="Seleccionar perfil"
             [options]="roleOptions"
-            [value]="selectedRole"
-            (valueChange)="selectedRole = $event"
+            [value]="userForm.perfil.value ?? ''"
+            (valueChange)="userForm.perfil.setValue($event)"
           />
+          @if (userForm.perfil.invalid && userForm.perfil.touched) {
+            <p class="text-xs text-error-500">Seleccione um perfil</p>
+          }
         </div>
 
         <!-- Palavra-passe -->
         <div class="space-y-1.5">
-          <app-label>Palavra-passe</app-label>
+          <app-label>
+            Palavra-passe
+            @if (isEditing()) {
+              <span class="ml-1 text-xs font-normal text-gray-400">(deixe vazio para não alterar)</span>
+            }
+          </app-label>
           <div class="relative">
             <app-input-field
-              [type]="showPassword ? 'text' : 'password'"
+              [type]="showPassword() ? 'text' : 'password'"
               placeholder="Mínimo 8 caracteres"
               className="pr-10"
-              (valueChange)="password = $event.toString()"
+              [value]="userForm.senha.value ?? ''"
+              [error]="userForm.senha.invalid && userForm.senha.touched"
+              (valueChange)="userForm.senha.setValue($event.toString())"
             />
             <button
               type="button"
-              (click)="showPassword = !showPassword"
+              (click)="showPassword.set(!showPassword())"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
-              <ng-container [solarIcon]="showPassword ? EyeClosedBold : EyeBold" [size]="18" />
+              <ng-container [solarIcon]="showPassword() ? EyeClosedBold : EyeBold" [size]="18" />
             </button>
           </div>
 
+          @if (userForm.senha.invalid && userForm.senha.touched) {
+            @if (userForm.senha.hasError('required')) {
+              <p class="text-xs text-error-500">Campo obrigatório</p>
+            } @else if (userForm.senha.hasError('passwordStrength')) {
+              <p class="text-xs text-error-500">
+                A senha deve ter pelo menos 8 caracteres, uma maiúscula, um número e um símbolo
+              </p>
+            }
+          }
+
           <!-- Indicador de força -->
-          @if (password) {
+          @if (userForm.senhaValue()) {
             <div class="mt-2 space-y-1.5 px-0.5">
               <div class="flex gap-1">
                 @for (i of [1, 2, 3, 4]; track i) {
                   <div
                     class="h-1.5 flex-1 rounded-full transition-colors duration-300"
-                    [class]="i <= passwordStrength ? strengthInfo.barColor : 'bg-gray-200 dark:bg-gray-700'"
+                    [class]="i <= passwordStrength() ? strengthInfo().barColor : 'bg-gray-200 dark:bg-gray-700'"
                   ></div>
                 }
               </div>
-              <p class="flex items-center gap-1 text-xs font-semibold" [class]="strengthInfo.textColor">
+              <p class="flex items-center gap-1 text-xs font-semibold" [class]="strengthInfo().textColor">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M11.25 4.533A9.707 9.707 0 0 0 6 3a9.735 9.735 0 0 0-3.25.555.75.75 0 0 0-.5.707v14.25a.75.75 0 0 0 1 .707A8.237 8.237 0 0 1 6 18.75c1.995 0 3.823.707 5.25 1.886V4.533ZM12.75 20.636A8.214 8.214 0 0 1 18 18.75c.966 0 1.89.166 2.75.47a.75.75 0 0 0 1-.708V4.262a.75.75 0 0 0-.5-.707A9.735 9.735 0 0 0 18 3a9.707 9.707 0 0 0-5.25 1.533v16.103Z" />
                 </svg>
-                {{ strengthInfo.text }}
+                {{ strengthInfo().text }}
               </p>
             </div>
           }
         </div>
 
         <!-- Confirmar Palavra-passe -->
-        <div class="space-y-1.5">
-          <app-label>Confirmar Palavra-passe</app-label>
-          <div class="relative">
-            <app-input-field
-              [type]="showConfirmPassword ? 'text' : 'password'"
-              placeholder="Repita a palavra-passe"
-              className="pr-10"
-            />
-            <button
-              type="button"
-              (click)="showConfirmPassword = !showConfirmPassword"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            >
-              <ng-container [solarIcon]="showConfirmPassword ? EyeClosedBold : EyeBold" [size]="18" />
-            </button>
+        @if (!isEditing() || userForm.senhaValue()) {
+          <div class="space-y-1.5">
+            <app-label>Confirmar Palavra-passe</app-label>
+            <div class="relative">
+              <app-input-field
+                [type]="showConfirmPassword() ? 'text' : 'password'"
+                placeholder="Repita a palavra-passe"
+                className="pr-10"
+                [value]="userForm.confirmarSenha.value ?? ''"
+                [error]="userForm.confirmarSenha.invalid && userForm.confirmarSenha.touched || userForm.form.hasError('passwordMismatch') && userForm.confirmarSenha.dirty"
+                (valueChange)="userForm.confirmarSenha.setValue($event.toString())"
+              />
+              <button
+                type="button"
+                (click)="showConfirmPassword.set(!showConfirmPassword())"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <ng-container [solarIcon]="showConfirmPassword() ? EyeClosedBold : EyeBold" [size]="18" />
+              </button>
+            </div>
+            @if (userForm.confirmarSenha.invalid && userForm.confirmarSenha.touched) {
+              <p class="text-xs text-error-500">Campo obrigatório</p>
+            } @else if (userForm.form.hasError('passwordMismatch') && userForm.confirmarSenha.dirty) {
+              <p class="text-xs text-error-500">As palavras-passe não coincidem</p>
+            }
           </div>
-        </div>
+        }
 
         <!-- Estado da conta -->
         <div class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.02]">
@@ -137,13 +192,13 @@
           </div>
           <app-switch
             label=""
-            [defaultChecked]="true"
-            (valueChange)="accountActive = $event"
+            [defaultChecked]="userForm.situacao.value"
+            (valueChange)="userForm.situacao.setValue($event)"
           />
         </div>
+
       </div>
     </section>
-
   </form>
 
   <!-- Footer -->
@@ -152,7 +207,7 @@
       variant="outline"
       class="flex-1"
       className="w-full justify-center"
-      (btnClick)="openChange.emit(false)"
+      (btnClick)="close()"
     >
       Cancelar
     </app-button>
@@ -160,8 +215,10 @@
       variant="primary"
       class="flex-1"
       className="w-full justify-center"
+      [loading]="isLoading()"
+      (btnClick)="submit()"
     >
-      Guardar
+      {{ isEditing() ? 'Guardar alterações' : 'Criar utilizador' }}
     </app-button>
   </div>
 </app-drawer>
