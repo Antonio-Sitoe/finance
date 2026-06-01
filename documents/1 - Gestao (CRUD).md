@@ -2,19 +2,20 @@
 
 CRUD completo.
 
-### Funcionalidades
+### Funcionalidades frontend
 
-* [x] Criar cliente
-* [x] Editar cliente
-* [x] Listar clientes
-* [x] Desativar cliente
-* [x] Ver detalhes do cliente
+- [ ] Criar cliente
+- [ ] Editar cliente
+- [ ] Listar clientes
+- [ ] Desativar cliente
+- [ ] Ver detalhes do cliente
 
 ---
 
 ### Filtros
-* [x] Buscar por nome
-* [x] Filtrar por status
+
+- [x] Buscar por nome
+- [x] Filtrar por status
 
 ---
 
@@ -24,23 +25,25 @@ Contactos vinculados ao cliente.
 
 ### Funcionalidades
 
-* [x] Criar contacto  `POST /contacts`: criar contacto
-* [x] Editar contacto
-* [x] Listar contactos do cliente `GET /contacts`: listagem com filtros (cliente_id, departamento, situacao, q full-text), ordenação, paginação page/limit
-* [x] Desativar contacto
-* [x] Ver detalhes do contacto -  `GET /contacts/{id}`: obter contacto (opcional ?include=client para join)
+- [x] Criar contacto `POST /contacts`: criar contacto
+- [x] Editar contacto
+- [x] Listar contactos do cliente `GET /contacts`: listagem com filtros (cliente_id, departamento, situacao, q full-text), ordenação, paginação page/limit
+- [x] Desativar contacto
+- [x] Ver detalhes do contacto - `GET /contacts/{id}`: obter contacto (opcional ?include=client para join)
 
 ---
 
 ### Filtros
-* [x] Buscar por nome
-* [x] Filtrar por departamento
-* [x] Filtrar por situação
-* [x] Filtrar por cliente
 
+- [x] Buscar por nome
+- [x] Filtrar por departamento
+- [x] Filtrar por situação
+- [x] Filtrar por cliente
 
 **Estatísticas / Relatórios**
+
 - [x]`GET /contacts/stats/count-by-client`: quantos contactos por cliente (top N)
+
 ---
 
 # 5️⃣ Gestão de fornecedores
@@ -48,14 +51,17 @@ Contactos vinculados ao cliente.
 CRUD igual ao cliente.
 
 ### Funcionalidades
-* [x] Criar fornecedor
-* [x] Editar fornecedor
-* [x] Listar fornecedores
-* [x] Desativar fornecedor
+
+- [x] Criar fornecedor
+- [x] Editar fornecedor
+- [x] Listar fornecedores
+- [x] Desativar fornecedor
+
 ---
+
 Filtros:
 
-* [x] Nome
+- [x] Nome
 
 ---
 
@@ -65,10 +71,10 @@ Representa contas financeiras.
 
 ### Funcionalidades
 
-* [x] Criar conta
-* [x] Editar conta
-* [x] Listar contas
-* [x] Desativar conta
+- [x] Criar conta
+- [x] Editar conta
+- [x] Listar contas
+- [x] Desativar conta
 
 ---
 
@@ -90,8 +96,8 @@ Categorias hierárquicas.
 
 ### Funcionalidades
 
-* [x] Criar categoria
-* [x] Editar categoria
-* [x] Excluir categoria
-* [x] Listar categorias
-* [x] Criar subcategoria
+- [x] Criar categoria
+- [x] Editar categoria
+- [x] Excluir categoria
+- [x] Listar categorias
+- [x] Criar subcategoria
