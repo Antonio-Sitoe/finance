@@ -1,0 +1,14 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: postgres-local
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: G8434avsNnLGrqKiWnGneVR1WVWyLPO1bJsi96EnYRObBVTJK0FUy2CZCqgExkGH
+      POSTGRES_DB: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
