@@ -1,10 +1,10 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
-import { UsersApiService } from "./users.api.service";
-import { ListStore } from "@/shared/config/listing/list.store";
 import { IUsuario } from "@/shared/interfaces/users.dto";
-import { PROFILE, SITUATION } from "@/shared/interfaces/enum.dto";
+import { ListStore } from "@/shared/config/listing/list.store";
 import { ColumnDef } from "@/shared/components/ui/datatable/datatable";
 import { USERS_COLUMNS } from "@/shared/constants/users.columns";
+import { UsersApiService } from "./users.api.service";
+import { PROFILE, SITUATION } from "@/shared/interfaces/enum.dto";
+import { computed, inject, Injectable, signal } from "@angular/core";
 
 @Injectable({ providedIn: "root" })
 export class UserFacadeService {
@@ -15,6 +15,16 @@ export class UserFacadeService {
   setEditingUser(user: IUsuario | null): void {
     this.editingUser.set(user);
   }
+
+  readonly statusOptions = [
+    { value: SITUATION.ATIVO, label: "Activo" },
+    { value: SITUATION.INATIVO, label: "Inactivo" },
+  ];
+
+  readonly roleOptions = [
+    { value: PROFILE.ADMIN, label: "Administrador" },
+    { value: PROFILE.USER, label: "Utilizador" },
+  ];
 
   readonly list = new ListStore<IUsuario>();
   readonly selectedRows = signal<number[]>([]);
@@ -37,16 +47,6 @@ export class UserFacadeService {
   });
 
   readonly columns: ColumnDef[] = USERS_COLUMNS;
-
-  readonly statusOptions = [
-    { value: SITUATION.ATIVO, label: "Activo" },
-    { value: SITUATION.INATIVO, label: "Inactivo" },
-  ];
-
-  readonly roleOptions = [
-    { value: PROFILE.ADMIN, label: "Administrador" },
-    { value: PROFILE.USER, label: "Utilizador" },
-  ];
 
   constructor() {
     this.list.connect((query) => this.api.getUsers(query));
