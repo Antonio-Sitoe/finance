@@ -1,114 +1,106 @@
-import { Routes } from '@angular/router'
-import { EcommerceComponent } from './pages/dashboard/ecommerce/ecommerce.component'
-import { ProfileComponent } from './pages/profile/profile.component'
-import { FormElementsComponent } from './pages/forms/form-elements/form-elements.component'
-import { BasicTablesComponent } from './pages/tables/basic-tables/basic-tables.component'
-import { NotFoundComponent } from './pages/other-page/not-found/not-found.component'
-import { AppLayoutComponent } from './shared/layout/app-layout/app-layout.component'
-import { InvoicesComponent } from './pages/invoices/invoices.component'
-import { LineChartComponent } from './pages/charts/line-chart/line-chart.component'
-import { BarChartComponent } from './pages/charts/bar-chart/bar-chart.component'
-import { AlertsComponent } from './pages/ui-elements/alerts/alerts.component'
-import { AvatarElementComponent } from './pages/ui-elements/avatar-element/avatar-element.component'
-import { BadgesComponent } from './pages/ui-elements/badges/badges.component'
-import { ButtonsComponent } from './pages/ui-elements/buttons/buttons.component'
-import { SignInComponent } from './pages/auth-pages/sign-in/sign-in.component'
-import { SignUpComponent } from './pages/auth-pages/sign-up/sign-up.component'
-import { CalenderComponent } from './pages/calender/calender.component'
-import { UsersComponent } from './pages/users/users.component'
+import { Routes } from "@angular/router";
+import { EcommerceComponent } from "./pages/dashboard/ecommerce/ecommerce.component";
+import { ProfileComponent } from "./pages/profile/profile.component";
+import { FormElementsComponent } from "./pages/forms/form-elements/form-elements.component";
+import { BasicTablesComponent } from "./pages/tables/basic-tables/basic-tables.component";
+import { NotFoundComponent } from "./pages/other-page/not-found/not-found.component";
+import { AppLayoutComponent } from "./shared/layout/app-layout/app-layout.component";
+import { LineChartComponent } from "./pages/charts/line-chart/line-chart.component";
+import { BarChartComponent } from "./pages/charts/bar-chart/bar-chart.component";
+import { AlertsComponent } from "./pages/ui-elements/alerts/alerts.component";
+import { AvatarElementComponent } from "./pages/ui-elements/avatar-element/avatar-element.component";
+import { BadgesComponent } from "./pages/ui-elements/badges/badges.component";
+import { ButtonsComponent } from "./pages/ui-elements/buttons/buttons.component";
+import { SignInComponent } from "./pages/auth-pages/sign-in/sign-in.component";
+import { SignUpComponent } from "./pages/auth-pages/sign-up/sign-up.component";
+import { CalenderComponent } from "./pages/calender/calender.component";
+import { UsersComponent } from "./pages/users/users.component";
 
 export const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: AppLayoutComponent,
     children: [
       {
-        path: '',
+        path: "",
         component: EcommerceComponent,
-        pathMatch: 'full',
-        title: 'Angular Ecommerce Dashboard | FinanceApp Administrative Panel',
+        pathMatch: "full",
+        title: "Angular Ecommerce Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'users',
+        path: "users",
         component: UsersComponent,
-        title: 'Finance Users | FinanceApp Administrative Panel',
+        title: "Finance Users | FinanceApp Administrative Panel",
       },
       {
-        path: 'calendar',
+        path: "calendar",
         component: CalenderComponent,
-        title: 'Angular Calender | FinanceApp Administrative Panel',
+        title: "Angular Calender | FinanceApp Administrative Panel",
       },
       {
-        path: 'profile',
+        path: "profile",
         component: ProfileComponent,
-        title: 'Angular Profile Dashboard | FinanceApp Administrative Panel',
+        title: "Angular Profile Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'form-elements',
+        path: "form-elements",
         component: FormElementsComponent,
         title:
-          'Angular Form Elements Dashboard | FinanceApp Administrative Panel',
+          "Angular Form Elements Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'basic-tables',
+        path: "basic-tables",
         component: BasicTablesComponent,
         title:
-          'Angular Basic Tables Dashboard | FinanceApp Administrative Panel',
-      },
-
-      {
-        path: 'invoice',
-        component: InvoicesComponent,
-        title:
-          'Angular Invoice Details Dashboard | FinanceApp Administrative Panel',
+          "Angular Basic Tables Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'line-chart',
+        path: "line-chart",
         component: LineChartComponent,
-        title: 'Angular Line Chart Dashboard | FinanceApp Administrative Panel',
+        title: "Angular Line Chart Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'bar-chart',
+        path: "bar-chart",
         component: BarChartComponent,
-        title: 'Angular Bar Chart Dashboard | FinanceApp Administrative Panel',
+        title: "Angular Bar Chart Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'alerts',
+        path: "alerts",
         component: AlertsComponent,
-        title: 'Angular Alerts Dashboard | FinanceApp Administrative Panel',
+        title: "Angular Alerts Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'avatars',
+        path: "avatars",
         component: AvatarElementComponent,
-        title: 'Angular Avatars Dashboard | FinanceApp Administrative Panel',
+        title: "Angular Avatars Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'badge',
+        path: "badge",
         component: BadgesComponent,
-        title: 'Angular Badges Dashboard | FinanceApp Administrative Panel',
+        title: "Angular Badges Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: 'buttons',
+        path: "buttons",
         component: ButtonsComponent,
-        title: 'Angular Buttons Dashboard | FinanceApp Administrative Panel',
+        title: "Angular Buttons Dashboard | FinanceApp Administrative Panel",
       },
     ],
   },
   // auth pages
   {
-    path: 'signin',
+    path: "signin",
     component: SignInComponent,
-    title: 'Angular Sign In Dashboard | FinanceApp Administrative Panel',
+    title: "Angular Sign In Dashboard | FinanceApp Administrative Panel",
   },
   {
-    path: 'signup',
+    path: "signup",
     component: SignUpComponent,
-    title: 'Angular Sign Up Dashboard | FinanceApp Administrative Panel',
+    title: "Angular Sign Up Dashboard | FinanceApp Administrative Panel",
   },
   // error pages
   {
-    path: '**',
+    path: "**",
     component: NotFoundComponent,
-    title: 'Angular NotFound Dashboard | FinanceApp Administrative Panel',
+    title: "Angular NotFound Dashboard | FinanceApp Administrative Panel",
   },
-]
+];

@@ -9,6 +9,7 @@
   [rowsPerPage]="facade.list.query().size"
   (nextPage)="facade.list.nextPage()"
   (previousPage)="facade.list.previousPage()"
+  [loading]="facade.list.loading()"
 />
 
 <ng-template #userFilters>
@@ -146,15 +147,19 @@
   </tr>
 </ng-template>
 
-<app-create-and-edit-user
-  [open]="drawerOpen()"
-  (openChange)="drawerOpen.set($event)"
-/>
+@if (drawerOpen()) {
+  <app-create-and-edit-user
+    [open]="drawerOpen()"
+    (openChange)="drawerOpen.set($event)"
+  />
+}
 
-<app-user-detail-drawer
-  [open]="detailDrawerOpen()"
-  [user]="selectedUser()"
-  (openChange)="detailDrawerOpen.set($event)"
-  (deactivate)="openDetail($event)"
-  (edit)="openEdit($event)"
-/>
+@if (detailDrawerOpen()) {
+  <app-user-detail-drawer
+    [open]="detailDrawerOpen()"
+    [user]="selectedUser()"
+    (openChange)="detailDrawerOpen.set($event)"
+    (deactivate)="openDetail($event)"
+    (edit)="openEdit($event)"
+  />
+}
