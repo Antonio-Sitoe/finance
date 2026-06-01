@@ -22,7 +22,13 @@ import { SolarDynamicIcon } from '@solar-icons/angular'
 import { UserFacadeService } from '@/shared/services/users/users.facade.service'
 import { ReactiveFormsModule } from '@angular/forms'
 import { InputFieldComponent } from '@/shared/components/ui/input/input-field.component'
-import { EyeBold, EyeClosedBold } from '@solar-icons/angular'
+import {
+  EyeBold,
+  EyeClosedBold,
+  UserRoundedBold,
+  LockKeyholeMinimalisticBold,
+  NotebookBold,
+} from '@solar-icons/angular'
 
 @Component({
   selector: 'app-create-and-edit-user',
@@ -45,6 +51,9 @@ export class CreateAndEditUserComponent implements OnChanges {
 
   readonly EyeBold = EyeBold
   readonly EyeClosedBold = EyeClosedBold
+  readonly UserRoundedBold = UserRoundedBold
+  readonly LockKeyholeMinimalisticBold = LockKeyholeMinimalisticBold
+  readonly NotebookBold = NotebookBold
 
   readonly facade = inject(UserFacadeService)
   readonly userForm = inject(UsersFormService)

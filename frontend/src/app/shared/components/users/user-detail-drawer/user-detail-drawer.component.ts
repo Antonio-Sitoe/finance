@@ -6,6 +6,14 @@ import { PROFILE, SITUATION } from '@/shared/interfaces/enum.dto'
 import { ProfilePipe } from '@/shared/pipe/profile.pipe'
 import { SituationPipe } from '@/shared/pipe/situatuin.pipe'
 import { AvatarTextComponent } from '@/shared/components/ui/avatar/avatar-text.component'
+import {
+  SolarDynamicIcon,
+  InfoCircleBold,
+  ClockCircleBold,
+  AddCircleBold,
+  KeyMinimalisticBold,
+  Pen2Bold,
+} from '@solar-icons/angular'
 
 type BadgeColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light'
 
@@ -17,10 +25,16 @@ type BadgeColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light'
     ProfilePipe,
     SituationPipe,
     AvatarTextComponent,
+    SolarDynamicIcon,
   ],
   templateUrl: './user-detail-drawer.component.html',
 })
 export class UserDetailDrawerComponent {
+  readonly InfoCircleBold = InfoCircleBold
+  readonly ClockCircleBold = ClockCircleBold
+  readonly AddCircleBold = AddCircleBold
+  readonly KeyMinimalisticBold = KeyMinimalisticBold
+  readonly Pen2Bold = Pen2Bold
   @Input() user: IUsuario | null = null
 
   readonly SITUATION = SITUATION

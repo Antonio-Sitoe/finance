@@ -12,6 +12,12 @@ import { UserDetailDrawerComponent } from '@/shared/components/users/user-detail
 import { ProfilePipe } from '@/shared/pipe/profile.pipe'
 import { DatePipe } from '@angular/common'
 import { SituationPipe } from '@/shared/pipe/situatuin.pipe'
+import {
+  SolarDynamicIcon,
+  MagnifierBold,
+  Pen2Bold,
+  EyeBold,
+} from '@solar-icons/angular'
 
 @Component({
   imports: [
@@ -26,11 +32,15 @@ import { SituationPipe } from '@/shared/pipe/situatuin.pipe'
     SelectComponent,
     CreateAndEditUserComponent,
     UserDetailDrawerComponent,
+    SolarDynamicIcon,
   ],
   selector: 'app-users-list-table',
   templateUrl: './users-list-table-component.html',
 })
 export class UsersListTableComponent {
+  readonly MagnifierBold = MagnifierBold
+  readonly Pen2Bold = Pen2Bold
+  readonly EyeBold = EyeBold
   @Input() drawerOpen!: WritableSignal<boolean>
 
   readonly facade = inject(UserFacadeService)
