@@ -16,3 +16,8 @@ export enum SITUATION {
   ATIVO = 'ATIVO',
   INATIVO = 'INATIVO',
 }
+
+export enum SITUATION_LABEL {
+  ATIVO = 'Ativo',
+  INATIVO = 'Inativo',
+}

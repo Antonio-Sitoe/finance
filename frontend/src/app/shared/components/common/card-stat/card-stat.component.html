@@ -1,17 +1,17 @@
 <div
   class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
 >
-  <div class="flex items-center justify-between flex-wrap gap-4">
+  <div class="flex items-start justify-between flex-wrap gap-4">
     <app-card-title size="md">{{ title() }}</app-card-title>
     @if (icon()) {
       <div
-        class="mb-5 flex h-14 w-full max-w-14 items-center justify-center rounded-[10.5px] bg-brand-50 text-brand-500 dark:bg-brand-500/10"
+        class="flex h-14 w-full max-w-14 items-center justify-center rounded-[10.5px] bg-brand-50 text-brand-500 dark:bg-brand-500/10"
       >
         <ng-container [solarIcon]="icon()!" [size]="iconSize()" />
       </div>
     }
   </div>
-  <div class="flex flex-col mt-3">
+  <div class="flex flex-col">
     <app-card-title size="lg">{{ value() }}</app-card-title>
     <app-card-description>{{ description() }}</app-card-description>
   </div>

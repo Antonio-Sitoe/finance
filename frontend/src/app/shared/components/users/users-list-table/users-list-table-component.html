@@ -78,14 +78,16 @@
     <td class="px-5 py-3.5 text-xs text-gray-600 dark:text-gray-400">
       {{ row.perfil | profile }}
     </td>
-    <td class="px-5 py-3.5 mx-auto flex items-center justify-center">
-      <app-badge
-        variant="light"
-        [color]="facade.badgeColor(row.situacao)"
-        size="sm"
-      >
-        {{ row.situacao }}
-      </app-badge>
+    <td class="px-5 py-3.5 mx-auto">
+      <div class="flex items-center justify-center">
+        <app-badge
+          variant="light"
+          [color]="facade.badgeColor(row.situacao)"
+          size="sm"
+        >
+          {{ row.situacao | situation }}
+        </app-badge>
+      </div>
     </td>
     <td class="px-5 py-3.5 text-sm text-gray-500 dark:text-gray-400">
       {{ row.createdAt | date:'dd \'de\' MMMM \'de\' yyyy' }}

@@ -11,11 +11,13 @@ import { CreateAndEditUserComponent } from '@/shared/components/users/create-and
 import { UserDetailDrawerComponent } from '@/shared/components/users/user-detail-drawer/user-detail-drawer.component'
 import { ProfilePipe } from '@/shared/pipe/profile.pipe'
 import { DatePipe } from '@angular/common'
+import { SituationPipe } from '@/shared/pipe/situatuin.pipe'
 
 @Component({
   imports: [
     DatePipe,
     ProfilePipe,
+    SituationPipe,
     DataTableComponent,
     BadgeComponent,
     AvatarTextComponent,
