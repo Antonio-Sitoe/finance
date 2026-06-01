@@ -2,6 +2,7 @@ package com.finance.finance.modules.auth.service;
 
 import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
 import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
+import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
 import com.finance.finance.modules.auth.mapper.UsuarioMapper;
 import com.finance.finance.modules.auth.model.Usuario;
 import com.finance.finance.modules.auth.repository.UsuarioRepository;
@@ -32,11 +33,13 @@ public class UsuarioService {
         return UsuarioMapper.toResponseDTO(usuarioRepository.save(usuario));
     }
 
-    public UsuarioResponseDTO atualizar(Long id, UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO atualizar(Long id, UsuarioUpdateRequestDTO dto) {
         Usuario usuario = buscarOuFalhar(id);
         validarEmailUnico(dto.getEmail(), id);
         UsuarioMapper.updateEntity(usuario, dto);
-        usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+        if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
+            usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+        }
         return UsuarioMapper.toResponseDTO(usuarioRepository.save(usuario));
     }
 

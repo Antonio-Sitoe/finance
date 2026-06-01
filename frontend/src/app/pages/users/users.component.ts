@@ -44,7 +44,7 @@ export class UsersComponent implements OnInit {
 
   ngOnInit(): void {
     const p = this.route.snapshot.queryParams
-    const page = +p['page'] || 0
+    const page = +p['page'] || 1
     const size = +p['size'] || 10
     const filters: Record<string, string> = {}
     if (p['search']) filters['search'] = p['search']

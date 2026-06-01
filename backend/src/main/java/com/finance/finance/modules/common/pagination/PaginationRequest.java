@@ -21,11 +21,11 @@ public class PaginationRequest {
 
     private String sortBy = "id";
 
-    private String sortDirection = "asc";
+    private String sortOrder = "asc";
 
     public Pageable toPageable(String defaultSortBy) {
         String resolvedSortBy = (sortBy == null || sortBy.isBlank()) ? defaultSortBy : sortBy;
-        Sort.Direction direction = "desc".equalsIgnoreCase(sortDirection)
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder)
                 ? Sort.Direction.DESC
                 : Sort.Direction.ASC;
 

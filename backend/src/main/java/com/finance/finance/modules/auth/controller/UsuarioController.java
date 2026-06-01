@@ -2,6 +2,7 @@ package com.finance.finance.modules.auth.controller;
 
 import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
 import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
+import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
 import com.finance.finance.modules.auth.service.UsuarioService;
 import com.finance.finance.exceptions.ApiErrorResponse;
 import com.finance.finance.modules.common.pagination.PageResponse;
@@ -40,10 +41,8 @@ public class UsuarioController {
     @PostMapping
     @Operation(summary = "Criar usuário", description = "Cria um novo usuário com senha criptografada.")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso",
-            content = @Content(schema = @Schema(implementation = UsuarioResponseDTO.class))),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos",
-            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso", content = @Content(schema = @Schema(implementation = UsuarioResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     public ResponseEntity<UsuarioResponseDTO> criar(@RequestBody @Valid UsuarioRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.criar(dto));
@@ -52,16 +51,13 @@ public class UsuarioController {
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar usuário", description = "Atualiza um usuário existente e recriptografa a senha informada.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso",
-            content = @Content(schema = @Schema(implementation = UsuarioResponseDTO.class))),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos",
-            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
-            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso", content = @Content(schema = @Schema(implementation = UsuarioResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     public ResponseEntity<UsuarioResponseDTO> atualizar(
-        @Parameter(description = "ID do usuário", example = "1") @PathVariable Long id,
-            @RequestBody @Valid UsuarioRequestDTO dto) {
+            @Parameter(description = "ID do usuário", example = "1") @PathVariable Long id,
+            @RequestBody @Valid UsuarioUpdateRequestDTO dto) {
         return ResponseEntity.ok(usuarioService.atualizar(id, dto));
     }
 
@@ -69,9 +65,8 @@ public class UsuarioController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Desativar usuário", description = "Marca o usuário como INATIVO.")
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Usuário desativado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
-            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "204", description = "Usuário desativado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     public void desativar(@PathVariable Long id) {
         usuarioService.desativar(id);
@@ -80,8 +75,7 @@ public class UsuarioController {
     @GetMapping
     @Operation(summary = "Listar usuários", description = "Lista usuários com paginação.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso",
-            content = @Content(schema = @Schema(implementation = PageResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = PageResponse.class)))
     })
     public ResponseEntity<PageResponse<UsuarioResponseDTO>> listar(
             @Valid @ModelAttribute PaginationRequest paginationRequest) {
@@ -91,10 +85,8 @@ public class UsuarioController {
     @GetMapping("/{id}")
     @Operation(summary = "Buscar usuário por ID", description = "Retorna um usuário específico pelo identificador.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Usuário encontrado",
-            content = @Content(schema = @Schema(implementation = UsuarioResponseDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
-            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Usuário encontrado", content = @Content(schema = @Schema(implementation = UsuarioResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));

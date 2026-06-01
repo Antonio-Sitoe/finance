@@ -43,7 +43,7 @@
 * [x] USER
 
 ### Frontend
-* [ ] Criar usuário
+* [x] Criar usuário
 * [ ] Editar usuário
 * [ ] Desativar usuário
 * [ ] Listar usuários

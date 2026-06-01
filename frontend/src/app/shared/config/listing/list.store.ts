@@ -11,7 +11,7 @@ export class ListStore<T> {
   readonly loading = signal<boolean>(false);
   readonly errors = signal<any>(null);
 
-  readonly query = signal<ListQuery>({ size: 10, page: 0 });
+  readonly query = signal<ListQuery>({ size: 10, page: 1 });
 
   private _loader?: ListLoader<T>;
   private readonly _trigger = new Subject<ListQuery>();
@@ -50,7 +50,6 @@ export class ListStore<T> {
 
   connect(loader: ListLoader<T>) {
     this._loader = loader;
-    this.reload();
   }
 
   setQuery(patch: Partial<ListQuery>) {
@@ -89,17 +88,17 @@ export class ListStore<T> {
   }
 
   clearPagination() {
-    this.setPagination(0, 10);
+    this.setPagination(1, 10);
   }
 
   nextPage() {
-    if (this.query().page + 1 >= this.totalPages()) return;
+    if (this.query().page >= this.totalPages()) return;
     this.query.update((q) => ({ ...q, page: q.page + 1 }));
     this.reload();
   }
 
   previousPage() {
-    if (this.query().page <= 0) return;
+    if (this.query().page <= 1) return;
     this.query.update((q) => ({ ...q, page: q.page - 1 }));
     this.reload();
   }

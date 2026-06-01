@@ -19,7 +19,11 @@ export class UsersApiService {
 
   getUsers(query: ListQuery): Observable<UsuariosResponse> {
     return this.http.get<UsuariosResponse>(USERS_API_ENDPOINTS.LIST, {
-      params: toHttpParams(query),
+      params: toHttpParams({
+        ...query,
+        page: query.page - 1,
+        sortOrder: "desc",
+      }),
     });
   }
 
