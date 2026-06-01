@@ -19,15 +19,11 @@ export class UsersApiService {
 
   getUsers(query: ListQuery): Observable<UsuariosResponse> {
     return this.http.get<UsuariosResponse>(USERS_API_ENDPOINTS.LIST, {
-      params: toHttpParams({
-        ...query,
-        page: query.page - 1,
-      }),
+      params: toHttpParams(query),
     });
   }
 
   createUser(dto: CreateUsuarioDto): Observable<IUsuario> {
-    console.log(dto);
     return this.http.post<IUsuario>(USERS_API_ENDPOINTS.CREATE, dto);
   }
 

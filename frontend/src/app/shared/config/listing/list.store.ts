@@ -89,18 +89,17 @@ export class ListStore<T> {
   }
 
   clearPagination() {
-    this.setPagination(1, 10);
+    this.setPagination(0, 10);
   }
 
   nextPage() {
-    if (this.query().page * this.query().size >= this.total()) return;
+    if (this.query().page + 1 >= this.totalPages()) return;
     this.query.update((q) => ({ ...q, page: q.page + 1 }));
     this.reload();
   }
 
   previousPage() {
-    const minPage = this.query().startsWithZero ? 0 : 1;
-    if (this.query().page <= minPage) return;
+    if (this.query().page <= 0) return;
     this.query.update((q) => ({ ...q, page: q.page - 1 }));
     this.reload();
   }
