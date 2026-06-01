@@ -5,7 +5,6 @@ import { USERS_COLUMNS } from '@/shared/constants/users.columns'
 import { UsersApiService } from './users.api.service'
 import { PROFILE, SITUATION } from '@/shared/interfaces/enum.dto'
 import { computed, inject, Injectable, signal } from '@angular/core'
-import { Observable } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class UserFacadeService {
@@ -98,14 +97,4 @@ export class UserFacadeService {
     return 'error'
   }
 
-  toggleUserStatus(user: IUsuario): Observable<IUsuario> {
-    const newStatus =
-      user.situacao === SITUATION.ATIVO ? SITUATION.INATIVO : SITUATION.ATIVO
-    return this.api.updateUser(user.id, {
-      nome: user.nome,
-      email: user.email,
-      perfil: user.perfil,
-      situacao: newStatus,
-    })
-  }
 }
