@@ -140,6 +140,7 @@ export class UsersFormService {
     return obs$.pipe(
       tap(() => {
         this.facade.list.reload();
+        this.facade.getUserAnalytics();
         this.isLoading.set(false);
       }),
       catchError((err) => {

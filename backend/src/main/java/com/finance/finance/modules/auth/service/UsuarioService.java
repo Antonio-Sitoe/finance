@@ -13,6 +13,8 @@ import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
 import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.exceptions.ResourceNotFoundException;
+import java.text.Normalizer;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -66,7 +68,12 @@ public class UsuarioService {
         }
 
         if (search != null && !search.isBlank()) {
-            spec = spec.and((root, query, cb) -> cb.like(root.get("nome"), "%" + search + "%"));
+            String term = "%" + Normalizer.normalize(search.trim(), Normalizer.Form.NFD)
+                    .replaceAll("\\p{M}", "")
+                    .toLowerCase() + "%";
+            spec = spec.and((root, query, cb) -> cb.like(
+                    cb.function("unaccent", String.class, cb.lower(root.get("nome"))),
+                    term));
         }
 
         return PageResponse.from(usuarioRepository.findAll(spec, pageable).map(UsuarioMapper::toResponseDTO));
@@ -79,13 +86,17 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public UsuarioAnalytcsResponseDto buscarAnalytics() {
-        Long totalUsuarios = usuarioRepository.count();
-        Long totalAtivos = usuarioRepository.count((root, query, cb) -> cb.equal(root.get("situacao"), Situacao.ATIVO));
-        Long totalInativos = usuarioRepository
-                .count((root, query, cb) -> cb.equal(root.get("situacao"), Situacao.INATIVO));
-        Long totalAdministradores = usuarioRepository
-                .count((root, query, cb) -> cb.equal(root.get("perfil"), Perfil.ADMIN));
-        return new UsuarioAnalytcsResponseDto(totalUsuarios, totalAtivos, totalInativos, totalAdministradores);
+        UsuarioAnalytcsResponseDto analytics = usuarioRepository.fetchUsuarioAnalytics();
+        Long totalUsuarios = analytics.totalUsuarios() != null ? analytics.totalUsuarios() : 0L;
+        Long totalAtivos = analytics.totalAtivos() != null ? analytics.totalAtivos() : 0L;
+        Long totalInativos = analytics.totalInativos() != null ? analytics.totalInativos() : 0L;
+        Long totalAdministradores = analytics.totalAdministradores() != null ? analytics.totalAdministradores() : 0L;
+        return UsuarioAnalytcsResponseDto.builder()
+                .totalUsuarios(totalUsuarios)
+                .totalAtivos(totalAtivos)
+                .totalInativos(totalInativos)
+                .totalAdministradores(totalAdministradores)
+                .build();
     }
 
     private Usuario buscarOuFalhar(Long id) {

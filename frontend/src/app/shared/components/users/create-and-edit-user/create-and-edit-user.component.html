@@ -9,13 +9,13 @@
     drawer-header
     class="text-base font-semibold text-gray-800 dark:text-white/90"
   >
-    {{ isEditing() ? "Editar Utilizador" : "Novo Utilizador" }}
+    {{ isEditing() ? 'Editar Utilizador' : 'Novo Utilizador' }}
   </span>
   <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
     {{
       isEditing()
-        ? "Actualize os dados do utilizador"
-        : "Preencha os dados abaixo para criar uma nova conta"
+        ? 'Actualize os dados do utilizador'
+        : 'Preencha os dados abaixo para criar uma nova conta'
     }}
   </span>
 
@@ -102,7 +102,7 @@
           <app-label>Perfil de Acesso</app-label>
           <app-select
             placeholder="Seleccionar perfil"
-            [options]="facade.roleOptions"
+            [options]="facade.roleOptions.filter(r => r.value !== '')"
             [value]="userForm.perfil.value ?? ''"
             (valueChange)="userForm.perfil.setValue($event)"
           />
@@ -252,7 +252,7 @@
       [loading]="userForm.isLoading()"
       (btnClick)="submit()"
     >
-      {{ isEditing() ? "Guardar alterações" : "Criar utilizador" }}
+      {{ isEditing() ? 'Guardar alterações' : 'Criar utilizador' }}
     </app-button>
   </div>
 </app-drawer>

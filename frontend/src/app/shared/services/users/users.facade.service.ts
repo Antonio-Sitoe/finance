@@ -12,6 +12,12 @@ export class UserFacadeService {
   private api = inject(UsersApiService)
 
   readonly editingUser = signal<IUsuario | null>(null)
+  readonly analytics = signal({
+    totalUsuarios: 0,
+    totalAtivos: 0,
+    totalInativos: 0,
+    totalAdministradores: 0,
+  })
 
   setEditingUser(user: IUsuario | null): void {
     this.editingUser.set(user)
@@ -53,6 +59,11 @@ export class UserFacadeService {
 
   constructor() {
     this.list.connect((query) => this.api.getUsers(query))
+    this.getUserAnalytics()
+  }
+
+  getUserAnalytics(): void {
+    this.api.getUserAnalytics().subscribe((data) => this.analytics.set(data))
   }
 
   search(value: string): void {

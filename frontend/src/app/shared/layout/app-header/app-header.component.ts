@@ -5,6 +5,13 @@ import { RouterModule } from '@angular/router';
 import { ThemeToggleButtonComponent } from '../../components/common/theme-toggle/theme-toggle-button.component';
 import { NotificationDropdownComponent } from '../../components/header/notification-dropdown/notification-dropdown.component';
 import { UserDropdownComponent } from '../../components/header/user-dropdown/user-dropdown.component';
+import {
+  SolarDynamicIcon,
+  HamburgerMenuBold,
+  CloseCircleBold,
+  MenuDotsBold,
+  MagnifierBold,
+} from '@solar-icons/angular';
 
 @Component({
   selector: 'app-header',
@@ -14,10 +21,16 @@ import { UserDropdownComponent } from '../../components/header/user-dropdown/use
     ThemeToggleButtonComponent,
     NotificationDropdownComponent,
     UserDropdownComponent,
+    SolarDynamicIcon,
   ],
   templateUrl: './app-header.component.html',
 })
 export class AppHeaderComponent {
+  readonly HamburgerMenuBold = HamburgerMenuBold;
+  readonly CloseCircleBold = CloseCircleBold;
+  readonly MenuDotsBold = MenuDotsBold;
+  readonly MagnifierBold = MagnifierBold;
+
   isApplicationMenuOpen = false;
   readonly isMobileOpen$;
 

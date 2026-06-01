@@ -17,25 +17,25 @@
     icon="UsersGroupRoundedBold"
     title="Total"
     description="Utilizadores registados"
-    [value]="'100'"
+    [value]="facade.analytics().totalUsuarios.toString()"
   />
   <app-card-stat
     icon="UserCheckRoundedBold"
     title="Activos"
     description="Com acesso activo"
-    [value]="'100'"
+    [value]="facade.analytics().totalAtivos.toString()"
   />
   <app-card-stat
     icon="UserBlockRoundedBold"
     title="Inactivos"
     description="Acessos revogados"
-    [value]="'100'"
+    [value]="facade.analytics().totalInativos.toString()"
   />
   <app-card-stat
     icon="ShieldUserBold"
     title="Administradores"
     description="Permissões especiais"
-    [value]="'100'"
+    [value]="facade.analytics().totalAdministradores.toString()"
   />
 </div>
 
