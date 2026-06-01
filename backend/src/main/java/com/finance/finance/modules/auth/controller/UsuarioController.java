@@ -1,10 +1,13 @@
 package com.finance.finance.modules.auth.controller;
 
+import com.finance.finance.modules.auth.dto.UsuarioAnalytcsResponseDto;
 import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
 import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
 import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
 import com.finance.finance.modules.auth.service.UsuarioService;
 import com.finance.finance.exceptions.ApiErrorResponse;
+import com.finance.finance.modules.common.enums.Perfil;
+import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
 import jakarta.validation.Valid;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -78,8 +82,11 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = PageResponse.class)))
     })
     public ResponseEntity<PageResponse<UsuarioResponseDTO>> listar(
+            @Parameter(description = "Filtrar por utilizador", example = "ADMIN/USER") @RequestParam(required = false) Perfil perfil,
+            @Parameter(description = "Filtrar por nome", example = "João") @RequestParam(required = false) String search,
+            @Parameter(description = "Filtro por situação", example = "ATIVO") @RequestParam(required = false) Situacao situacao,
             @Valid @ModelAttribute PaginationRequest paginationRequest) {
-        return ResponseEntity.ok(usuarioService.listar(paginationRequest));
+        return ResponseEntity.ok(usuarioService.listar(paginationRequest, perfil, situacao, search));
     }
 
     @GetMapping("/{id}")
@@ -91,4 +98,14 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
+
+    @GetMapping("/analytics")
+    @Operation(summary = "Métricas de usuários", description = "Retorna contagens agregadas: total de usuários, activos, inactivos e administradores.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Métricas retornadas com sucesso", content = @Content(schema = @Schema(implementation = UsuarioAnalytcsResponseDto.class)))
+    })
+    public ResponseEntity<UsuarioAnalytcsResponseDto> buscarAnalytics() {
+        return ResponseEntity.ok(usuarioService.buscarAnalytics());
+    }
+
 }

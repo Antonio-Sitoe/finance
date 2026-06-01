@@ -1,67 +1,92 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { DrawerComponent } from "../../ui/drawer/drawer.component";
-import { BadgeComponent } from "../../ui/badge/badge.component";
-import { IUsuario } from "@/shared/interfaces/users.dto";
-import { PROFILE, SITUATION } from "@/shared/interfaces/enum.dto";
+import { Component, inject, Input, Output, EventEmitter } from '@angular/core'
+import { DrawerComponent } from '../../ui/drawer/drawer.component'
+import { BadgeComponent } from '../../ui/badge/badge.component'
+import { ModalComponent } from '../../ui/modal/modal.component'
+import { IUsuario } from '@/shared/interfaces/users.dto'
+import { PROFILE, SITUATION } from '@/shared/interfaces/enum.dto'
+import { ProfilePipe } from '@/shared/pipe/profile.pipe'
+import { SituationPipe } from '@/shared/pipe/situatuin.pipe'
+import { AvatarTextComponent } from '@/shared/components/ui/avatar/avatar-text.component'
+import { UserFacadeService } from '@/shared/services/users/users.facade.service'
 
-type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light";
+type BadgeColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light'
 
 @Component({
-  selector: "app-user-detail-drawer",
-  imports: [DrawerComponent, BadgeComponent],
-  templateUrl: "./user-detail-drawer.component.html",
+  selector: 'app-user-detail-drawer',
+  imports: [
+    DrawerComponent,
+    BadgeComponent,
+    ModalComponent,
+    ProfilePipe,
+    SituationPipe,
+    AvatarTextComponent,
+  ],
+  templateUrl: './user-detail-drawer.component.html',
 })
 export class UserDetailDrawerComponent {
-  @Input() user: IUsuario | null = null;
+  @Input() user: IUsuario | null = null
 
-  readonly SITUATION = SITUATION;
-  @Input() open = false;
-  @Output() openChange = new EventEmitter<boolean>();
-  @Output() edit = new EventEmitter<IUsuario>();
-  @Output() deactivate = new EventEmitter<IUsuario>();
+  readonly SITUATION = SITUATION
+  @Input() open = false
+  @Output() openChange = new EventEmitter<boolean>()
+  @Output() edit = new EventEmitter<IUsuario>()
+  @Output() deactivate = new EventEmitter<IUsuario>()
 
-  get initials(): string {
-    if (!this.user?.nome) return "";
-    return this.user.nome
-      .split(" ")
-      .map((w) => w[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  }
+  private facade = inject(UserFacadeService)
 
-  get avatarColor(): string {
-    const colors = [
-      "bg-brand-100 text-brand-600",
-      "bg-pink-100 text-pink-600",
-      "bg-cyan-100 text-cyan-600",
-      "bg-orange-100 text-orange-600",
-      "bg-green-100 text-green-600",
-      "bg-purple-100 text-purple-600",
-    ];
-    if (!this.user?.nome) return colors[0];
-    const idx = this.user.nome
-      .split("")
-      .reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    return colors[idx % colors.length];
+  confirmModalOpen = false
+  loading = false
+
+  get isActive(): boolean {
+    return this.user?.situacao === SITUATION.ATIVO
   }
 
   statusColor(situacao: string): BadgeColor {
-    if (situacao === SITUATION.ATIVO) return "success";
-    return "error";
+    if (situacao === SITUATION.ATIVO) return 'success'
+    return 'error'
   }
 
   roleColor(perfil: string): BadgeColor {
-    if (perfil === PROFILE.ADMIN) return "primary";
-    return "light";
+    if (perfil === PROFILE.ADMIN) return 'primary'
+    return 'light'
   }
 
   formatDate(date: string): string {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("pt-PT", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+    if (!date) return ''
+    return new Date(date).toLocaleDateString('pt-PT', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  }
+
+  handleEditUser(user: IUsuario | null): void {
+    if (user) {
+      this.openChange.emit(false)
+      this.edit.emit(user)
+    }
+  }
+
+  handleDeativate(): void {
+    if (this.user) {
+      this.confirmModalOpen = true
+    }
+  }
+
+  confirmToggleStatus(): void {
+    if (!this.user || this.loading) return
+    this.loading = true
+    this.facade.toggleUserStatus(this.user).subscribe({
+      next: (updated) => {
+        this.loading = false
+        this.confirmModalOpen = false
+        this.facade.list.reload()
+        this.deactivate.emit(updated)
+        this.openChange.emit(false)
+      },
+      error: () => {
+        this.loading = false
+      },
+    })
   }
 }

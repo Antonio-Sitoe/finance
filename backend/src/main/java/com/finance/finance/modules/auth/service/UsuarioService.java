@@ -1,19 +1,21 @@
 package com.finance.finance.modules.auth.service;
 
+import com.finance.finance.modules.auth.dto.UsuarioAnalytcsResponseDto;
 import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
 import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
 import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
 import com.finance.finance.modules.auth.mapper.UsuarioMapper;
 import com.finance.finance.modules.auth.model.Usuario;
 import com.finance.finance.modules.auth.repository.UsuarioRepository;
+import com.finance.finance.modules.common.enums.Perfil;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
 import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,16 +52,40 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<UsuarioResponseDTO> listar(PaginationRequest paginationRequest) {
+    public PageResponse<UsuarioResponseDTO> listar(PaginationRequest paginationRequest, Perfil perfil,
+            Situacao situacao, String search) {
         Pageable pageable = paginationRequest.toPageable("id");
-        Page<UsuarioResponseDTO> page = usuarioRepository.findAll(pageable)
-                .map(UsuarioMapper::toResponseDTO);
-        return PageResponse.from(page);
+        Specification<Usuario> spec = Specification.unrestricted();
+
+        if (perfil != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("perfil"), perfil));
+        }
+
+        if (situacao != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("situacao"), situacao));
+        }
+
+        if (search != null && !search.isBlank()) {
+            spec = spec.and((root, query, cb) -> cb.like(root.get("nome"), "%" + search + "%"));
+        }
+
+        return PageResponse.from(usuarioRepository.findAll(spec, pageable).map(UsuarioMapper::toResponseDTO));
     }
 
     @Transactional(readOnly = true)
     public UsuarioResponseDTO buscarPorId(Long id) {
         return UsuarioMapper.toResponseDTO(buscarOuFalhar(id));
+    }
+
+    @Transactional(readOnly = true)
+    public UsuarioAnalytcsResponseDto buscarAnalytics() {
+        Long totalUsuarios = usuarioRepository.count();
+        Long totalAtivos = usuarioRepository.count((root, query, cb) -> cb.equal(root.get("situacao"), Situacao.ATIVO));
+        Long totalInativos = usuarioRepository
+                .count((root, query, cb) -> cb.equal(root.get("situacao"), Situacao.INATIVO));
+        Long totalAdministradores = usuarioRepository
+                .count((root, query, cb) -> cb.equal(root.get("perfil"), Perfil.ADMIN));
+        return new UsuarioAnalytcsResponseDto(totalUsuarios, totalAtivos, totalInativos, totalAdministradores);
     }
 
     private Usuario buscarOuFalhar(Long id) {
@@ -76,4 +102,5 @@ public class UsuarioService {
             throw new BusinessException("Já existe um usuário cadastrado com este email");
         }
     }
+
 }

@@ -53,8 +53,10 @@ public class RelatorioController {
         return ResponseEntity.ok(service.gerarRelatorioAnual());
     }
 
-    @Operation(summary = "Relatório percentual por situação", description = "Retorna a distribuição dos lançamentos agrupados por situação (ex.: PAGO, PENDENTE), "
-            + "com quantidade, soma de valores e percentagem em relação ao total.")
+    @Operation(
+        summary = "Relatório percentual por situação",
+        description = "Retorna a distribuição dos lançamentos agrupados por situação de pagamento (ex.: PAGO, PENDENTE), "
+                + "com quantidade, soma de valores e percentagem em relação ao total.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Relatório gerado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno ao gerar o relatório")
@@ -78,9 +80,15 @@ public class RelatorioController {
         return ResponseEntity.ok(service.gerarDashboard());
     }
 
+    @Operation(
+        summary = "Relatório por categoria",
+        description = "Retorna o total de lançamentos e o valor agregado agrupados por categoria.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Relatório gerado com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno ao gerar o relatório")
+    })
     @GetMapping("/relatorio-categoria")
     public ResponseEntity<List<RelatorioPorCategoria>> gerarRelatorioCategoria() {
         return ResponseEntity.ok(service.realizarRelatorioCategoria());
     }
-
 }
