@@ -1,0 +1,39 @@
+<app-page-header
+  title="Clientes"
+  description="Gerencie os acessos ao sistema e controle permissões institucionais."
+  [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Clientes' }]"
+>
+  <button
+    class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+  >
+    <span class="text-base leading-none">+</span>
+    Novo Cliente
+  </button>
+</app-page-header>
+
+<div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6">
+  <app-card-stat
+    icon="UsersGroupRoundedBold"
+    title="Total"
+    description="Utilizadores registados"
+    [value]="'100'"
+  />
+  <app-card-stat
+    icon="UserCheckRoundedBold"
+    title="Activos"
+    description="Com acesso activo"
+    [value]="'100'"
+  />
+  <app-card-stat
+    icon="UserBlockRoundedBold"
+    title="Inactivos"
+    description="Acessos revogados"
+    [value]="'100'"
+  />
+  <app-card-stat
+    icon="ShieldUserBold"
+    title="Administradores"
+    description="Permissões especiais"
+    [value]="'100'"
+  />
+</div>
