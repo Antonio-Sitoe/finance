@@ -1,5 +1,6 @@
-import { Component, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { DatePipe } from "@angular/common";
+import { Router } from "@angular/router";
 import {
   DataTableComponent,
   ColumnDef,
@@ -17,6 +18,7 @@ import {
   Pen2Bold,
   EyeBold,
   BuildingsBold,
+  UsersGroupRoundedBold,
 } from "@solar-icons/angular";
 
 @Component({
@@ -35,10 +37,13 @@ import {
   templateUrl: "./costumers-list-table.component.html",
 })
 export class CostumersListTableComponent {
+  private readonly router = inject(Router);
+
   readonly MagnifierBold = MagnifierBold;
   readonly Pen2Bold = Pen2Bold;
   readonly EyeBold = EyeBold;
   readonly BuildingsBold = BuildingsBold;
+  readonly UsersGroupRoundedBold = UsersGroupRoundedBold;
 
   readonly drawerOpen = signal(false);
   readonly detailDrawerOpen = signal(false);
@@ -82,9 +87,9 @@ export class CostumersListTableComponent {
       vip: true,
       createdAt: "2024-03-15T10:00:00Z",
       contactos: [
-        { nome: "Ana Martins", cargo: "Diretora Financeira (CFO)" },
-        { nome: "Ricardo Costa", cargo: "Gestor de Compras" },
-        { nome: "Sandra Teixeira", cargo: "Assistente Administrativa" },
+        { id: 1, nome: "Ana Martins", cargo: "Diretora Financeira - CFO", departamento: "Financeiro", telefone: "+351 912 345 678", email: "ana.martins@globaltrade.pt", situacao: "ATIVO", ultimaAtividade: "Hoje, 10:45" },
+        { id: 2, nome: "Ricardo Costa", cargo: "Gestor de Compras", departamento: "Compras", telefone: "+351 934 567 890", email: "ricardo.costa@globaltrade.pt", situacao: "ATIVO", ultimaAtividade: "Ontem, 14:20" },
+        { id: 3, nome: "Sandra Teixeira", cargo: "Assistente Administrativa", departamento: "Administrativo", telefone: "+351 961 122 334", email: "sandra.t@globaltrade.pt", situacao: "INATIVO", ultimaAtividade: "3 dias atrás" },
       ],
     },
     {
@@ -124,5 +129,9 @@ export class CostumersListTableComponent {
   openDetail(costumer: ICliente): void {
     this.selectedCostumer.set(costumer);
     this.detailDrawerOpen.set(true);
+  }
+
+  openContacts(costumer: ICliente): void {
+    this.router.navigate(['/costumers', costumer.id, 'contacts']);
   }
 }

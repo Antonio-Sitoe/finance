@@ -1,0 +1,191 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="md"
+  [showFooter]="true"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    {{ isEditing() ? 'Editar Contacto' : 'Novo Contacto' }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ isEditing() ? 'Actualize os dados do contacto' : 'Preencha os dados para criar um novo contacto' }}
+  </span>
+
+  <form class="space-y-10">
+
+    <!-- Secção 1: Identificação -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <span class="text-brand-500">
+          <ng-container [solarIcon]="UserRoundedBold" [size]="16" />
+        </span>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Identificação
+        </h4>
+      </div>
+
+      <div class="space-y-4">
+        <div class="space-y-1.5">
+          <app-label>Nome Completo <span class="text-error-500">*</span></app-label>
+          <app-input-field
+            type="text"
+            placeholder="Ex: Ana Martins"
+            [value]="nome()"
+            (valueChange)="nome.set($event.toString())"
+          />
+        </div>
+        <div class="space-y-1.5">
+          <app-label>Cargo / Função <span class="text-error-500">*</span></app-label>
+          <app-input-field
+            type="text"
+            placeholder="Ex: Diretora Financeira"
+            [value]="cargo()"
+            (valueChange)="cargo.set($event.toString())"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Secção 2: Contacto -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <span class="text-brand-500">
+          <ng-container [solarIcon]="LetterBold" [size]="16" />
+        </span>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Informação de Contacto
+        </h4>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="space-y-1.5">
+          <app-label>Email Corporativo <span class="text-error-500">*</span></app-label>
+          <app-input-field
+            type="email"
+            placeholder="nome@empresa.pt"
+            [value]="email()"
+            (valueChange)="email.set($event.toString())"
+          />
+        </div>
+        <div class="space-y-1.5">
+          <app-label>Telefone Direto</app-label>
+          <app-input-field
+            type="tel"
+            placeholder="+351 912 345 678"
+            [value]="telefone()"
+            (valueChange)="telefone.set($event.toString())"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Secção 3: Empresa -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <span class="text-brand-500">
+          <ng-container [solarIcon]="BuildingsBold" [size]="16" />
+        </span>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Empresa
+        </h4>
+      </div>
+
+      <div class="space-y-1.5">
+        <app-label>Empresa Associada</app-label>
+        @if (isEditing()) {
+          <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 dark:border-white/[0.08] dark:bg-white/[0.02]">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ empresa() }}</span>
+            <span class="text-xs text-gray-400 dark:text-gray-500">
+              <ng-container [solarIcon]="LockKeyholeMinimalisticBold" [size]="14" />
+            </span>
+          </div>
+          <p class="text-xs text-gray-400 dark:text-gray-500">A empresa não pode ser alterada após a criação.</p>
+        } @else {
+          <app-select
+            placeholder="Seleccionar empresa"
+            [options]="empresaOptions"
+            [value]="empresa()"
+            (valueChange)="empresa.set($event)"
+          />
+        }
+      </div>
+    </section>
+
+    <!-- Secção 4: Departamento -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <span class="text-brand-500">
+          <ng-container [solarIcon]="LockKeyholeMinimalisticBold" [size]="16" />
+        </span>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Departamento
+        </h4>
+      </div>
+
+      <div class="space-y-3">
+        <app-label>Departamento</app-label>
+        <div class="flex flex-wrap gap-2">
+          @for (dept of departamentosRapidos; track dept) {
+            <button
+              type="button"
+              (click)="setDepartamento(dept)"
+              class="rounded-full border px-3 py-1 text-xs font-medium transition-colors"
+              [class]="departamento() === dept
+                ? 'border-brand-500 bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400'
+                : 'border-gray-200 bg-white text-gray-600 hover:border-brand-300 hover:text-brand-500 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-gray-400'"
+            >
+              {{ dept }}
+            </button>
+          }
+        </div>
+        <app-select
+          placeholder="Ou escolha da lista..."
+          [options]="departamentoOptions"
+          [value]="departamento()"
+          (valueChange)="departamento.set($event)"
+        />
+      </div>
+    </section>
+
+    <!-- Secção 5: Estado -->
+    <section>
+      <div
+        class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.02]"
+      >
+        <div>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado do Contacto</p>
+          <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+            O contacto ficará visível nas listagens ativas
+          </p>
+        </div>
+        <app-switch
+          label=""
+          [defaultChecked]="isAtivo()"
+          (valueChange)="isAtivo.set($event)"
+        />
+      </div>
+    </section>
+
+  </form>
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full gap-3">
+    <app-button
+      variant="outline"
+      class="flex-1"
+      className="w-full justify-center"
+      (btnClick)="close()"
+    >
+      Cancelar
+    </app-button>
+    <app-button
+      variant="primary"
+      class="flex-1"
+      className="w-full justify-center"
+      (btnClick)="close()"
+    >
+      {{ isEditing() ? 'Guardar Alterações' : 'Guardar Contacto' }}
+    </app-button>
+  </div>
+</app-drawer>

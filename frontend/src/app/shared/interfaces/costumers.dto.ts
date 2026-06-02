@@ -1,6 +1,12 @@
 export interface IContactoCliente {
+  id?: number
   nome: string
   cargo: string
+  departamento?: string
+  telefone?: string
+  email?: string
+  situacao?: 'ATIVO' | 'INATIVO'
+  ultimaAtividade?: string
 }
 
 export interface ICliente {

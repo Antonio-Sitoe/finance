@@ -101,16 +101,25 @@
       {{ row.createdAt | date:'dd/MM/yyyy' }}
     </td>
     <td class="px-5 py-3.5">
-      <div class="flex items-center justify-end gap-4">
+      <div class="flex items-center justify-end gap-1">
+        <button
+          (click)="openContacts(row)"
+          title="Ver contactos"
+          class="text-gray-400 hover:text-brand-500 w-8 h-8 flex items-center justify-center rounded hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors"
+        >
+          <ng-container [solarIcon]="UsersGroupRoundedBold" [size]="18" />
+        </button>
         <button
           (click)="openEdit(row)"
-          class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+          title="Editar"
+          class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
           <ng-container [solarIcon]="Pen2Bold" [size]="18" />
         </button>
         <button
           (click)="openDetail(row)"
-          class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+          title="Ver detalhes"
+          class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
           <ng-container [solarIcon]="EyeBold" [size]="18" />
         </button>

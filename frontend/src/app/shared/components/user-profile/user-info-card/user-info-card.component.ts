@@ -33,13 +33,7 @@ export class UserInfoCardComponent {
     lastName: "Chowdhury",
     email: "randomuser@pimjo.com",
     phone: "+09 363 398 46",
-    bio: "Team Manager",
-    social: {
-      facebook: "https://www.facebook.com/PimjoHQ",
-      x: "https://x.com/PimjoHQ",
-      linkedin: "https://www.linkedin.com/company/pimjo",
-      instagram: "https://instagram.com/PimjoHQ",
-    },
+    cargo: "Team Manager",
   };
 
   handleSave() {

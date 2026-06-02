@@ -1,0 +1,185 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="sm"
+  [showFooter]="!!supplier"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    {{ supplier?.nomeEmpresarial ?? 'Detalhes' }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ supplier?.emailFinanceiro || supplier?.telefone || '—' }}
+  </span>
+
+  @if (supplier) {
+
+    <!-- Hero -->
+    <div
+      class="-mx-6 -mt-5 mb-6 flex flex-col items-center gap-3 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 pb-6 pt-8 text-center dark:border-white/[0.05] dark:from-gray-800/40 dark:to-transparent"
+    >
+      <div
+        class="flex h-20 w-20 items-center justify-center rounded-full bg-brand-50 ring-4 ring-white dark:bg-brand-500/10 dark:ring-gray-900"
+      >
+        <span class="text-2xl font-bold text-brand-600 dark:text-brand-400">
+          {{ initials(supplier.nomeEmpresarial) }}
+        </span>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white/90">
+          {{ supplier.nomeEmpresarial }}
+        </h3>
+        @if (supplier.emailFinanceiro) {
+          <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+            {{ supplier.emailFinanceiro }}
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-2">
+        <app-badge variant="solid" [color]="supplier.situacao === 'ATIVO' ? 'success' : 'error'" size="sm">
+          {{ supplier.situacao === 'ATIVO' ? 'Activo' : 'Inactivo' }}
+        </app-badge>
+        <app-badge variant="solid" [color]="ratingBadgeColor(supplier.classificacaoRisco)" size="sm">
+          {{ supplier.classificacaoRisco.toFixed(1) }} · {{ ratingLabel(supplier.classificacaoRisco) }}
+        </app-badge>
+      </div>
+    </div>
+
+    <!-- Secção: Contacto -->
+    <section class="mb-6">
+      <div class="mb-3 flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M6.6 2.2A1 1 0 0 0 5 3v18a1 1 0 0 0 1.6.8l4-3 4 3A1 1 0 0 0 16 21V3a1 1 0 0 0-1.6-.8l-4 3-3.8-3Z"
+            fill="currentColor"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          Contacto
+        </h4>
+      </div>
+      <div class="divide-y divide-dashed divide-gray-100 dark:divide-white/[0.05]">
+        @if (supplier.emailFinanceiro) {
+          <div class="flex items-center justify-between py-3">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Email</span>
+            <a [href]="'mailto:' + supplier.emailFinanceiro"
+              class="text-sm font-medium text-brand-500 hover:underline dark:text-brand-400">
+              {{ supplier.emailFinanceiro }}
+            </a>
+          </div>
+        }
+        @if (supplier.telefone) {
+          <div class="flex items-center justify-between py-3">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Telefone</span>
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ supplier.telefone }}</span>
+          </div>
+        }
+        @if (supplier.website) {
+          <div class="flex items-center justify-between py-3">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Website</span>
+            <a [href]="supplier.website" target="_blank" rel="noopener noreferrer"
+              class="text-sm font-medium text-brand-500 hover:underline dark:text-brand-400">
+              {{ supplier.website }}
+            </a>
+          </div>
+        }
+        @if (!supplier.emailFinanceiro && !supplier.telefone && !supplier.website) {
+          <p class="py-3 text-sm text-gray-400 dark:text-gray-500">Sem dados de contacto</p>
+        }
+      </div>
+    </section>
+
+    <!-- Secção: Localização -->
+    @if (supplier.cidade || supplier.rua) {
+      <section class="mb-6">
+        <div class="mb-3 flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"
+              fill="currentColor"/>
+          </svg>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            Localização
+          </h4>
+        </div>
+        <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
+          @if (supplier.rua) {
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              {{ supplier.rua }}@if (supplier.numero) {, {{ supplier.numero }}}
+              @if (supplier.complemento) { — {{ supplier.complemento }}}
+            </p>
+          }
+          @if (supplier.bairro) {
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ supplier.bairro }}</p>
+          }
+          @if (supplier.cidade) {
+            <p class="mt-0.5 text-sm font-medium text-gray-700 dark:text-gray-300">
+              {{ supplier.cidade }}@if (supplier.distrito && supplier.distrito !== supplier.cidade) {, {{ supplier.distrito }}}
+            </p>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Secção: Avaliação -->
+    <section class="mb-6">
+      <div class="mb-3 flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          Avaliação de Risco
+        </h4>
+      </div>
+      <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02] space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-2xl font-bold text-gray-800 dark:text-white/90">
+            {{ supplier.classificacaoRisco.toFixed(1) }}<span class="text-sm font-normal text-gray-400">/10</span>
+          </span>
+          <span class="text-sm font-bold" [class]="ratingTextColor(supplier.classificacaoRisco)">
+            {{ ratingLabel(supplier.classificacaoRisco) }}
+          </span>
+        </div>
+        <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <div
+            class="h-full rounded-full"
+            [class]="ratingBarColor(supplier.classificacaoRisco)"
+            [style.width.%]="supplier.classificacaoRisco * 10"
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Datas -->
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
+        <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Criado em</span>
+        <p class="mt-0.5 text-sm font-semibold text-gray-700 dark:text-gray-300">
+          {{ formatDate(supplier.createdAt) }}
+        </p>
+      </div>
+      <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
+        <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Última ref.</span>
+        <p class="mt-0.5 text-sm font-semibold text-gray-700 dark:text-gray-300">—</p>
+      </div>
+    </div>
+
+  }
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full flex-col gap-3">
+    <button
+      (click)="handleEdit()"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-600 active:scale-[0.98]"
+    >
+      <ng-container [solarIcon]="Pen2Bold" [size]="16" />
+      Editar Fornecedor
+    </button>
+    <button
+      class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-error-200 px-4 py-2.5 text-sm font-medium text-error-500 transition-colors hover:bg-error-50 dark:border-error-500/20 dark:hover:bg-error-500/10"
+    >
+      Desactivar Fornecedor
+    </button>
+  </div>
+</app-drawer>

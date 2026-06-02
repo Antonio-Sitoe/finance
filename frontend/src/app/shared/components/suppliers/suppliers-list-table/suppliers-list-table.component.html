@@ -1,0 +1,210 @@
+<app-datatable
+  [columns]="columns"
+  [data]="filtered()"
+  [rowTemplate]="supplierRow"
+  [filtersTemplate]="supplierFilters"
+  [currentPage]="1"
+  [totalPages]="1"
+  [totalElements]="filtered().length"
+  [rowsPerPage]="10"
+  [showPagination]="false"
+/>
+
+<!-- ── Filtros ─────────────────────────────────────────────── -->
+<ng-template #supplierFilters>
+  <div
+    class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]"
+  >
+    <div class="relative flex-1">
+      <span
+        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
+      >
+        <ng-container [solarIcon]="MagnifierBold" [size]="16" />
+      </span>
+      <app-input-field
+        placeholder="Pesquisar por nome ou email..."
+        className="pl-9"
+        [value]="searchTerm()"
+        (valueChange)="searchTerm.set($event.toString())"
+      />
+    </div>
+    <app-select
+      placeholder="Todos os estados"
+      [options]="statusOptions"
+      [value]="filterSituacao()"
+      (valueChange)="filterSituacao.set($event)"
+      className="w-full sm:w-44"
+    />
+    <app-select
+      placeholder="Todas as avaliações"
+      [options]="ratingFilterOptions"
+      [value]="filterAvaliacao()"
+      (valueChange)="filterAvaliacao.set($event)"
+      className="w-full sm:w-48"
+    />
+  </div>
+</ng-template>
+
+<!-- ── Linha da tabela ─────────────────────────────────────── -->
+<ng-template #supplierRow let-row>
+  <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
+
+    <!-- Fornecedor -->
+    <td class="px-5 py-3.5">
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-bold text-brand-600 dark:bg-brand-500/10 dark:text-brand-400"
+        >
+          {{ initials(row.nomeEmpresarial) }}
+        </div>
+        <div>
+          <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ row.nomeEmpresarial }}
+          </span>
+          <span class="text-xs text-gray-400 dark:text-gray-500">
+            {{ row.emailFinanceiro || '—' }}
+          </span>
+        </div>
+      </div>
+    </td>
+
+    <!-- Contacto -->
+    <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
+      {{ row.telefone || '—' }}
+    </td>
+
+    <!-- Localização -->
+    <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
+      @if (row.cidade) {
+        {{ row.cidade }}@if (row.distrito && row.distrito !== row.cidade) {, {{ row.distrito }}}
+      } @else {
+        —
+      }
+    </td>
+
+    <!-- Avaliação -->
+    <td class="px-5 py-3.5">
+      <div class="flex w-32 flex-col gap-1">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold" [class]="ratingTextColor(row.classificacaoRisco)">
+            {{ row.classificacaoRisco.toFixed(1) }}
+          </span>
+          <span class="text-xs font-medium" [class]="ratingTextColor(row.classificacaoRisco)">
+            {{ ratingLabel(row.classificacaoRisco) }}
+          </span>
+        </div>
+        <div class="h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+          <div
+            class="h-full rounded-full transition-all"
+            [class]="ratingBarColor(row.classificacaoRisco)"
+            [style.width.%]="row.classificacaoRisco * 10"
+          ></div>
+        </div>
+      </div>
+    </td>
+
+    <!-- Estado -->
+    <td class="px-5 py-3.5">
+      <div class="flex items-center justify-center">
+        <app-badge
+          variant="light"
+          [color]="row.situacao === 'ATIVO' ? 'success' : 'error'"
+          size="sm"
+        >
+          {{ row.situacao === 'ATIVO' ? 'Activo' : 'Inactivo' }}
+        </app-badge>
+      </div>
+    </td>
+
+    <!-- Acções -->
+    <td class="px-5 py-3.5">
+      <div class="flex items-center justify-end gap-1">
+        <button
+          (click)="openDetail(row)"
+          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          title="Ver detalhes"
+        >
+          <ng-container [solarIcon]="EyeBold" [size]="18" />
+        </button>
+        <button
+          (click)="openEdit(row)"
+          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          title="Editar"
+        >
+          <ng-container [solarIcon]="Pen2Bold" [size]="18" />
+        </button>
+        <button
+          (click)="openDeactivate(row)"
+          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-error-50 hover:text-error-500 dark:hover:bg-error-500/10 dark:hover:text-error-400"
+          title="Desactivar"
+        >
+          <ng-container [solarIcon]="MenuDotsBold" [size]="18" />
+        </button>
+      </div>
+    </td>
+  </tr>
+</ng-template>
+
+<!-- ── Drawer criar/editar ─────────────────────────────────── -->
+@if (drawerOpen()) {
+  <app-create-and-edit-supplier
+    [open]="drawerOpen()"
+    [supplier]="editingSupplier()"
+    (openChange)="onDrawerChange($event)"
+  />
+}
+
+<!-- ── Drawer detalhe ──────────────────────────────────────── -->
+@if (detailDrawerOpen()) {
+  <app-supplier-detail-drawer
+    [open]="detailDrawerOpen()"
+    [supplier]="selectedSupplier()"
+    (openChange)="detailDrawerOpen.set($event)"
+    (edit)="openEdit($event)"
+  />
+}
+
+<!-- ── Modal desactivação ─────────────────────────────────── -->
+<app-modal
+  [isOpen]="deactivateOpen()"
+  (close)="deactivateOpen.set(false)"
+  className="relative w-full m-5 max-w-[480px] rounded-2xl bg-white p-6 shadow-theme-xl dark:bg-gray-900"
+>
+  <div class="flex flex-col items-center gap-4 text-center">
+    <div
+      class="flex h-14 w-14 items-center justify-center rounded-full bg-error-50 text-error-500 dark:bg-error-500/10"
+    >
+      <ng-container [solarIcon]="DangerTriangleBold" [size]="28" />
+    </div>
+    <div>
+      <h4 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+        Desactivar Fornecedor
+      </h4>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Tem a certeza que pretende desactivar
+        <strong class="font-medium text-gray-700 dark:text-gray-300">
+          {{ selectedSupplier()?.nomeEmpresarial }}
+        </strong>?
+        Esta acção pode ser revertida posteriormente.
+      </p>
+    </div>
+    <div class="flex w-full gap-3 pt-2">
+      <app-button
+        variant="outline"
+        class="flex-1"
+        className="w-full justify-center"
+        (btnClick)="deactivateOpen.set(false)"
+      >
+        Cancelar
+      </app-button>
+      <app-button
+        variant="primary"
+        class="flex-1"
+        className="w-full justify-center bg-error-500 hover:bg-error-600 border-error-500 hover:border-error-600"
+        (btnClick)="deactivateOpen.set(false)"
+      >
+        Confirmar Desactivação
+      </app-button>
+    </div>
+  </div>
+</app-modal>

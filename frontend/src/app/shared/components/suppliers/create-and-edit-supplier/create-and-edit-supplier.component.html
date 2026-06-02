@@ -1,0 +1,241 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="md"
+  [showFooter]="true"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    {{ isEditing() ? 'Editar Fornecedor' : 'Novo Fornecedor' }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ isEditing() ? 'Actualize os dados do fornecedor' : 'Preencha os dados para registar um novo fornecedor' }}
+  </span>
+
+  <form class="space-y-10">
+
+    <!-- ── Secção 1: Identificação ────────────────────────── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <span class="text-brand-500">
+          <ng-container [solarIcon]="BuildingsBold" [size]="16" />
+        </span>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Identificação
+        </h4>
+      </div>
+
+      <div class="space-y-4">
+        <div class="space-y-1.5">
+          <app-label>Nome Empresarial <span class="text-error-500">*</span></app-label>
+          <app-input-field
+            type="text"
+            placeholder="Ex: TechFlow Systems Lda."
+            [value]="nomeEmpresarial()"
+            (valueChange)="nomeEmpresarial.set($event.toString())"
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <app-label>Email Financeiro</app-label>
+          <app-input-field
+            type="email"
+            placeholder="billing@empresa.com"
+            [value]="emailFinanceiro()"
+            (valueChange)="emailFinanceiro.set($event.toString())"
+          />
+          <p class="text-xs text-gray-400 dark:text-gray-500">
+            Utilizado para o envio automático de ordens de pagamento.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <app-label>Telefone</app-label>
+            <app-input-field
+              type="tel"
+              placeholder="+351 000 000 000"
+              [value]="telefone()"
+              (valueChange)="telefone.set($event.toString())"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <app-label>Website</app-label>
+            <app-input-field
+              type="text"
+              placeholder="https://..."
+              [value]="website()"
+              (valueChange)="website.set($event.toString())"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Secção 2: Endereço ──────────────────────────────── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-brand-500">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"
+            fill="currentColor"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Endereço
+        </h4>
+      </div>
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-6 gap-4">
+          <div class="col-span-4 space-y-1.5">
+            <app-label>Rua / Avenida</app-label>
+            <app-input-field
+              type="text"
+              placeholder="Nome do arruamento"
+              [value]="rua()"
+              (valueChange)="rua.set($event.toString())"
+            />
+          </div>
+          <div class="col-span-2 space-y-1.5">
+            <app-label>Nº</app-label>
+            <app-input-field
+              type="text"
+              placeholder="123"
+              [value]="numero()"
+              (valueChange)="numero.set($event.toString())"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <app-label>Bairro</app-label>
+            <app-input-field
+              type="text"
+              placeholder="Ex: Parque Industrial"
+              [value]="bairro()"
+              (valueChange)="bairro.set($event.toString())"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <app-label>Complemento</app-label>
+            <app-input-field
+              type="text"
+              placeholder="Bloco / Sala"
+              [value]="complemento()"
+              (valueChange)="complemento.set($event.toString())"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-6 gap-4">
+          <div class="col-span-4 space-y-1.5">
+            <app-label>Cidade</app-label>
+            <app-input-field
+              type="text"
+              placeholder="Lisboa"
+              [value]="cidade()"
+              (valueChange)="cidade.set($event.toString())"
+            />
+          </div>
+          <div class="col-span-2 space-y-1.5">
+            <app-label>Distrito</app-label>
+            <app-input-field
+              type="text"
+              placeholder="Lisboa"
+              [value]="distrito()"
+              (valueChange)="distrito.set($event.toString())"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Secção 3: Avaliação e Estado ───────────────────── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-brand-500">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Avaliação e Estado
+        </h4>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-white/[0.08] dark:bg-white/[0.02] space-y-6">
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Rating do Fornecedor</p>
+            <span
+              class="rounded-full border border-gray-200 bg-white px-3 py-0.5 text-sm font-bold dark:border-white/[0.08] dark:bg-white/[0.05]"
+              [class]="ratingLabel().cls"
+            >
+              {{ ratingValue().toFixed(1) }}
+            </span>
+          </div>
+
+          <input
+            type="range" min="0" max="10" step="0.1"
+            class="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-gray-200 accent-brand-500 dark:bg-gray-700"
+            [value]="ratingValue()"
+            (input)="ratingValue.set(+$any($event.target).value)"
+          />
+
+          <div class="flex justify-between text-xs font-semibold text-gray-400">
+            <span>Crítico</span>
+            <span>Regular</span>
+            <span>Excelente</span>
+          </div>
+
+          <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+            <div
+              class="h-full rounded-full transition-all duration-200"
+              [class]="ratingBarColor()"
+              [style.width.%]="ratingValue() * 10"
+            ></div>
+          </div>
+
+          <p class="text-center text-sm font-bold uppercase tracking-wider" [class]="ratingLabel().cls">
+            {{ ratingLabel().text }}
+          </p>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-gray-200 pt-5 dark:border-white/[0.08]">
+          <div>
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado do Fornecedor</p>
+            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+              Define se o fornecedor está apto para transacções
+            </p>
+          </div>
+          <app-switch
+            label=""
+            [defaultChecked]="isActive()"
+            (valueChange)="isActive.set($event)"
+          />
+        </div>
+      </div>
+    </section>
+
+  </form>
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full gap-3">
+    <app-button
+      variant="outline"
+      class="flex-1"
+      className="w-full justify-center"
+      (btnClick)="close()"
+    >
+      Cancelar
+    </app-button>
+    <app-button
+      variant="primary"
+      class="flex-1"
+      className="w-full justify-center"
+      (btnClick)="submit()"
+    >
+      {{ isEditing() ? 'Guardar Alterações' : 'Guardar Fornecedor' }}
+    </app-button>
+  </div>
+</app-drawer>

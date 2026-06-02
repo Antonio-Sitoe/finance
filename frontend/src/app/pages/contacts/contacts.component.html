@@ -1,13 +1,13 @@
 <app-page-header
-  title="Clientes"
-  description="Gerencie o relacionamento comercial com seus clientes e parceiros."
-  [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Clientes' }]"
+  title="Contactos"
+  description="Gira os contactos das empresas clientes e os seus dados de comunicação."
+  [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Contactos' }]"
 >
   <button
     class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
   >
     <span class="text-base leading-none">+</span>
-    Novo Cliente
+    Novo Contacto
   </button>
 </app-page-header>
 
@@ -15,29 +15,29 @@
   <app-card-stat
     icon="UsersGroupRoundedBold"
     title="Total"
-    description="Total de Clientes"
-    [value]="'100'"
+    description="Contactos registados"
+    value="47"
   />
   <app-card-stat
     icon="UserCheckRoundedBold"
     title="Activos"
-    description="Clientes Ativos"
-    [value]="'100'"
+    description="Com acesso activo"
+    value="42"
   />
   <app-card-stat
-    icon="UserCrossRoundedBold"
+    icon="UserBlockRoundedBold"
     title="Inactivos"
-    description="Clientes Inativos"
-    [value]="'100'"
+    description="Acessos revogados"
+    value="5"
   />
   <app-card-stat
-    icon="UserHandUpLineDuotone"
-    title="VIP"
-    description="Clientes VIP"
-    [value]="'100'"
+    icon="BuildingsBold"
+    title="Empresas"
+    description="Empresas associadas"
+    value="12"
   />
 </div>
 
 <div class="w-full">
-  <app-costumers-list-table />
+  <app-contacts-list-table />
 </div>
