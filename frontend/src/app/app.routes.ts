@@ -36,11 +36,13 @@ export const routes: Routes = [
         path: "costumers",
         component: CostumersComponent,
         title: "Finance Costumers | FinanceApp Administrative Panel",
-      },
-      {
-        path: "calendar",
-        component: CalenderComponent,
-        title: "Angular Calender | FinanceApp Administrative Panel",
+        children: [
+          {
+            path: ":id/contacts",
+            component: CalenderComponent,
+            title: "Finance company Contacts | FinanceApp Administrative Panel",
+          },
+        ],
       },
       {
         path: "profile",

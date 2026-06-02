@@ -1,0 +1,136 @@
+<app-datatable
+  [columns]="columns"
+  [data]="mockData"
+  [rowTemplate]="costumerRow"
+  [filtersTemplate]="costumerFilters"
+  [currentPage]="1"
+  [totalPages]="1"
+  [totalElements]="mockData.length"
+  [rowsPerPage]="10"
+/>
+
+<ng-template #costumerFilters>
+  <div
+    class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]"
+  >
+    <div class="relative flex-1">
+      <span
+        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
+      >
+        <ng-container [solarIcon]="MagnifierBold" [size]="16" />
+      </span>
+      <app-input-field
+        placeholder="Pesquisar por nome ou email..."
+        className="pl-9"
+      />
+    </div>
+    <app-select
+      placeholder="Todos os estados"
+      [options]="statusOptions"
+      className="w-full sm:w-44"
+    />
+    <app-select
+      placeholder="Todas as classificações"
+      [options]="classificacaoOptions"
+      className="w-full sm:w-52"
+    />
+  </div>
+</ng-template>
+
+<ng-template #costumerRow let-row>
+  <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
+    <td class="px-5 py-3.5">
+      <div class="flex items-center gap-3">
+        <app-checkbox />
+        <div
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-500 dark:bg-brand-500/10"
+        >
+          <ng-container [solarIcon]="BuildingsBold" [size]="18" />
+        </div>
+        <div>
+          <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ row.nomeEmpresarial }}
+            @if (row.vip) {
+              <app-badge variant="solid" color="primary" size="sm" class="ml-1">VIP</app-badge>
+            }
+          </span>
+          <span class="text-xs text-gray-500 dark:text-gray-400">
+            {{ row.email }}
+          </span>
+        </div>
+      </div>
+    </td>
+    <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
+      {{ row.telefone }}
+    </td>
+    <td class="px-5 py-3.5">
+      <div class="flex items-center gap-0.5">
+        @for (star of [1,2,3,4,5]; track star) {
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            [class]="star <= (row.classificacaoRisco ?? 0) ? 'text-warning-400' : 'text-gray-200 dark:text-gray-700'"
+          >
+            <path
+              d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+              fill="currentColor"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        }
+      </div>
+    </td>
+    <td class="px-5 py-3.5 mx-auto">
+      <div class="flex items-center justify-center">
+        <app-badge
+          variant="light"
+          [color]="row.situacao === 'ATIVO' ? 'success' : 'error'"
+          size="sm"
+        >
+          {{ row.situacao === 'ATIVO' ? 'Ativo' : 'Inativo' }}
+        </app-badge>
+      </div>
+    </td>
+    <td class="px-5 py-3.5 text-sm text-gray-500 dark:text-gray-400">
+      {{ row.createdAt | date:'dd/MM/yyyy' }}
+    </td>
+    <td class="px-5 py-3.5">
+      <div class="flex items-center justify-end gap-4">
+        <button
+          (click)="openEdit(row)"
+          class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          <ng-container [solarIcon]="Pen2Bold" [size]="18" />
+        </button>
+        <button
+          (click)="openDetail(row)"
+          class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          <ng-container [solarIcon]="EyeBold" [size]="18" />
+        </button>
+      </div>
+    </td>
+  </tr>
+</ng-template>
+
+@if (drawerOpen()) {
+  <app-create-and-edit-costumer
+    [open]="drawerOpen()"
+    (openChange)="drawerOpen.set($event)"
+  />
+}
+
+@if (detailDrawerOpen()) {
+  <app-costumer-detail-drawer
+    [open]="detailDrawerOpen()"
+    [costumer]="selectedCostumer()"
+    (openChange)="detailDrawerOpen.set($event)"
+    (edit)="openEdit($event)"
+  />
+}

@@ -1,6 +1,6 @@
 <app-page-header
   title="Clientes"
-  description="Gerencie os acessos ao sistema e controle permissões institucionais."
+  description="Gerencie o relacionamento comercial com seus clientes e parceiros."
   [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Clientes' }]"
 >
   <button
@@ -25,9 +25,13 @@
     [value]="'100'"
   />
   <app-card-stat
-    icon="UserBlockRoundedBold"
+    icon="UserCrossRoundedBold"
     title="Inactivos"
     description="Clientes Inativos"
     [value]="'100'"
   />
+</div>
+
+<div class="w-full">
+  <app-costumers-list-table />
 </div>
