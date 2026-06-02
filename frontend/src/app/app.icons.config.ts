@@ -1,11 +1,14 @@
 import {
+  BuildingsBold,
   ShieldUserBold,
   UserBlockRoundedBold,
   UserCheckRoundedBold,
+  UserCrossRoundedBold,
+  UserHandUpLineDuotone,
   UsersGroupRoundedBold,
   WalletBold,
-} from "@solar-icons/angular";
-import { provideSolarIcons } from "@solar-icons/angular";
+} from '@solar-icons/angular'
+import { provideSolarIcons } from '@solar-icons/angular'
 
 export const appIconsConfig = [
   provideSolarIcons({
@@ -14,5 +17,8 @@ export const appIconsConfig = [
     UsersGroupRoundedBold,
     UserBlockRoundedBold,
     ShieldUserBold,
+    UserCrossRoundedBold,
+    UserHandUpLineDuotone,
+    BuildingsBold,
   }),
-];
+]
