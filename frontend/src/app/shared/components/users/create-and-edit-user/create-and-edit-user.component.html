@@ -23,7 +23,7 @@
     <section class="space-y-5">
       <div class="flex items-center gap-2.5">
         <span class="text-brand-500">
-          <ng-container [solarIcon]="UserRoundedBold" [size]="16" />
+          <ng-container solarIcon="UserRoundedBold" [size]="16" />
         </span>
         <h4
           class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"
@@ -65,7 +65,7 @@
     <section class="space-y-5">
       <div class="flex items-center gap-2.5">
         <span class="text-brand-500">
-          <ng-container [solarIcon]="LockKeyholeMinimalisticBold" [size]="16" />
+          <ng-container solarIcon="LockKeyholeMinimalisticBold" [size]="16" />
         </span>
         <h4
           class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"
@@ -115,7 +115,7 @@
               class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <ng-container
-                [solarIcon]="showPassword() ? EyeClosedBold : EyeBold"
+                [solarIcon]="showPassword() ? 'EyeClosedBold' : 'EyeBold'"
                 [size]="18"
               />
             </button>
@@ -140,7 +140,7 @@
                 class="flex items-center gap-1 text-xs font-semibold"
                 [class]="userForm.strengthInfo().textColor"
               >
-                <ng-container [solarIcon]="NotebookBold" [size]="12" />
+                <ng-container solarIcon="NotebookBold" [size]="12" />
                 {{ userForm.strengthInfo().text }}
               </p>
             </div>
@@ -174,7 +174,7 @@
                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 <ng-container
-                  [solarIcon]="showConfirmPassword() ? EyeClosedBold : EyeBold"
+                  [solarIcon]="showConfirmPassword() ? 'EyeClosedBold' : 'EyeBold'"
                   [size]="18"
                 />
               </button>
