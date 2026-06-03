@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-input-field',
@@ -18,6 +19,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
         [disabled]="disabled"
         [ngClass]="inputClasses"
         (input)="onInput($event)"
+        (blur)="onTouched()"
       />
 
       @if (hint) {
@@ -32,8 +34,15 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       }
     </div>
   `,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => InputFieldComponent),
+      multi: true,
+    },
+  ],
 })
-export class InputFieldComponent {
+export class InputFieldComponent implements ControlValueAccessor {
 
   @Input() type: string = 'text';
   @Input() id?: string = '';
@@ -50,6 +59,25 @@ export class InputFieldComponent {
   @Input() className: string = '';
 
   @Output() valueChange = new EventEmitter<string | number>();
+
+  private _onChange: (value: string | number) => void = () => {};
+  onTouched: () => void = () => {};
+
+  writeValue(value: string | number): void {
+    this.value = value ?? '';
+  }
+
+  registerOnChange(fn: (value: string | number) => void): void {
+    this._onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
 
   get inputClasses(): string {
     let inputClasses = `h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${this.className}`;
@@ -68,6 +96,9 @@ export class InputFieldComponent {
 
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
-    this.valueChange.emit(this.type === 'number' ? +input.value : input.value);
+    const val = this.type === 'number' ? +input.value : input.value;
+    this.value = val;
+    this.valueChange.emit(val);
+    this._onChange(val);
   }
 }

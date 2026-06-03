@@ -4,6 +4,7 @@
   [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Clientes' }]"
 >
   <button
+    (click)="createAndEditDrawerOpen.set(true)"
     class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
   >
     <span class="text-base leading-none">+</span>
@@ -41,3 +42,18 @@
 <div class="w-full">
   <app-costumers-list-table />
 </div>
+
+@if (createAndEditDrawerOpen()) {
+  <app-create-and-edit-costumer
+    [open]="createAndEditDrawerOpen()"
+    (openChange)="createAndEditDrawerOpen.set($event)"
+    [isEditing]="isEditing()"
+  />
+}
+
+@if (detailDrawerOpen()) {
+  <!-- <app-costumer-detail-drawer
+  [open]="detailDrawerOpen()"
+  (openChange)="detailDrawerOpen.set($event)"
+/> -->
+}

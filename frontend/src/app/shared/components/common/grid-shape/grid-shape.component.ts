@@ -1,11 +1,9 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-grid-shape',
+  selector: "app-grid-shape",
   imports: [],
-  templateUrl: './grid-shape.component.html',
-  styles: ``
+  templateUrl: "./grid-shape.component.html",
+  styles: ``,
 })
-export class GridShapeComponent {
-
-}
+export class GridShapeComponent {}

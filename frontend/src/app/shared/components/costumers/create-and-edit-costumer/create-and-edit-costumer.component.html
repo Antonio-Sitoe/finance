@@ -1,35 +1,49 @@
 <app-drawer
   [open]="open"
   (openChange)="openChange.emit($event)"
-  size="md"
+  size="lg"
   [showFooter]="true"
 >
   <!-- Header -->
-  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
-    {{ isEditing ? 'Editar Cliente' : 'Novo Cliente' }}
+  <span
+    drawer-header
+    class="text-base font-semibold text-gray-800 dark:text-white/90"
+  >
+    {{ isEditing ? "Editar Cliente" : "Novo Cliente" }}
   </span>
   <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
-    {{ isEditing ? 'Actualize os dados institucionais do cliente.' : 'Preencha os dados institucionais do novo parceiro.' }}
+    {{
+      isEditing
+        ? "Actualize os dados institucionais do cliente."
+        : "Preencha os dados institucionais do novo parceiro."
+    }}
   </span>
 
-  <div class="space-y-10">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-10">
     <!-- Secção: Dados da Empresa -->
     <section class="space-y-5">
       <div class="flex items-center gap-2.5">
         <span class="text-brand-500">
-          <ng-container [solarIcon]="BuildingsBold" [size]="16" />
+          <ng-container solarIcon="BuildingsBold" [size]="16" />
         </span>
-        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+        <h4
+          class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"
+        >
           Dados da Empresa
         </h4>
       </div>
 
       <div class="space-y-4">
         <div class="space-y-1.5">
-          <app-label>Nome Empresarial <span class="text-error-500">*</span></app-label>
+          <app-label
+            >Nome Empresarial <span class="text-error-500">*</span></app-label
+          >
           <app-input-field
             type="text"
             placeholder="Ex: FinanceCorp S.A."
+            formControlName="nomeEmpresarial"
+            [error]="isInvalid('nomeEmpresarial')"
+            [hint]="getError('nomeEmpresarial')"
           />
         </div>
 
@@ -39,13 +53,21 @@
             <app-input-field
               type="email"
               placeholder="contato@empresa.com"
+              formControlName="email"
+              [error]="isInvalid('email')"
+              [hint]="getError('email')"
             />
           </div>
           <div class="space-y-1.5">
-            <app-label>Telefone <span class="text-error-500">*</span></app-label>
+            <app-label
+              >Telefone <span class="text-error-500">*</span></app-label
+            >
             <app-input-field
               type="tel"
               placeholder="+351 000 000 000"
+              formControlName="telefone"
+              [error]="isInvalid('telefone')"
+              [hint]="getError('telefone')"
             />
           </div>
         </div>
@@ -56,9 +78,11 @@
     <section class="space-y-5">
       <div class="flex items-center gap-2.5">
         <span class="text-brand-500">
-          <ng-container [solarIcon]="MapPointBold" [size]="16" />
+          <ng-container solarIcon="MapPointBold" [size]="16" />
         </span>
-        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+        <h4
+          class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"
+        >
           Endereço
         </h4>
       </div>
@@ -67,27 +91,53 @@
         <div class="grid grid-cols-[1fr_auto] gap-4 items-end">
           <div class="space-y-1.5">
             <app-label>Endereço</app-label>
-            <app-input-field placeholder="Rua, Avenida, etc." />
+            <app-input-field
+              placeholder="Rua, Avenida, etc."
+              formControlName="endereco"
+              [error]="isInvalid('endereco')"
+              [hint]="getError('endereco')"
+            />
           </div>
           <div class="space-y-1.5">
             <app-label>Número</app-label>
-            <app-input-field placeholder="123" className="w-24" />
+            <app-input-field
+              placeholder="123"
+              className="w-24"
+              formControlName="numero"
+              [error]="isInvalid('numero')"
+              [hint]="getError('numero')"
+            />
           </div>
         </div>
 
         <div class="space-y-1.5">
           <app-label>Complemento</app-label>
-          <app-input-field placeholder="Andar, Sala, Edifício" />
+          <app-input-field
+            placeholder="Andar, Sala, Edifício"
+            formControlName="complemento"
+            [error]="isInvalid('complemento')"
+            [hint]="getError('complemento')"
+          />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1.5">
             <app-label>Cidade</app-label>
-            <app-input-field placeholder="Lisboa" />
+            <app-input-field
+              placeholder="Lisboa"
+              formControlName="cidade"
+              [error]="isInvalid('cidade')"
+              [hint]="getError('cidade')"
+            />
           </div>
           <div class="space-y-1.5">
-            <app-label>Distrito</app-label>
-            <app-input-field placeholder="Ex: Lisboa" />
+            <app-label>Distrito / Estado</app-label>
+            <app-input-field
+              placeholder="Ex: Lisboa"
+              formControlName="estado"
+              [error]="isInvalid('estado')"
+              [hint]="getError('estado')"
+            />
           </div>
         </div>
       </div>
@@ -97,9 +147,11 @@
     <section class="space-y-5">
       <div class="flex items-center gap-2.5">
         <span class="text-brand-500">
-          <ng-container [solarIcon]="StarBold" [size]="16" />
+          <ng-container [solarIcon]="'StarBold'" [size]="16" />
         </span>
-        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+        <h4
+          class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400"
+        >
           Avaliação e Estado
         </h4>
       </div>
@@ -114,7 +166,7 @@
               Classificação de Risco
             </p>
             <div class="flex items-center gap-1">
-              @for (star of [1,2,3,4,5]; track star) {
+              @for (star of [1, 2, 3, 4, 5]; track star) {
                 <button
                   type="button"
                   (click)="setRating(star)"
@@ -128,7 +180,11 @@
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    [class]="star <= (hoverRating() || selectedRating()) ? 'text-warning-400' : 'text-gray-200 dark:text-gray-700'"
+                    [class]="
+                      star <= (hoverRating() || selectedRating())
+                        ? 'text-warning-400'
+                        : 'text-gray-200 dark:text-gray-700'
+                    "
                   >
                     <path
                       d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
@@ -161,23 +217,21 @@
             </p>
             <p
               class="mt-0.5 text-xs font-semibold"
-              [class.text-success-500]="isActive()"
-              [class.text-error-500]="!isActive()"
+              [class.text-success-500]="isActive"
+              [class.text-error-500]="!isActive"
             >
-              {{ isActive() ? 'Ativo' : 'Inativo' }}
+              {{ isActive ? "Ativo" : "Inativo" }}
             </p>
           </div>
           <app-switch
             label=""
             [defaultChecked]="true"
-            (valueChange)="isActive.set($event)"
+            (valueChange)="setActive($event)"
           />
         </div>
       </div>
     </section>
-  </div>
-
-  <!-- Footer -->
+  </form>
   <div drawer-footer class="flex w-full gap-3">
     <app-button
       variant="outline"
@@ -191,8 +245,9 @@
       variant="primary"
       class="flex-1"
       className="w-full justify-center"
+      (btnClick)="onSubmit()"
     >
-      {{ isEditing ? 'Guardar Alterações' : 'Guardar Cliente' }}
+      {{ isEditing ? "Guardar Alterações" : "Guardar Cliente" }}
     </app-button>
   </div>
 </app-drawer>

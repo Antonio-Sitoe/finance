@@ -5,24 +5,25 @@ import {
   EventEmitter,
   signal,
   computed,
+  inject,
 } from "@angular/core";
 import { NgClass } from "@angular/common";
+import { ReactiveFormsModule } from "@angular/forms";
 import { DrawerComponent } from "@/shared/components/ui/drawer/drawer.component";
 import { LabelComponent } from "@/shared/components/ui/label/label.component";
 import { InputFieldComponent } from "@/shared/components/ui/input/input-field.component";
 import { SwitchComponent } from "@/shared/components/ui/input/switch.component";
 import { ButtonComponent } from "@/shared/components/ui/button/button.component";
-import {
-  SolarDynamicIcon,
-  BuildingsBold,
-  MapPointBold,
-  StarBold,
-} from "@solar-icons/angular";
+import { SolarDynamicIcon } from "@solar-icons/angular";
+import { CustumerFormService } from "@/shared/services/customers/custumer.form.service";
+import { CustomerApiService } from "@/shared/services/customers/customer.api.service";
+import { ToastService } from "@/shared/services/toast.service";
 
 @Component({
   selector: "app-create-and-edit-costumer",
   imports: [
     NgClass,
+    ReactiveFormsModule,
     DrawerComponent,
     LabelComponent,
     InputFieldComponent,
@@ -31,19 +32,19 @@ import {
     SolarDynamicIcon,
   ],
   templateUrl: "./create-and-edit-costumer.component.html",
+  providers: [CustumerFormService],
 })
 export class CreateAndEditCostumerComponent {
-  readonly BuildingsBold = BuildingsBold;
-  readonly MapPointBold = MapPointBold;
-  readonly StarBold = StarBold;
-
   @Input() open = false;
   @Input() isEditing = false;
   @Output() openChange = new EventEmitter<boolean>();
 
+  readonly customerService = inject(CustumerFormService);
+  readonly api = inject(CustomerApiService);
+  readonly form = this.customerService.form;
+  readonly toast = inject(ToastService);
   readonly selectedRating = signal(0);
   readonly hoverRating = signal(0);
-  readonly isActive = signal(true);
 
   readonly riskLabel = computed(() => {
     const r = this.selectedRating();
@@ -62,7 +63,52 @@ export class CreateAndEditCostumerComponent {
     return "bg-gray-100 text-gray-600 dark:bg-white/5 dark:text-white/80";
   });
 
-  setRating(value: number): void {
-    this.selectedRating.set(value);
+  onSubmit(): void {
+    if (this.form.valid) {
+      const formData = this.form.value;
+      console.log("Form Data:", formData);
+
+      this.api.createCustomer(formData).subscribe({
+        next: (response) => {
+          console.log("Customer created successfully:", response);
+          this.toast.success(
+            this.isEditing
+              ? "Cliente atualizado " + response.nomeEmpresarial
+              : "Cliente criado " + response.nomeEmpresarial
+          );
+          this.openChange.emit(false);
+        },
+        error: (error) => {
+          console.error("Error creating customer:", error);
+          const msg =
+            error?.error?.message ||
+            error?.message ||
+            "Erro ao gravar utilizador";
+          this.toast.error("Falha", msg);
+        },
+      });
+    } else {
+      this.form.markAllAsTouched();
+    }
+  }
+
+  isInvalid(field: string): boolean {
+    return this.customerService.isInvalid(field);
+  }
+
+  getError(field: string): string {
+    return this.customerService.getError(field);
+  }
+  setRating(stars: number): void {
+    this.selectedRating.set(stars);
+    this.form.patchValue({ nota: stars * 2 });
+  }
+
+  setActive(value: boolean): void {
+    this.form.patchValue({ situacao: value ? "ATIVO" : "INATIVO" });
+  }
+
+  get isActive(): boolean {
+    return this.form.get("situacao")?.value === "ATIVO";
   }
 }

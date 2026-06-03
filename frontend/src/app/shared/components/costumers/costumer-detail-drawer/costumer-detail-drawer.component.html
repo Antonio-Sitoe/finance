@@ -20,13 +20,13 @@
         <div
           class="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-50 text-brand-500 ring-4 ring-white dark:bg-brand-500/10 dark:ring-gray-900"
         >
-          <ng-container [solarIcon]="BuildingsBold" [size]="36" />
+          <ng-container solarIcon="BuildingsBold" [size]="36" />
         </div>
         @if (costumer.vip) {
           <span
             class="absolute -top-2 -right-2 flex items-center gap-0.5 rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-bold text-white"
           >
-            <ng-container [solarIcon]="StarBold" [size]="9" />
+            <ng-container solarIcon="StarBold" [size]="9" />
             VIP
           </span>
         }
@@ -47,7 +47,7 @@
           class="flex items-center gap-3 rounded-xl border border-gray-100 px-4 py-2.5 dark:border-white/[0.06]"
         >
           <span class="text-gray-400">
-            <ng-container [solarIcon]="LetterBold" [size]="16" />
+            <ng-container solarIcon="LetterBold" [size]="16" />
           </span>
           <span class="text-sm text-gray-600 dark:text-gray-300">
             {{ costumer.email }}
@@ -57,7 +57,7 @@
           class="flex items-center gap-3 rounded-xl border border-gray-100 px-4 py-2.5 dark:border-white/[0.06]"
         >
           <span class="text-gray-400">
-            <ng-container [solarIcon]="PhoneCallingBold" [size]="16" />
+            <ng-container solarIcon="PhoneCallingBold" [size]="16" />
           </span>
           <span class="text-sm text-gray-600 dark:text-gray-300">
             {{ costumer.telefone }}
@@ -70,7 +70,7 @@
     <section class="mb-6">
       <div class="mb-3 flex items-center gap-2">
         <span class="text-gray-400">
-          <ng-container [solarIcon]="GraphNewUpBold" [size]="14" />
+          <ng-container solarIcon="GraphNewUpBold" [size]="14" />
         </span>
         <h4
           class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500"
@@ -135,7 +135,7 @@
         <div class="mb-3 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-gray-400">
-              <ng-container [solarIcon]="MapPointBold" [size]="14" />
+              <ng-container solarIcon="MapPointBold" [size]="14" />
             </span>
             <h4
               class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500"
@@ -146,7 +146,7 @@
           <button
             class="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
-            <ng-container [solarIcon]="MapBold" [size]="14" />
+            <ng-container solarIcon="MapBold" [size]="14" />
           </button>
         </div>
 
@@ -154,7 +154,7 @@
           class="flex gap-3 rounded-xl border border-gray-100 p-4 dark:border-white/[0.06]"
         >
           <span class="mt-0.5 shrink-0 text-gray-400">
-            <ng-container [solarIcon]="MapPointBold" [size]="16" />
+            <ng-container solarIcon="MapPointBold" [size]="16" />
           </span>
           <div>
             @if (costumer.endereco) {
@@ -182,7 +182,7 @@
       <section>
         <div class="mb-3 flex items-center gap-2">
           <span class="text-gray-400">
-            <ng-container [solarIcon]="UsersGroupRoundedBold" [size]="14" />
+            <ng-container solarIcon="UsersGroupRoundedBold" [size]="14" />
           </span>
           <h4
             class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500"
@@ -222,7 +222,7 @@
     <button
       class="inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-error-500 transition-colors hover:bg-error-50 dark:hover:bg-error-500/10"
     >
-      <ng-container [solarIcon]="ForbiddenCircleBold" [size]="16" />
+      <ng-container solarIcon="ForbiddenCircleBold" [size]="16" />
       Desativar Cliente
     </button>
   </div>

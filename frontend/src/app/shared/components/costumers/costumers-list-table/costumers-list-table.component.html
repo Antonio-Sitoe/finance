@@ -1,12 +1,13 @@
 <app-datatable
   [columns]="columns"
-  [data]="mockData"
+  [data]="facade.list.items()"
   [rowTemplate]="costumerRow"
   [filtersTemplate]="costumerFilters"
-  [currentPage]="1"
-  [totalPages]="1"
-  [totalElements]="mockData.length"
-  [rowsPerPage]="10"
+  [currentPage]="facade.list.query().page"
+  [totalPages]="facade.list.totalPages()"
+  [totalElements]="facade.list.total()"
+  [rowsPerPage]="facade.list.query().size"
+  [loading]="facade.list.loading()"
 />
 
 <ng-template #costumerFilters>
@@ -17,22 +18,21 @@
       <span
         class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
       >
-        <ng-container [solarIcon]="MagnifierBold" [size]="16" />
+        <ng-container solarIcon="MagnifierBold" [size]="16" />
       </span>
       <app-input-field
         placeholder="Pesquisar por nome ou email..."
         className="pl-9"
+        [value]="facade.searchTerm()"
+        (valueChange)="facade.search($event.toString())"
       />
     </div>
     <app-select
       placeholder="Todos os estados"
-      [options]="statusOptions"
+      [options]="facade.statusOptions"
+      [value]="facade.filterStatus()"
+      (valueChange)="facade.filterBySituacao($event)"
       className="w-full sm:w-44"
-    />
-    <app-select
-      placeholder="Todas as classificações"
-      [options]="classificacaoOptions"
-      className="w-full sm:w-52"
     />
   </div>
 </ng-template>
@@ -45,14 +45,11 @@
         <div
           class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-500 dark:bg-brand-500/10"
         >
-          <ng-container [solarIcon]="BuildingsBold" [size]="18" />
+          <ng-container solarIcon="BuildingsBold" [size]="18" />
         </div>
         <div>
           <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {{ row.nomeEmpresarial }}
-            @if (row.vip) {
-              <app-badge variant="solid" color="primary" size="sm" class="ml-1">VIP</app-badge>
-            }
           </span>
           <span class="text-xs text-gray-500 dark:text-gray-400">
             {{ row.email }}
@@ -72,7 +69,7 @@
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            [class]="star <= (row.classificacaoRisco ?? 0) ? 'text-warning-400' : 'text-gray-200 dark:text-gray-700'"
+            [class]="star <= facade.ratingToStars(row.nota ?? 0) ? 'text-warning-400' : 'text-gray-200 dark:text-gray-700'"
           >
             <path
               d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
@@ -90,7 +87,7 @@
       <div class="flex items-center justify-center">
         <app-badge
           variant="light"
-          [color]="row.situacao === 'ATIVO' ? 'success' : 'error'"
+          [color]="facade.badgeColor(row.situacao)"
           size="sm"
         >
           {{ row.situacao === 'ATIVO' ? 'Ativo' : 'Inativo' }}
@@ -107,21 +104,21 @@
           title="Ver contactos"
           class="text-gray-400 hover:text-brand-500 w-8 h-8 flex items-center justify-center rounded hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors"
         >
-          <ng-container [solarIcon]="UsersGroupRoundedBold" [size]="18" />
+          <ng-container solarIcon="UsersGroupRoundedBold" [size]="18" />
         </button>
         <button
           (click)="openEdit(row)"
           title="Editar"
           class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
-          <ng-container [solarIcon]="Pen2Bold" [size]="18" />
+          <ng-container solarIcon="Pen2Bold" [size]="18" />
         </button>
         <button
           (click)="openDetail(row)"
           title="Ver detalhes"
           class="text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
-          <ng-container [solarIcon]="EyeBold" [size]="18" />
+          <ng-container solarIcon="EyeBold" [size]="18" />
         </button>
       </div>
     </td>
@@ -138,7 +135,7 @@
 @if (detailDrawerOpen()) {
   <app-costumer-detail-drawer
     [open]="detailDrawerOpen()"
-    [costumer]="selectedCostumer()"
+    [costumer]="facade.editingCustomer()"
     (openChange)="detailDrawerOpen.set($event)"
     (edit)="openEdit($event)"
   />
