@@ -96,5 +96,4 @@ export class UserFacadeService {
     if (situacao === SITUATION.ATIVO) return 'success'
     return 'error'
   }
-
 }

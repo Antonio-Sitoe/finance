@@ -43,8 +43,6 @@ const MOCK_CLIENTES: ICliente[] = [
     email: 'geral@techvision.ao',
     telefone: '+244 923 456 789',
     cidade: 'Luanda',
-    classificacaoRisco: 3,
-    classificacao: 'Normal',
     situacao: 'ATIVO',
     createdAt: '2024-05-20T08:30:00Z',
     contactos: [

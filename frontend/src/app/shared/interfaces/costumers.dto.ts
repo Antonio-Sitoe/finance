@@ -19,10 +19,7 @@ export interface ICliente {
   complemento?: string;
   cidade?: string;
   distrito?: string;
-  classificacaoRisco?: number;
-  classificacao?: string;
   situacao: "ATIVO" | "INATIVO";
-  vip?: boolean;
   createdAt: string;
   contactos?: IContactoCliente[];
 }
@@ -36,6 +33,7 @@ export interface ICustomerDTO {
   numero?: string;
   complemento?: string;
   cidade?: string;
+  distrito?: string;
   estado?: string;
   nota?: number;
   situacao: "ATIVO" | "INATIVO";
