@@ -1,24 +1,3 @@
-# 3️⃣ Gestão de clientes
-
-CRUD completo.
-
-### Funcionalidades frontend
-
-- [ ] Criar cliente
-- [ ] Editar cliente
-- [ ] Listar clientes
-- [ ] Desativar cliente
-- [ ] Ver detalhes do cliente
-
----
-
-### Filtros
-
-- [x] Buscar por nome
-- [x] Filtrar por status
-
----
-
 # 4️⃣ Gestão de contactos
 
 Contactos vinculados ao cliente.

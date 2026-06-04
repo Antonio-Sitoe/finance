@@ -110,9 +110,12 @@ export class CreateAndEditCostumerComponent implements OnChanges {
     if (changes['open']?.currentValue === true) {
       if (this.isEditing() && !!this.customer) {
         const stars = Math.round((this.customer.nota ?? 0) / 2)
+        const situacao =
+          this.customer.situacao === 'ATIVO' ? 'ATIVO' : 'INATIVO'
         this.form.patchValue({
           ...this.customer,
           nota: this.customer.nota ?? 0,
+          situacao: situacao,
         })
         this.selectedRating.set(stars)
       }
