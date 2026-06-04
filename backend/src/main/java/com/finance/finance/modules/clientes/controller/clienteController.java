@@ -37,62 +37,62 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Clientes", description = "Endpoints para gestão de clientes")
 public class clienteController {
-    private final ClienteService clienteService;
+        private final ClienteService clienteService;
 
-    @PostMapping
-    @Operation(summary = "Criar cliente", description = "Cria um novo cliente usando o grupo de validação Create.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso", content = @Content(schema = @Schema(implementation = ClienteResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
-    public ResponseEntity<ClienteResponseDTO> criar(
-            @RequestBody @Validated(ClienteRequestDTO.Create.class) ClienteRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criar(dto));
-    }
+        @PostMapping
+        @Operation(summary = "Criar cliente", description = "Cria um novo cliente usando o grupo de validação Create.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso", content = @Content(schema = @Schema(implementation = ClienteResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+        })
+        public ResponseEntity<ClienteResponseDTO> criar(
+                        @RequestBody @Validated(ClienteRequestDTO.Create.class) ClienteRequestDTO dto) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criar(dto));
+        }
 
-    @PatchMapping("/{id}")
-    @Operation(summary = "Atualizar cliente", description = "Atualiza parcialmente um cliente usando o grupo de validação Update.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso", content = @Content(schema = @Schema(implementation = ClienteResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
-    public ResponseEntity<ClienteResponseDTO> atualizar(
-            @Parameter(description = "ID do cliente", example = "25") @PathVariable Long id,
-            @RequestBody @Validated(ClienteRequestDTO.Update.class) ClienteRequestDTO dto) {
-        return ResponseEntity.ok(clienteService.atualizar(id, dto));
-    }
+        @PatchMapping("/{id}")
+        @Operation(summary = "Atualizar cliente", description = "Atualiza parcialmente um cliente usando o grupo de validação Update.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso", content = @Content(schema = @Schema(implementation = ClienteResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                        @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+        })
+        public ResponseEntity<ClienteResponseDTO> atualizar(
+                        @Parameter(description = "ID do cliente", example = "25") @PathVariable Long id,
+                        @RequestBody @Validated(ClienteRequestDTO.Update.class) ClienteRequestDTO dto) {
+                return ResponseEntity.ok(clienteService.atualizar(id, dto));
+        }
 
-    @PatchMapping("/{id}/situacao")
-    @Operation(summary = "Ativar ou desativar cliente", description = "Alterna a situação do cliente entre ATIVO e INATIVO.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Situação alterada com sucesso", content = @Content(schema = @Schema(implementation = ClienteStatusResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
-    public ResponseEntity<ClienteStatusResponseDTO> activarOuDesativar(@PathVariable Long id) {
-        return ResponseEntity.ok(clienteService.activarOuDesativar(id));
-    }
+        @PatchMapping("/{id}/situacao")
+        @Operation(summary = "Ativar ou desativar cliente", description = "Alterna a situação do cliente entre ATIVO e INATIVO.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Situação alterada com sucesso", content = @Content(schema = @Schema(implementation = ClienteStatusResponseDTO.class))),
+                        @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+        })
+        public ResponseEntity<ClienteStatusResponseDTO> activarOuDesativar(@PathVariable Long id) {
+                return ResponseEntity.ok(clienteService.activarOuDesativar(id));
+        }
 
-    @GetMapping
-    @Operation(summary = "Listar clientes", description = "Lista clientes com paginação, ordenação e filtros opcionais por nome e situação.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = PageResponse.class)))
-    })
-    public ResponseEntity<PageResponse<ClienteResponseDTO>> listar(
-            @Parameter(description = "Filtro parcial por nome empresarial", example = "Roberto") @RequestParam(required = false) String nome,
-            @Parameter(description = "Filtro por situação do cliente", example = "ATIVO") @RequestParam(required = false) Situacao situacao,
-            @Valid @ModelAttribute PaginationRequest paginationRequest) {
-        return ResponseEntity.ok(clienteService.listar(nome, situacao, paginationRequest));
-    }
+        @GetMapping
+        @Operation(summary = "Listar clientes", description = "Lista clientes com paginação, ordenação e filtros opcionais por nome e situação.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = PageResponse.class)))
+        })
+        public ResponseEntity<PageResponse<ClienteResponseDTO>> listar(
+                        @Parameter(description = "Filtro parcial por nome empresarial", example = "Roberto") @RequestParam(required = false) String search,
+                        @Parameter(description = "Filtro por situação do cliente", example = "ATIVO") @RequestParam(required = false) Situacao situacao,
+                        @Valid @ModelAttribute PaginationRequest paginationRequest) {
+                return ResponseEntity.ok(clienteService.listar(search, situacao, paginationRequest));
+        }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Obter cliente por ID", description = "Retorna um cliente específico pelo identificador.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cliente encontrado", content = @Content(schema = @Schema(implementation = ClienteResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
-    public ResponseEntity<ClienteResponseDTO> obterPorId(
-            @Parameter(description = "ID do cliente", example = "25") @PathVariable Long id) {
-        return ResponseEntity.ok(clienteService.obterPorId(id));
-    }
+        @GetMapping("/{id}")
+        @Operation(summary = "Obter cliente por ID", description = "Retorna um cliente específico pelo identificador.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Cliente encontrado", content = @Content(schema = @Schema(implementation = ClienteResponseDTO.class))),
+                        @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+        })
+        public ResponseEntity<ClienteResponseDTO> obterPorId(
+                        @Parameter(description = "ID do cliente", example = "25") @PathVariable Long id) {
+                return ResponseEntity.ok(clienteService.obterPorId(id));
+        }
 }

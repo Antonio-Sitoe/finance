@@ -49,6 +49,7 @@ public final class ClienteMapper {
                 .estado(cliente.getEstado())
                 .nota(cliente.getNota())
                 .situacao(cliente.getSituacao())
+                .createdAt(cliente.getCreatedAt())
                 .build();
     }
 }

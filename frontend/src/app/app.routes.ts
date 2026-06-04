@@ -6,10 +6,6 @@ import { NotFoundComponent } from './pages/other-page/not-found/not-found.compon
 import { AppLayoutComponent } from './shared/layout/app-layout/app-layout.component'
 import { LineChartComponent } from './pages/charts/line-chart/line-chart.component'
 import { BarChartComponent } from './pages/charts/bar-chart/bar-chart.component'
-import { AlertsComponent } from './pages/ui-elements/alerts/alerts.component'
-import { AvatarElementComponent } from './pages/ui-elements/avatar-element/avatar-element.component'
-import { BadgesComponent } from './pages/ui-elements/badges/badges.component'
-import { ButtonsComponent } from './pages/ui-elements/buttons/buttons.component'
 import { SignInComponent } from './pages/auth-pages/sign-in/sign-in.component'
 import { ForgotPasswordComponent } from './pages/auth-pages/forgot-password/forgot-password.component'
 import { ResetPasswordComponent } from './pages/auth-pages/reset-password/reset-password.component'
@@ -70,26 +66,6 @@ export const routes: Routes = [
         path: 'bar-chart',
         component: BarChartComponent,
         title: 'Angular Bar Chart Dashboard | FinanceApp Administrative Panel',
-      },
-      {
-        path: 'alerts',
-        component: AlertsComponent,
-        title: 'Angular Alerts Dashboard | FinanceApp Administrative Panel',
-      },
-      {
-        path: 'avatars',
-        component: AvatarElementComponent,
-        title: 'Angular Avatars Dashboard | FinanceApp Administrative Panel',
-      },
-      {
-        path: 'badge',
-        component: BadgesComponent,
-        title: 'Angular Badges Dashboard | FinanceApp Administrative Panel',
-      },
-      {
-        path: 'buttons',
-        component: ButtonsComponent,
-        title: 'Angular Buttons Dashboard | FinanceApp Administrative Panel',
       },
     ],
   },

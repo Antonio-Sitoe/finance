@@ -4,6 +4,8 @@ import com.finance.finance.modules.common.enums.Situacao;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class ClienteResponseDTO {
@@ -18,4 +20,5 @@ public class ClienteResponseDTO {
     private String estado;
     private Integer nota;
     private Situacao situacao;
+    private LocalDateTime createdAt;
 }

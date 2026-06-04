@@ -1,7 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
-import { ICliente, IContactoCliente } from '@/shared/interfaces/costumers.dto'
-import { DataTableComponent, ColumnDef } from '@/shared/components/ui/datatable/datatable'
+import { IContactoCliente } from '@/shared/interfaces/costumers.dto'
+import {
+  DataTableComponent,
+  ColumnDef,
+} from '@/shared/components/ui/datatable/datatable'
 import { BadgeComponent } from '@/shared/components/ui/badge/badge.component'
 import { AvatarTextComponent } from '@/shared/components/ui/avatar/avatar-text.component'
 import { InputFieldComponent } from '@/shared/components/ui/input/input-field.component'
@@ -18,7 +21,7 @@ import {
   UsersGroupRoundedBold,
 } from '@solar-icons/angular'
 
-const MOCK_CLIENTES: ICliente[] = [
+const MOCK_CLIENTES = [
   {
     id: 1,
     nomeEmpresarial: 'Global Trade Solutions S.A.',
@@ -32,9 +35,36 @@ const MOCK_CLIENTES: ICliente[] = [
     situacao: 'ATIVO',
     createdAt: '2024-03-15T10:00:00Z',
     contactos: [
-      { id: 1, nome: 'Ana Martins', cargo: 'Diretora Financeira - CFO', departamento: 'Financeiro', telefone: '+351 912 345 678', email: 'ana.martins@globaltrade.pt', situacao: 'ATIVO', ultimaAtividade: 'Hoje, 10:45' },
-      { id: 2, nome: 'Ricardo Costa', cargo: 'Gestor de Compras', departamento: 'Compras', telefone: '+351 934 567 890', email: 'ricardo.costa@globaltrade.pt', situacao: 'ATIVO', ultimaAtividade: 'Ontem, 14:20' },
-      { id: 3, nome: 'Sandra Teixeira', cargo: 'Assistente Administrativa', departamento: 'Administrativo', telefone: '+351 961 122 334', email: 'sandra.t@globaltrade.pt', situacao: 'INATIVO', ultimaAtividade: '3 dias atrás' },
+      {
+        id: 1,
+        nome: 'Ana Martins',
+        cargo: 'Diretora Financeira - CFO',
+        departamento: 'Financeiro',
+        telefone: '+351 912 345 678',
+        email: 'ana.martins@globaltrade.pt',
+        situacao: 'ATIVO',
+        ultimaAtividade: 'Hoje, 10:45',
+      },
+      {
+        id: 2,
+        nome: 'Ricardo Costa',
+        cargo: 'Gestor de Compras',
+        departamento: 'Compras',
+        telefone: '+351 934 567 890',
+        email: 'ricardo.costa@globaltrade.pt',
+        situacao: 'ATIVO',
+        ultimaAtividade: 'Ontem, 14:20',
+      },
+      {
+        id: 3,
+        nome: 'Sandra Teixeira',
+        cargo: 'Assistente Administrativa',
+        departamento: 'Administrativo',
+        telefone: '+351 961 122 334',
+        email: 'sandra.t@globaltrade.pt',
+        situacao: 'INATIVO',
+        ultimaAtividade: '3 dias atrás',
+      },
     ],
   },
   {
@@ -46,7 +76,16 @@ const MOCK_CLIENTES: ICliente[] = [
     situacao: 'ATIVO',
     createdAt: '2024-05-20T08:30:00Z',
     contactos: [
-      { id: 4, nome: 'Pedro Alves', cargo: 'Diretor Geral', departamento: 'Direção', telefone: '+244 923 456 789', email: 'pedro.alves@techvision.ao', situacao: 'ATIVO', ultimaAtividade: 'Hoje, 09:00' },
+      {
+        id: 4,
+        nome: 'Pedro Alves',
+        cargo: 'Diretor Geral',
+        departamento: 'Direção',
+        telefone: '+244 923 456 789',
+        email: 'pedro.alves@techvision.ao',
+        situacao: 'ATIVO',
+        ultimaAtividade: 'Hoje, 09:00',
+      },
     ],
   },
   {
@@ -91,9 +130,9 @@ export class CostumerContactsComponent {
   readonly filterDepartamento = signal('')
   readonly filterSituacao = signal('')
 
-  readonly cliente = computed<ICliente | null>(() => {
+  readonly cliente = computed<any | null>(() => {
     const id = Number(this.route.snapshot.paramMap.get('id'))
-    return MOCK_CLIENTES.find(c => c.id === id) ?? null
+    return MOCK_CLIENTES.find((c) => c.id === id) ?? null
   })
 
   readonly contactosFiltrados = computed<IContactoCliente[]>(() => {
@@ -102,8 +141,12 @@ export class CostumerContactsComponent {
     const dept = this.filterDepartamento()
     const sit = this.filterSituacao()
 
-    return contactos.filter(c => {
-      const matchSearch = !search || c.nome.toLowerCase().includes(search) || c.email?.toLowerCase().includes(search) || c.cargo.toLowerCase().includes(search)
+    return contactos.filter((c: any) => {
+      const matchSearch =
+        !search ||
+        c.nome.toLowerCase().includes(search) ||
+        c.email?.toLowerCase().includes(search) ||
+        c.cargo.toLowerCase().includes(search)
       const matchDept = !dept || c.departamento === dept
       const matchSit = !sit || c.situacao === sit
       return matchSearch && matchDept && matchSit
@@ -111,13 +154,15 @@ export class CostumerContactsComponent {
   })
 
   readonly departamentos = computed<string[]>(() => {
-    const depts = this.cliente()?.contactos?.map(c => c.departamento).filter(Boolean) as string[]
+    const depts = this.cliente()
+      ?.contactos?.map((c: any) => c.departamento)
+      .filter(Boolean) as string[]
     return [...new Set(depts)]
   })
 
   readonly departamentoOptions = computed(() => [
     { label: 'Todos os departamentos', value: '' },
-    ...this.departamentos().map(d => ({ label: d, value: d })),
+    ...this.departamentos().map((d) => ({ label: d, value: d })),
   ])
 
   readonly situacaoOptions = [
@@ -140,6 +185,11 @@ export class CostumerContactsComponent {
   }
 
   getInitials(nome: string): string {
-    return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+    return nome
+      .split(' ')
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase()
   }
 }
