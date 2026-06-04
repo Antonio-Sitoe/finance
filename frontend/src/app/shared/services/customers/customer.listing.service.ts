@@ -10,7 +10,6 @@ import { SITUATION } from '@/shared/interfaces/enum.dto'
 export class CustomerFacadeService {
   private api = inject(CustomerApiService)
   readonly list = new ListStore<ICustomerDTO>()
-  readonly editingCustomer = signal<ICustomerDTO | null>(null)
 
   readonly statusOptions = [
     { value: '', label: 'Todos os estados' },
@@ -28,10 +27,6 @@ export class CustomerFacadeService {
 
   constructor() {
     this.list.connect((query) => this.api.getCustomers(query))
-  }
-
-  setEditingCustomer(customer: ICustomerDTO | null): void {
-    this.editingCustomer.set(customer)
   }
 
   search(value: string): void {

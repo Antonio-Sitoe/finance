@@ -9,13 +9,13 @@
     drawer-header
     class="text-base font-semibold text-gray-800 dark:text-white/90"
   >
-    {{ isEditing ? "Editar Cliente" : "Novo Cliente" }}
+    {{ isEditing() ? 'Editar Cliente' : 'Novo Cliente' }}
   </span>
   <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
     {{
-      isEditing
-        ? "Actualize os dados institucionais do cliente."
-        : "Preencha os dados institucionais do novo parceiro."
+      isEditing()
+        ? 'Actualize os dados institucionais do cliente.'
+        : 'Preencha os dados institucionais do novo parceiro.'
     }}
   </span>
 
@@ -165,37 +165,44 @@
             <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
               Classificação de Risco
             </p>
-            <div class="flex items-center gap-1">
-              @for (star of [1, 2, 3, 4, 5]; track star) {
-                <button
-                  type="button"
-                  (click)="setRating(star)"
-                  (mouseenter)="hoverRating.set(star)"
-                  (mouseleave)="hoverRating.set(0)"
-                  class="transition-transform hover:scale-110"
-                >
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    [class]="
-                      star <= (hoverRating() || selectedRating())
-                        ? 'text-warning-400'
-                        : 'text-gray-200 dark:text-gray-700'
-                    "
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-1">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <button
+                    type="button"
+                    (click)="setRating(star)"
+                    (mouseenter)="hoverRating.set(star)"
+                    (mouseleave)="hoverRating.set(0)"
+                    class="transition-transform hover:scale-110"
                   >
-                    <path
-                      d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                      fill="currentColor"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      [class]="
+                        star <= (hoverRating() || selectedRating())
+                          ? 'text-warning-400'
+                          : 'text-gray-200 dark:text-gray-700'
+                      "
+                    >
+                      <path
+                        d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </button>
+                }
+              </div>
+              @if (isInvalid('nota')) {
+                <p class="text-xs text-error-500">
+                  Classificação de risco é obrigatória
+                </p>
               }
             </div>
           </div>
@@ -220,7 +227,7 @@
               [class.text-success-500]="isActive"
               [class.text-error-500]="!isActive"
             >
-              {{ isActive ? "Ativo" : "Inativo" }}
+              {{ isActive ? 'Ativo' : 'Inativo' }}
             </p>
           </div>
           <app-switch
@@ -245,9 +252,11 @@
       variant="primary"
       class="flex-1"
       className="w-full justify-center"
+      [disabled]="isLoading()"
+      [loading]="isLoading()"
       (btnClick)="onSubmit()"
     >
-      {{ isEditing ? "Guardar Alterações" : "Guardar Cliente" }}
+      {{ isEditing() ? 'Guardar Alterações' : 'Guardar Cliente' }}
     </app-button>
   </div>
 </app-drawer>

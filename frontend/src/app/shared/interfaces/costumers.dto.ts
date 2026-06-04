@@ -30,4 +30,4 @@ export type CreateCustomerDto = Omit<
   ICustomerDTO,
   'id' | 'createdAt' | 'contactos'
 >
-export type UpdateCustomerDto = Partial<CreateCustomerDto>
+export type UpdateCustomerDto = Partial<ICustomerDTO>

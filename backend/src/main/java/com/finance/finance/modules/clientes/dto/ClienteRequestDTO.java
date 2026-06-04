@@ -6,10 +6,6 @@ import lombok.Data;
 
 @Data
 public class ClienteRequestDTO {
-
-    @NotNull(groups = Update.class, message = "ID é obrigatório para atualização")
-    private Long id;
-
     @NotBlank(groups = { Create.class, Update.class }, message = "O nome empresarial é obrigatório")
     private String nomeEmpresarial;
 
@@ -43,7 +39,9 @@ public class ClienteRequestDTO {
     @NotNull(groups = Create.class, message = "A situação é obrigatória")
     private Situacao situacao;
 
-    public interface Create {}
+    public interface Create {
+    }
 
-    public interface Update {}
+    public interface Update {
+    }
 }

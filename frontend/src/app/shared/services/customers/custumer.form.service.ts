@@ -12,7 +12,7 @@ export class CustumerFormService {
     complemento: new FormControl("", [Validators.required]),
     cidade: new FormControl("", [Validators.required]),
     estado: new FormControl("", [Validators.required]),
-    nota: new FormControl(0),
+    nota: new FormControl(0, [Validators.min(1)]),
     situacao: new FormControl("ATIVO", [Validators.required]),
   });
 
