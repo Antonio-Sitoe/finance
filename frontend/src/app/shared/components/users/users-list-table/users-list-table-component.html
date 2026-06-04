@@ -1,15 +1,9 @@
 <app-datatable
+  [store]="facade.list"
+  [syncUrl]="true"
   [columns]="facade.columns"
-  [data]="facade.list.items()"
   [rowTemplate]="userRow"
   [filtersTemplate]="userFilters"
-  [currentPage]="facade.list.query().page"
-  [totalPages]="facade.list.totalPages()"
-  [totalElements]="facade.list.total()"
-  [rowsPerPage]="facade.list.query().size"
-  (nextPage)="facade.list.nextPage()"
-  (previousPage)="facade.list.previousPage()"
-  [loading]="facade.list.loading()"
 />
 
 <ng-template #userFilters>
@@ -24,7 +18,7 @@
       </span>
       <app-input-field
         placeholder="Pesquisar por nome ou email..."
-        className="pl-9"
+        className="pl-4 pr-9"
         [value]="facade.searchTerm()"
         (valueChange)="facade.search($event.toString())"
       />
