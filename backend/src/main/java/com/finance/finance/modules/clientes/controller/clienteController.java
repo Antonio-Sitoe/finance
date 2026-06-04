@@ -21,6 +21,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import com.finance.finance.modules.clientes.dto.ClienteRankingResumoDTO;
 import com.finance.finance.modules.clientes.dto.ClienteRequestDTO;
 import com.finance.finance.modules.clientes.dto.ClienteResponseDTO;
 import com.finance.finance.modules.clientes.dto.ClienteStatusResponseDTO;
@@ -94,5 +96,11 @@ public class clienteController {
         public ResponseEntity<ClienteResponseDTO> obterPorId(
                         @Parameter(description = "ID do cliente", example = "25") @PathVariable Long id) {
                 return ResponseEntity.ok(clienteService.obterPorId(id));
+        }
+
+        @GetMapping("/ranking")
+        @Operation(summary = "Obter resumo do ranking de clientes")
+        public ResponseEntity<ClienteRankingResumoDTO> obterResumoRanking() {
+                return ResponseEntity.ok(clienteService.obterResumoRanking());
         }
 }

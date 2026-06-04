@@ -9,6 +9,19 @@ export interface IContactoCliente {
   ultimaAtividade?: string
 }
 
+export interface IContactoDTO {
+  id: number
+  nome: string
+  departamento?: string
+  email: string
+  telefone: string
+  situacao: 'ATIVO' | 'INATIVO'
+  clienteId: number
+  clienteNome: string
+  createdAt?: string
+  updatedAt?: string
+}
+
 export interface ICustomerDTO {
   id: number
   nomeEmpresarial: string
@@ -24,6 +37,13 @@ export interface ICustomerDTO {
   situacao: 'ATIVO' | 'INATIVO'
   createdAt?: string
   contactos?: IContactoCliente[]
+}
+
+export interface ICustomerRankingResumoDTO {
+  totalClientes: number
+  clientesNormais: number
+  clientesEmCrescimento: number
+  clientesVip: number
 }
 
 export type CreateCustomerDto = Omit<

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
 import com.finance.finance.modules.clientes.model.Cliente;
+import com.finance.finance.modules.clientes.dto.ClienteRankingResumoDTO;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
 
@@ -42,5 +43,16 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
             String nomeEmpresarial,
             Situacao situacao,
             Pageable pageable);
+
+    @Query("""
+            SELECT new com.finance.finance.modules.clientes.dto.ClienteRankingResumoDTO(
+                COUNT(c.id),
+                COUNT(CASE WHEN c.nota BETWEEN 0 AND 5 THEN 1 END),
+                COUNT(CASE WHEN c.nota BETWEEN 6 AND 8 THEN 1 END),
+                COUNT(CASE WHEN c.nota BETWEEN 9 AND 10 THEN 1 END)
+            )
+            FROM Cliente c
+            """)
+    ClienteRankingResumoDTO obterResumoRanking();
 
 }

@@ -55,17 +55,16 @@ export class CreateAndEditCostumerComponent implements OnChanges {
 
   readonly riskLabel = computed(() => {
     const r = this.selectedRating()
-    if (r === 0) return 'Normal'
-    if (r <= 2) return 'Baixo'
-    if (r === 3) return 'Médio'
-    return 'Alto'
+    if (r <= 2) return 'Normal'
+    if (r <= 4) return 'Em crescimento'
+    return 'VIP'
   })
 
   readonly riskLabelClass = computed(() => {
     const r = this.selectedRating()
-    if (r >= 4)
+    if (r >= 5)
       return 'bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-500'
-    if (r === 3)
+    if (r >= 3)
       return 'bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-orange-400'
     return 'bg-gray-100 text-gray-600 dark:bg-white/5 dark:text-white/80'
   })

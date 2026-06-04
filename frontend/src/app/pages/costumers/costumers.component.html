@@ -17,25 +17,25 @@
     icon="UsersGroupRoundedBold"
     title="Total"
     description="Total de Clientes"
-    [value]="'100'"
+    [value]="(facade.rankingResumo()?.totalClientes ?? 0).toString()"
   />
   <app-card-stat
     icon="UserCheckRoundedBold"
-    title="Activos"
-    description="Clientes Ativos"
-    [value]="'100'"
-  />
-  <app-card-stat
-    icon="UserCrossRoundedBold"
-    title="Inactivos"
-    description="Clientes Inativos"
-    [value]="'100'"
+    title="Normal"
+    description="Clientes de 0 a 5"
+    [value]="(facade.rankingResumo()?.clientesNormais ?? 0).toString()"
   />
   <app-card-stat
     icon="UserHandUpLineDuotone"
+    title="Em crescimento"
+    description="Clientes de 6 a 8"
+    [value]="(facade.rankingResumo()?.clientesEmCrescimento ?? 0).toString()"
+  />
+  <app-card-stat
+    icon="CrownMinimalisticBold"
     title="VIP"
-    description="Clientes VIP"
-    [value]="'100'"
+    description="Clientes de 9 a 10"
+    [value]="(facade.rankingResumo()?.clientesVip ?? 0).toString()"
   />
 </div>
 

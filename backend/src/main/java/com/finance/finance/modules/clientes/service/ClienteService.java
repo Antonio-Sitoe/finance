@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import com.finance.finance.exceptions.BusinessException;
+import com.finance.finance.modules.clientes.dto.ClienteRankingResumoDTO;
 import com.finance.finance.modules.clientes.dto.ClienteRequestDTO;
 import com.finance.finance.modules.clientes.dto.ClienteResponseDTO;
 import com.finance.finance.modules.clientes.dto.ClienteStatusResponseDTO;
@@ -102,6 +103,11 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Cliente não encontrado"));
         return ClienteMapper.toDto(cliente);
+    }
+
+    @Transactional(readOnly = true)
+    public ClienteRankingResumoDTO obterResumoRanking() {
+        return clienteRepository.obterResumoRanking();
     }
 
 }
