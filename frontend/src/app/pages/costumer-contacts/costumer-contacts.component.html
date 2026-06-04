@@ -31,9 +31,7 @@
             <h2 class="text-lg font-bold text-gray-800 dark:text-white/90">
               {{ empresa.nomeEmpresarial }}
             </h2>
-            @if (empresa.vip) {
-              <app-badge variant="solid" color="primary" size="sm">VIP</app-badge>
-            }
+
             <app-badge
               variant="light"
               [color]="empresa.situacao === 'ATIVO' ? 'success' : 'error'"
