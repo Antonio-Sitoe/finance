@@ -64,6 +64,7 @@ export class ListStore<T> {
   setFilter(key: string, value: unknown) {
     this.query.update((q) => ({
       ...q,
+      page: 1,
       filters: { ...(q.filters ?? {}), [key]: value as any },
     }));
     this.reload();
