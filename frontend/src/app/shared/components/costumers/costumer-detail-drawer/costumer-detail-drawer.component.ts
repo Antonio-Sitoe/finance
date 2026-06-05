@@ -10,7 +10,6 @@ import {
 import { DatePipe } from '@angular/common'
 import { DrawerComponent } from '@/shared/components/ui/drawer/drawer.component'
 import { BadgeComponent } from '@/shared/components/ui/badge/badge.component'
-import { AvatarTextComponent } from '@/shared/components/ui/avatar/avatar-text.component'
 import { SwitchComponent } from '@/shared/components/ui/input/switch.component'
 import { ICustomerDTO } from '@/shared/interfaces/costumers.dto'
 import { SITUATION } from '@/shared/interfaces/enum.dto'
@@ -25,7 +24,6 @@ import { ToastService } from '@/shared/services/toast.service'
     DatePipe,
     DrawerComponent,
     BadgeComponent,
-    AvatarTextComponent,
     SolarDynamicIcon,
     SwitchComponent,
   ],

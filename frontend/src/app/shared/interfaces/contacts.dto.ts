@@ -11,3 +11,16 @@ export interface IContact {
   createdAt: string
   ultimaAtividade?: string
 }
+
+export interface IContactoDTO {
+  id: number
+  nome: string
+  departamento?: string
+  email: string
+  telefone: string
+  situacao: 'ATIVO' | 'INATIVO'
+  clienteId: number
+  clienteNome: string
+  createdAt?: string
+  updatedAt?: string
+}

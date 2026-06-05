@@ -107,13 +107,18 @@ public class ContactoController {
         }
 
         @GetMapping("/cliente/{clienteId}")
-        @Operation(summary = "Listar contactos por cliente", description = "Lista contactos associados a um cliente específico.")
+        @Operation(summary = "Listar contactos por cliente", description = "Lista paginada de contactos associados a um cliente, com filtros opcionais por nome, departamento e situação.")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = PageResponse.class)))
+                        @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = PageResponse.class))),
+                        @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
         })
-        public ResponseEntity<List<ContactoResponseDTO>> listarPorCliente(
-                        @Parameter(description = "ID do cliente", example = "1") @PathVariable Long clienteId) {
-                return ResponseEntity.ok(service.listarPorCliente(clienteId));
+        public ResponseEntity<PageResponse<ContactoResponseDTO>> listarPorCliente(
+                        @Parameter(description = "ID do cliente", example = "1") @PathVariable Long clienteId,
+                        @Parameter(description = "Filtro parcial por nome") @RequestParam(required = false) String nome,
+                        @Parameter(description = "Filtro parcial por departamento") @RequestParam(required = false) String departamento,
+                        @Parameter(description = "Filtro por situação") @RequestParam(required = false) Situacao situacao,
+                        @Valid @ModelAttribute PaginationRequest paginationRequest) {
+                return ResponseEntity.ok(service.listarPorCliente(clienteId, nome, departamento, situacao, paginationRequest));
         }
 
         @GetMapping("/por-cliente")

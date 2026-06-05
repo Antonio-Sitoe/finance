@@ -15,7 +15,9 @@
     class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]"
   >
     <div class="relative flex-1">
-      <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
+      <span
+        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
+      >
         <ng-container [solarIcon]="MagnifierBold" [size]="16" />
       </span>
       <app-input-field
@@ -33,13 +35,6 @@
       className="w-full sm:w-52"
     />
     <app-select
-      placeholder="Todos os departamentos"
-      [options]="departamentoOptions()"
-      [value]="filterDepartamento()"
-      (valueChange)="filterDepartamento.set($event)"
-      className="w-full sm:w-52"
-    />
-    <app-select
       placeholder="Todos os estados"
       [options]="situacaoOptions"
       [value]="filterSituacao()"
@@ -52,14 +47,15 @@
 <!-- Row Template -->
 <ng-template #contactRow let-row>
   <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
-
     <!-- Nome / Email -->
     <td class="px-5 py-3.5">
       <div class="flex items-center gap-3">
         <app-checkbox />
         <app-avatar-text [name]="row.nome" />
         <div>
-          <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             {{ row.nome }}
           </span>
           <span class="block text-xs text-gray-500 dark:text-gray-400">
@@ -72,7 +68,9 @@
     <!-- Departamento -->
     <td class="px-5 py-3.5">
       @if (row.departamento) {
-        <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700 dark:bg-white/[0.05] dark:text-gray-300">
+        <span
+          class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700 dark:bg-white/[0.05] dark:text-gray-300"
+        >
           {{ row.departamento }}
         </span>
       } @else {
@@ -94,7 +92,9 @@
           >
             {{ getEmpresaInitials(row.empresaNome) }}
           </span>
-          <span class="text-sm text-gray-700 dark:text-gray-300">{{ row.empresaNome }}</span>
+          <span class="text-sm text-gray-700 dark:text-gray-300">{{
+            row.empresaNome
+          }}</span>
         </div>
       } @else {
         <span class="text-xs text-gray-400">—</span>
@@ -169,7 +169,9 @@
   (close)="deactivateOpen.set(false)"
 >
   <div class="flex flex-col items-center p-6 text-center">
-    <div class="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-error-50 text-error-500 dark:bg-error-500/10">
+    <div
+      class="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-error-50 text-error-500 dark:bg-error-500/10"
+    >
       <ng-container [solarIcon]="DangerTriangleBold" [size]="32" />
     </div>
     <h3 class="mb-2 text-lg font-semibold text-gray-800 dark:text-white/90">
@@ -178,12 +180,14 @@
     <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
       Tem certeza que deseja desativar
       <span class="font-semibold text-gray-700 dark:text-gray-300">
-        [{{ selectedContact()?.nome }}]
-      </span>?
-      Ele deixará de aparecer nas listagens ativas, mas o histórico será preservado.
+        [{{ selectedContact()?.nome }}] </span
+      >? Ele deixará de aparecer nas listagens ativas, mas o histórico será
+      preservado.
     </p>
   </div>
-  <div class="flex gap-3 border-t border-gray-100 bg-gray-50 px-6 py-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
+  <div
+    class="flex gap-3 border-t border-gray-100 bg-gray-50 px-6 py-4 dark:border-white/[0.05] dark:bg-white/[0.02]"
+  >
     <button
       (click)="deactivateOpen.set(false)"
       class="flex-1 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-gray-300 dark:hover:bg-white/[0.05]"

@@ -111,11 +111,28 @@ public class ContactoService {
         }
 
         @Transactional(readOnly = true)
-        public List<ContactoResponseDTO> listarPorCliente(Long clienteId) {
+        public PageResponse<ContactoResponseDTO> listarPorCliente(Long clienteId, String nome,
+                        String departamento, Situacao situacao, PaginationRequest paginationRequest) {
                 clienteRepository.findById(clienteId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Cliente não encontrado com id: " + clienteId));
-                return contactoRepository.findByClienteId(clienteId).stream().map(ContactoMapper::toDto).toList();
+
+                Pageable pageable = paginationRequest.toPageable("nome");
+                Specification<Contacto> spec = (root, query, cb) -> cb.equal(root.get("cliente").get("id"), clienteId);
+
+                if (nome != null && !nome.isBlank()) {
+                        spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("nome")),
+                                        "%" + nome.trim().toLowerCase() + "%"));
+                }
+                if (departamento != null && !departamento.isBlank()) {
+                        spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("departamento")),
+                                        "%" + departamento.trim().toLowerCase() + "%"));
+                }
+                if (situacao != null) {
+                        spec = spec.and((root, query, cb) -> cb.equal(root.get("situacao"), situacao));
+                }
+
+                return PageResponse.from(contactoRepository.findAll(spec, pageable).map(ContactoMapper::toDto));
         }
 
         @Transactional(readOnly = true)
