@@ -4,6 +4,7 @@ import { CUSTOMER_API_ENDPOINTS } from './customer.endpoint.service'
 import { Observable } from 'rxjs'
 import {
   CreateCustomerDto,
+  ICustomerRankingResumoDTO,
   ICustomerDTO,
   UpdateCustomerDto,
 } from '@/shared/interfaces/costumers.dto'
@@ -36,6 +37,16 @@ export class CustomerApiService {
 
   updateCustomer(id: number, dto: UpdateCustomerDto): Observable<ICustomerDTO> {
     return this.http.patch<ICustomerDTO>(CUSTOMER_API_ENDPOINTS.UPDATE(id), dto)
+  }
+
+  getById(id: number): Observable<ICustomerDTO> {
+    return this.http.get<ICustomerDTO>(CUSTOMER_API_ENDPOINTS.GET_BY_ID(id))
+  }
+
+  getRankingResumo(): Observable<ICustomerRankingResumoDTO> {
+    return this.http.get<ICustomerRankingResumoDTO>(
+      CUSTOMER_API_ENDPOINTS.RANKING,
+    )
   }
 
   updateSituacao(id: number, situacao: SITUATION): Observable<ICustomerDTO> {

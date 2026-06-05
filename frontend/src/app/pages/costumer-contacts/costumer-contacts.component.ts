@@ -1,195 +1,35 @@
-import { Component, computed, inject, signal } from '@angular/core'
+import { Component, inject, OnInit } from '@angular/core'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
-import { IContactoCliente } from '@/shared/interfaces/costumers.dto'
-import {
-  DataTableComponent,
-  ColumnDef,
-} from '@/shared/components/ui/datatable/datatable'
 import { BadgeComponent } from '@/shared/components/ui/badge/badge.component'
-import { AvatarTextComponent } from '@/shared/components/ui/avatar/avatar-text.component'
-import { InputFieldComponent } from '@/shared/components/ui/input/input-field.component'
-import { SelectComponent } from '@/shared/components/ui/select/select.component'
-import {
-  SolarDynamicIcon,
-  AltArrowLeftBold,
-  BuildingsBold,
-  UserPlusBold,
-  MagnifierBold,
-  FilterBold,
-  LetterBold,
-  MenuDotsBold,
-  UsersGroupRoundedBold,
-} from '@solar-icons/angular'
-
-const MOCK_CLIENTES = [
-  {
-    id: 1,
-    nomeEmpresarial: 'Global Trade Solutions S.A.',
-    email: 'contacto@globaltrade.pt',
-    telefone: '+351 210 998 776',
-    endereco: 'Avenida da Liberdade, 110',
-    numero: '110',
-    complemento: '4º Piso, Ala Norte',
-    cidade: 'Lisboa',
-    distrito: 'Lisboa',
-    situacao: 'ATIVO',
-    createdAt: '2024-03-15T10:00:00Z',
-    contactos: [
-      {
-        id: 1,
-        nome: 'Ana Martins',
-        cargo: 'Diretora Financeira - CFO',
-        departamento: 'Financeiro',
-        telefone: '+351 912 345 678',
-        email: 'ana.martins@globaltrade.pt',
-        situacao: 'ATIVO',
-        ultimaAtividade: 'Hoje, 10:45',
-      },
-      {
-        id: 2,
-        nome: 'Ricardo Costa',
-        cargo: 'Gestor de Compras',
-        departamento: 'Compras',
-        telefone: '+351 934 567 890',
-        email: 'ricardo.costa@globaltrade.pt',
-        situacao: 'ATIVO',
-        ultimaAtividade: 'Ontem, 14:20',
-      },
-      {
-        id: 3,
-        nome: 'Sandra Teixeira',
-        cargo: 'Assistente Administrativa',
-        departamento: 'Administrativo',
-        telefone: '+351 961 122 334',
-        email: 'sandra.t@globaltrade.pt',
-        situacao: 'INATIVO',
-        ultimaAtividade: '3 dias atrás',
-      },
-    ],
-  },
-  {
-    id: 166,
-    nomeEmpresarial: 'TechVision Lda.',
-    email: 'geral@techvision.ao',
-    telefone: '+244 923 456 789',
-    cidade: 'Luanda',
-    situacao: 'ATIVO',
-    createdAt: '2024-05-20T08:30:00Z',
-    contactos: [
-      {
-        id: 4,
-        nome: 'Pedro Alves',
-        cargo: 'Diretor Geral',
-        departamento: 'Direção',
-        telefone: '+244 923 456 789',
-        email: 'pedro.alves@techvision.ao',
-        situacao: 'ATIVO',
-        ultimaAtividade: 'Hoje, 09:00',
-      },
-    ],
-  },
-  {
-    id: 3,
-    nomeEmpresarial: 'Construtora Norte S.A.',
-    email: 'info@construtora-norte.pt',
-    telefone: '+351 253 112 233',
-    cidade: 'Braga',
-    situacao: 'INATIVO',
-    createdAt: '2023-11-08T14:00:00Z',
-    contactos: [],
-  },
-]
+import { CostumerContactsTableComponent } from '@/shared/components/costumers/costumer-contacts-table/costumer-contacts-table.component'
+import { CostumerContactsFacadeService } from '@/shared/services/contactos/costumer-contacts.facade.service'
+import { SolarDynamicIcon, AltArrowLeftBold, BuildingsBold } from '@solar-icons/angular'
 
 @Component({
   selector: 'app-costumer-contacts',
   imports: [
     RouterModule,
-    DataTableComponent,
     BadgeComponent,
-    AvatarTextComponent,
-    InputFieldComponent,
-    SelectComponent,
+    CostumerContactsTableComponent,
     SolarDynamicIcon,
   ],
   templateUrl: './costumer-contacts.component.html',
+  providers: [CostumerContactsFacadeService],
 })
-export class CostumerContactsComponent {
+export class CostumerContactsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute)
   private readonly router = inject(Router)
+  readonly facade = inject(CostumerContactsFacadeService)
 
   readonly AltArrowLeftBold = AltArrowLeftBold
   readonly BuildingsBold = BuildingsBold
-  readonly UserPlusBold = UserPlusBold
-  readonly MagnifierBold = MagnifierBold
-  readonly FilterBold = FilterBold
-  readonly LetterBold = LetterBold
-  readonly MenuDotsBold = MenuDotsBold
-  readonly UsersGroupRoundedBold = UsersGroupRoundedBold
 
-  readonly searchTerm = signal('')
-  readonly filterDepartamento = signal('')
-  readonly filterSituacao = signal('')
-
-  readonly cliente = computed<any | null>(() => {
+  ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'))
-    return MOCK_CLIENTES.find((c) => c.id === id) ?? null
-  })
-
-  readonly contactosFiltrados = computed<IContactoCliente[]>(() => {
-    const contactos = this.cliente()?.contactos ?? []
-    const search = this.searchTerm().toLowerCase()
-    const dept = this.filterDepartamento()
-    const sit = this.filterSituacao()
-
-    return contactos.filter((c: any) => {
-      const matchSearch =
-        !search ||
-        c.nome.toLowerCase().includes(search) ||
-        c.email?.toLowerCase().includes(search) ||
-        c.cargo.toLowerCase().includes(search)
-      const matchDept = !dept || c.departamento === dept
-      const matchSit = !sit || c.situacao === sit
-      return matchSearch && matchDept && matchSit
-    })
-  })
-
-  readonly departamentos = computed<string[]>(() => {
-    const depts = this.cliente()
-      ?.contactos?.map((c: any) => c.departamento)
-      .filter(Boolean) as string[]
-    return [...new Set(depts)]
-  })
-
-  readonly departamentoOptions = computed(() => [
-    { label: 'Todos os departamentos', value: '' },
-    ...this.departamentos().map((d) => ({ label: d, value: d })),
-  ])
-
-  readonly situacaoOptions = [
-    { label: 'Todos os estados', value: '' },
-    { label: 'Ativo', value: 'ATIVO' },
-    { label: 'Inativo', value: 'INATIVO' },
-  ]
-
-  columns: ColumnDef[] = [
-    { id: 'contacto', label: 'Nome / Cargo' },
-    { id: 'departamento', label: 'Departamento' },
-    { id: 'telefone', label: 'Telefone' },
-    { id: 'ultimaAtividade', label: 'Última Atividade' },
-    { id: 'situacao', label: 'Estado', align: 'center' },
-    { id: 'acoes', label: '', align: 'right' },
-  ]
+    if (id) this.facade.load(id)
+  }
 
   goBack(): void {
     this.router.navigate(['/costumers'])
-  }
-
-  getInitials(nome: string): string {
-    return nome
-      .split(' ')
-      .map((n) => n[0])
-      .slice(0, 2)
-      .join('')
-      .toUpperCase()
   }
 }
