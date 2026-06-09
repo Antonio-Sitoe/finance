@@ -1,4 +1,4 @@
-import { Observable, Subject, switchMap, tap, finalize, filter } from "rxjs";
+import { Observable, Subject, switchMap, tap, finalize, filter, debounceTime } from "rxjs";
 import { ListQuery, PageResult, SortDir } from "./listing.dto";
 import { signal } from "@angular/core";
 
@@ -15,8 +15,13 @@ export class ListStore<T> {
 
   private _loader?: ListLoader<T>;
   private readonly _trigger = new Subject<ListQuery>();
+  private readonly _debouncedTrigger = new Subject<ListQuery>();
 
   constructor() {
+    this._debouncedTrigger
+      .pipe(debounceTime(350))
+      .subscribe((q) => this._trigger.next(q));
+
     this._trigger
       .pipe(
         filter(() => !!this._loader),
@@ -68,6 +73,15 @@ export class ListStore<T> {
       filters: { ...(q.filters ?? {}), [key]: value as any },
     }));
     this.reload();
+  }
+
+  setFilterDebounced(key: string, value: unknown) {
+    this.query.update((q) => ({
+      ...q,
+      page: 1,
+      filters: { ...(q.filters ?? {}), [key]: value as any },
+    }));
+    this._debouncedTrigger.next(this.query());
   }
 
   clearFilters() {

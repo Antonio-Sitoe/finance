@@ -1,53 +1,58 @@
-import { computed, inject, Injectable, signal } from '@angular/core'
-import { ICustomerDTO } from '@/shared/interfaces/costumers.dto'
-import { IContactoDTO } from '@/shared/interfaces/contacts.dto'
-import { SITUATION } from '@/shared/interfaces/enum.dto'
-import { ListStore } from '@/shared/config/listing/list.store'
-import { CustomerApiService } from '@/shared/services/customers/customer.api.service'
-import { ContactoApiService } from './contacto.api.service'
+﻿import { computed, inject, Injectable, signal } from "@angular/core";
+import { ICustomerDTO } from "@/shared/interfaces/costumers.dto";
+import { IContactDTO } from "@/shared/interfaces/contacts.dto";
+import { SITUATION } from "@/shared/interfaces/enum.dto";
+import { ListStore } from "@/shared/config/listing/list.store";
+import { CustomerApiService } from "@/shared/services/customers/customer.api.service";
+import { ContactoApiService } from "./contacto.api.service";
 
 @Injectable()
 export class CostumerContactsFacadeService {
-  private readonly customerApi = inject(CustomerApiService)
-  private readonly contactoApi = inject(ContactoApiService)
+  private readonly customerApi = inject(CustomerApiService);
+  private readonly contactoApi = inject(ContactoApiService);
 
-  readonly cliente = signal<ICustomerDTO | null>(null)
-  readonly loadingCliente = signal(false)
+  readonly cliente = signal<ICustomerDTO | null>(null);
+  readonly loadingCliente = signal(false);
 
-  readonly list = new ListStore<IContactoDTO>()
+  readonly list = new ListStore<IContactDTO>();
 
   readonly searchTerm = computed(() =>
-    String(this.list.query().filters?.['nome'] ?? ''),
-  )
+    String(this.list.query().filters?.["nome"] ?? "")
+  );
 
   readonly filterSituacao = computed(() =>
-    String(this.list.query().filters?.['situacao'] ?? ''),
-  )
+    String(this.list.query().filters?.["situacao"] ?? "")
+  );
 
   readonly situacaoOptions = [
-    { label: 'Todos os estados', value: '' },
-    { label: 'Ativo', value: SITUATION.ATIVO },
-    { label: 'Inativo', value: SITUATION.INATIVO },
-  ]
+    { label: "Todos os estados", value: "" },
+    { label: "Ativo", value: SITUATION.ATIVO },
+    { label: "Inativo", value: SITUATION.INATIVO },
+  ];
 
   load(clienteId: number): void {
-    this.loadingCliente.set(true)
+    this.loadingCliente.set(true);
     this.customerApi.getById(clienteId).subscribe({
       next: (cliente) => {
-        this.cliente.set(cliente)
-        this.loadingCliente.set(false)
+        this.cliente.set(cliente);
+        this.loadingCliente.set(false);
       },
       error: () => this.loadingCliente.set(false),
-    })
+    });
 
-    this.list.connect((query) => this.contactoApi.getByCliente(clienteId, query))
+    this.list.connect((query) =>
+      this.contactoApi.getByCliente(clienteId, query)
+    );
   }
 
   search(value: string): void {
-    this.list.setFilter('nome', value)
+    this.list.setFilterDebounced("nome", value);
   }
 
   filterBySituacao(value: string): void {
-    this.list.setFilter('situacao', value)
+    this.list.setFilter("situacao", value);
+  }
+  refresh(): void {
+    this.list.reload();
   }
 }

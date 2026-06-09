@@ -1,6 +1,7 @@
-import { API_URL } from '@/shared/config/http'
+import { API_URL } from "@/shared/config/http";
 
 export const CUSTOMER_API_ENDPOINTS = {
+  ALL: `${API_URL}/clientes/all`,
   LIST: `${API_URL}/clientes`,
   CREATE: `${API_URL}/clientes`,
   GET_BY_ID: (id: number) => `${API_URL}/clientes/${id}`,
@@ -9,4 +10,4 @@ export const CUSTOMER_API_ENDPOINTS = {
   SITUACAO: (id: number) => `${API_URL}/clientes/${id}/situacao`,
   RANKING: `${API_URL}/clientes/ranking`,
   ANALYTICS: `${API_URL}/clientes/analytics`,
-} as const
+} as const;
