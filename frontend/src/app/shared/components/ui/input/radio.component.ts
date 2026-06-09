@@ -1,10 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-radio',
   imports: [
     CommonModule,
+  ],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RadioComponent),
+      multi: true,
+    },
   ],
   template: `
   <label
@@ -50,7 +58,7 @@ import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/cor
 </label>
   `,
 })
-export class RadioComponent {
+export class RadioComponent implements ControlValueAccessor {
 
   @Input() id!: string;
   @Input() name!: string;
@@ -62,9 +70,31 @@ export class RadioComponent {
 
   @Output() valueChange = new EventEmitter<string>();
 
+  private _onChange: (value: string) => void = () => {};
+  private _onTouched: () => void = () => {};
+
+  writeValue(value: string): void {
+    this.checked = value === this.value;
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this._onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this._onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
   onChange() {
     if (!this.disabled) {
+      this.checked = true;
       this.valueChange.emit(this.value);
+      this._onChange(this.value);
+      this._onTouched();
     }
   }
 }

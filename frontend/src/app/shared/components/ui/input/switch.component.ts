@@ -1,10 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-switch',
   imports: [
     CommonModule
+  ],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SwitchComponent),
+      multi: true,
+    },
   ],
   template: `
    <label
@@ -30,7 +38,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
     </label>
   `
 })
-export class SwitchComponent implements OnInit, OnChanges {
+export class SwitchComponent implements OnInit, OnChanges, ControlValueAccessor {
 
   @Input() label!: string;
   @Input() defaultChecked: boolean = false;
@@ -40,6 +48,9 @@ export class SwitchComponent implements OnInit, OnChanges {
   @Output() valueChange = new EventEmitter<boolean>();
 
   isChecked: boolean = false;
+
+  private _onChange: (value: boolean) => void = () => {};
+  private _onTouched: () => void = () => {};
 
   ngOnInit() {
     this.isChecked = this.defaultChecked;
@@ -51,10 +62,28 @@ export class SwitchComponent implements OnInit, OnChanges {
     }
   }
 
+  writeValue(value: boolean): void {
+    this.isChecked = !!value;
+  }
+
+  registerOnChange(fn: (value: boolean) => void): void {
+    this._onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this._onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
   handleToggle() {
     if (this.disabled) return;
     this.isChecked = !this.isChecked;
     this.valueChange.emit(this.isChecked);
+    this._onChange(this.isChecked);
+    this._onTouched();
   }
 
   get switchColors() {

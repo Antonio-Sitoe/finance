@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 
 @Component({
@@ -12,6 +13,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
         [rows]="rows"
         [value]="value"
         (input)="onInput($event)"
+        (blur)="onTouched()"
         [disabled]="disabled"
         [ngClass]="textareaClasses"
       ></textarea>
@@ -24,9 +26,16 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       }
     </div>
   `,
-  styles: ``
+  styles: ``,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => TextAreaComponent),
+      multi: true,
+    },
+  ],
 })
-export class TextAreaComponent {
+export class TextAreaComponent implements ControlValueAccessor {
 
   @Input() placeholder = 'Enter your message';
   @Input() rows = 3;
@@ -38,9 +47,30 @@ export class TextAreaComponent {
 
   @Output() valueChange = new EventEmitter<string>();
 
+  private _onChange: (value: string) => void = () => {};
+  onTouched: () => void = () => {};
+
+  writeValue(value: string): void {
+    this.value = value ?? '';
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this._onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
   onInput(event: Event) {
     const val = (event.target as HTMLTextAreaElement).value;
+    this.value = val;
     this.valueChange.emit(val);
+    this._onChange(val);
   }
 
   get textareaClasses(): string {

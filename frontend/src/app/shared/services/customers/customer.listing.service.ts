@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core'
+﻿import { computed, inject, Injectable, signal } from '@angular/core'
 import { ICustomerDTO, ICustomerRankingResumoDTO } from '@/shared/interfaces/costumers.dto'
 import { ListStore } from '@/shared/config/listing/list.store'
 import { CustomerApiService } from './customer.api.service'
@@ -38,7 +38,7 @@ export class CustomerFacadeService {
   }
 
   search(value: string): void {
-    this.list.setFilter('search', value)
+    this.list.setFilterDebounced('search', value)
   }
 
   filterBySituacao(value: string): void {
@@ -57,3 +57,4 @@ export class CustomerFacadeService {
     this.loadRankingResumo()
   }
 }
+

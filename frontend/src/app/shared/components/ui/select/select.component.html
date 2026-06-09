@@ -2,7 +2,8 @@
   <button
     type="button"
     (click)="toggle()"
-    class="flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-brand-800"
+    [disabled]="disabled"
+    [class]="buttonClasses"
   >
     <span
       class="truncate"
@@ -47,3 +48,12 @@
     </div>
   }
 </div>
+
+@if (hint) {
+  <p class="mt-1.5 text-xs"
+    [class.text-error-500]="error"
+    [class.text-success-500]="success && !error"
+    [class.text-gray-500]="!error && !success">
+    {{ hint }}
+  </p>
+}

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-checkbox',
@@ -69,9 +70,16 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   }
 </label>
   `,
-  styles: ``
+  styles: ``,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => CheckboxComponent),
+      multi: true,
+    },
+  ],
 })
-export class CheckboxComponent {
+export class CheckboxComponent implements ControlValueAccessor {
 
   @Input() label?: string;
   @Input() checked = false;
@@ -80,8 +88,30 @@ export class CheckboxComponent {
   @Input() disabled = false;
   @Output() checkedChange = new EventEmitter<boolean>();
 
+  private _onChange: (value: boolean) => void = () => {};
+  onTouched: () => void = () => {};
+
+  writeValue(value: boolean): void {
+    this.checked = !!value;
+  }
+
+  registerOnChange(fn: (value: boolean) => void): void {
+    this._onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
   onChange(event: Event) {
     const input = event.target as HTMLInputElement;
+    this.checked = input.checked;
     this.checkedChange.emit(input.checked);
+    this._onChange(input.checked);
+    this.onTouched();
   }
 }
