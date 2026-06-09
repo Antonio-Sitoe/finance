@@ -30,3 +30,16 @@ export const DEPARTMENT_OPTIONS = [
   { label: "Direção", value: "Direção" },
   { label: "Compras", value: "Compras" },
 ];
+
+export const department_options = [
+  { label: "Todos os departamentos", value: "" },
+  { label: "Financeiro", value: "Financeiro" },
+  { label: "Operações", value: "Operações" },
+  { label: "Tecnologia", value: "Tecnologia" },
+  { label: "Compliance", value: "Compliance" },
+  { label: "Comercial", value: "Comercial" },
+  { label: "Jurídico", value: "Jurídico" },
+  { label: "Administrativo", value: "Administrativo" },
+  { label: "Direção", value: "Direção" },
+  { label: "Compras", value: "Compras" },
+];

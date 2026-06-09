@@ -1,22 +1,41 @@
 @if (facade.loadingCliente()) {
-  <div class="flex items-center justify-center py-24 text-gray-400 dark:text-gray-500">
-    <div class="h-8 w-8 animate-spin rounded-full border-2 border-brand-500 border-t-transparent"></div>
+  <div
+    class="flex items-center justify-center py-24 text-gray-400 dark:text-gray-500"
+  >
+    <div
+      class="h-8 w-8 animate-spin rounded-full border-2 border-brand-500 border-t-transparent"
+    ></div>
   </div>
 } @else if (facade.cliente(); as empresa) {
-
   <!-- Breadcrumb + Title -->
   <div class="mb-6 flex items-start justify-between">
     <div>
-      <nav class="mb-2 flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-        <a routerLink="/" class="transition-colors hover:text-gray-700 dark:hover:text-gray-300">Sistema</a>
+      <nav
+        class="mb-2 flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400"
+      >
+        <a
+          routerLink="/"
+          class="transition-colors hover:text-gray-700 dark:hover:text-gray-300"
+          >Sistema</a
+        >
         <span class="text-gray-300 dark:text-gray-600">/</span>
-        <a routerLink="/costumers" class="transition-colors hover:text-gray-700 dark:hover:text-gray-300">Clientes</a>
+        <a
+          routerLink="/costumers"
+          class="transition-colors hover:text-gray-700 dark:hover:text-gray-300"
+          >Clientes</a
+        >
         <span class="text-gray-300 dark:text-gray-600">/</span>
-        <span class="font-medium text-gray-700 dark:text-gray-300">{{ empresa.nomeEmpresarial }}</span>
+        <span class="font-medium text-gray-700 dark:text-gray-300">{{
+          empresa.nomeEmpresarial
+        }}</span>
         <span class="text-gray-300 dark:text-gray-600">/</span>
-        <span class="font-medium text-gray-700 dark:text-gray-300">Contactos</span>
+        <span class="font-medium text-gray-700 dark:text-gray-300"
+          >Contactos</span
+        >
       </nav>
-      <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Contactos Associados</h1>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">
+        Contactos Associados
+      </h1>
       <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
         Gerencie os contactos da empresa e os seus dados de comunicação.
       </p>
@@ -24,11 +43,17 @@
   </div>
 
   <!-- Company Banner -->
-  <div class="mb-6 rounded-xl border border-gray-200 bg-white p-5 dark:border-white/[0.05] dark:bg-gray-900">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div
+    class="mb-6 rounded-xl border border-gray-200 bg-white p-5 dark:border-white/[0.05] dark:bg-gray-900"
+  >
+    <div
+      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+    >
       <div class="flex items-center gap-4">
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-500 dark:bg-brand-500/10">
-          <ng-container [solarIcon]="BuildingsBold" [size]="28" />
+        <div
+          class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-500 dark:bg-brand-500/10"
+        >
+          <ng-container [solarIcon]="'BuildingsBold'" [size]="28" />
         </div>
         <div>
           <div class="flex flex-wrap items-center gap-2">
@@ -40,17 +65,23 @@
               [color]="empresa.situacao === 'ATIVO' ? 'success' : 'error'"
               size="sm"
             >
-              {{ empresa.situacao === 'ATIVO' ? 'Ativo' : 'Inativo' }}
+              {{ empresa.situacao === "ATIVO" ? "Ativo" : "Inativo" }}
             </app-badge>
           </div>
-          <div class="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+          <div
+            class="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400"
+          >
             <span>{{ empresa.email }}</span>
             @if (empresa.telefone) {
-              <span class="hidden text-gray-300 dark:text-gray-600 sm:inline">|</span>
+              <span class="hidden text-gray-300 dark:text-gray-600 sm:inline"
+                >|</span
+              >
               <span>{{ empresa.telefone }}</span>
             }
             @if (empresa.cidade) {
-              <span class="hidden text-gray-300 dark:text-gray-600 sm:inline">|</span>
+              <span class="hidden text-gray-300 dark:text-gray-600 sm:inline"
+                >|</span
+              >
               <span>{{ empresa.cidade }}</span>
             }
           </div>
@@ -60,7 +91,7 @@
         (click)="goBack()"
         class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-gray-300 dark:hover:bg-white/[0.05]"
       >
-        <ng-container [solarIcon]="AltArrowLeftBold" [size]="16" />
+        <ng-container solarIcon="'AltArrowLeftBold'" [size]="16" />
         Ver todos os clientes
       </button>
     </div>
@@ -68,10 +99,11 @@
 
   <!-- Contacts Table Component -->
   <app-costumer-contacts-table />
-
 } @else {
-  <div class="flex flex-col items-center gap-3 py-24 text-center text-gray-400 dark:text-gray-500">
-    <ng-container [solarIcon]="BuildingsBold" [size]="40" />
+  <div
+    class="flex flex-col items-center gap-3 py-24 text-center text-gray-400 dark:text-gray-500"
+  >
+    <ng-container [solarIcon]="'BuildingsBold'" [size]="40" />
     <p class="text-sm font-medium">Cliente não encontrado</p>
     <button
       (click)="goBack()"

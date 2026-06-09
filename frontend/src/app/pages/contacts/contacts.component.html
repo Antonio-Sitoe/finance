@@ -4,7 +4,7 @@
   [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Contactos' }]"
 >
   <button
-    (click)="drawerOpen.set(true)"
+    (click)="openNew()"
     class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
   >
     <span class="text-base leading-none">+</span>
@@ -13,42 +13,24 @@
 </app-page-header>
 
 <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6">
-  <app-card-stat
-    icon="UsersGroupRoundedBold"
-    title="Total"
-    description="Total de contactos"
-    value="0"
-  />
-  <app-card-stat
-    icon="UserCheckRoundedBold"
-    title="Média por empresa"
-    description="Média de contactos por empresa"
-    value="0"
-  />
-  <app-card-stat
-    icon="UserBlockRoundedBold"
-    title="Empresas com contactos"
-    description="Número de empresas com ≥1 contacto"
-    value="0"
-  />
-  <app-card-stat
-    icon="BuildingsBold"
-    title="Empresas sem contactos"
-    description="Número de empresas sem contactos"
-    value="0"
-  />
+  <app-card-stat icon="UsersGroupRoundedBold" title="Total" description="Total de contactos" value="0" />
+  <app-card-stat icon="UserCheckRoundedBold" title="Média por empresa" description="Média de contactos por empresa" value="0" />
+  <app-card-stat icon="UserBlockRoundedBold" title="Empresas com contactos" description="Número de empresas com ≥1 contacto" value="0" />
+  <app-card-stat icon="BuildingsBold" title="Empresas sem contactos" description="Número de empresas sem contactos" value="0" />
 </div>
 
 <div class="w-full">
-  <app-contacts-list-table />
+  <app-contacts-list-table
+    (editClick)="openEdit($event)"
+    (detailClick)="openDetail($event)"
+  />
 </div>
 
-<!-- Drawers -->
 @if (drawerOpen()) {
   <app-create-and-edit-contact
     [open]="drawerOpen()"
     [contact]="selectedContact()"
-    (openChange)="drawerOpen.set($event)"
+    (openChange)="onDrawerClose($event)"
   />
 }
 
@@ -58,6 +40,5 @@
     [contact]="selectedContact()"
     (openChange)="detailDrawerOpen.set($event)"
     (edit)="openEdit($event)"
-    (deactivate)="openDeactivate($event)"
   />
 }

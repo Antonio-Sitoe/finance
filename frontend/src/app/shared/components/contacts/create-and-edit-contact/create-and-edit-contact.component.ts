@@ -1,101 +1,163 @@
-import { Component, computed, Input, Output, EventEmitter, signal, OnChanges, SimpleChanges } from '@angular/core'
-import { DrawerComponent } from '@/shared/components/ui/drawer/drawer.component'
-import { LabelComponent } from '@/shared/components/ui/label/label.component'
-import { InputFieldComponent } from '@/shared/components/ui/input/input-field.component'
-import { SelectComponent } from '@/shared/components/ui/select/select.component'
-import { SwitchComponent } from '@/shared/components/ui/input/switch.component'
-import { ButtonComponent } from '@/shared/components/ui/button/button.component'
-import { IContact } from '@/shared/interfaces/contacts.dto'
 import {
-  SolarDynamicIcon,
-  UserRoundedBold,
-  LetterBold,
-  BuildingsBold,
-  LockKeyholeMinimalisticBold,
-} from '@solar-icons/angular'
+  Input,
+  Output,
+  signal,
+  computed,
+  Component,
+  OnInit,
+  OnChanges,
+  EventEmitter,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
+
+import {
+  DEPARTMENT_OPTIONS,
+  DEPARTMENT_SHORTCUTS,
+} from "@/shared/constants/contacts.columns";
+
+import {
+  IContactPayloadDTO,
+  IContactDTO,
+} from "@/shared/interfaces/contacts.dto";
+import { LabelComponent } from "@/shared/components/ui/label/label.component";
+import { SwitchComponent } from "@/shared/components/ui/input/switch.component";
+import { ButtonComponent } from "@/shared/components/ui/button/button.component";
+import { DrawerComponent } from "@/shared/components/ui/drawer/drawer.component";
+import { SolarDynamicIcon } from "@solar-icons/angular";
+import { ContactFormService } from "@/shared/services/contactos/contact.form.service";
+import { CustomerApiService } from "@/shared/services/customers/customer.api.service";
+import { ContactoApiService } from "@/shared/services/contactos/contacto.api.service";
+import { InputFieldComponent } from "@/shared/components/ui/input/input-field.component";
+import { ReactiveFormsModule } from "@angular/forms";
+import {
+  SelectComponent,
+  SelectOption,
+} from "@/shared/components/ui/select/select.component";
+import { ToastService } from "@/shared/services/toast.service";
+import { ContactsFacadeService } from "@/shared/services/contactos/contacts.facade.service";
 
 @Component({
-  selector: 'app-create-and-edit-contact',
+  selector: "app-create-and-edit-contact",
   imports: [
-    DrawerComponent,
     LabelComponent,
-    InputFieldComponent,
     SelectComponent,
     SwitchComponent,
     ButtonComponent,
+    DrawerComponent,
     SolarDynamicIcon,
+    ReactiveFormsModule,
+    InputFieldComponent,
   ],
-  templateUrl: './create-and-edit-contact.component.html',
+  templateUrl: "./create-and-edit-contact.component.html",
+  providers: [ContactFormService],
 })
-export class CreateAndEditContactComponent implements OnChanges {
-  @Input() open = false
-  @Input() contact: IContact | null = null
-  @Output() openChange = new EventEmitter<boolean>()
+export class CreateAndEditContactComponent implements OnInit, OnChanges {
+  @Input() open = false;
+  @Input() contact: IContactDTO | null = null;
+  @Input() lockedClienteId: number | null = null;
+  @Input() lockedClienteNome: string | null = null;
+  @Output() openChange = new EventEmitter<boolean>();
 
-  readonly UserRoundedBold = UserRoundedBold
-  readonly LetterBold = LetterBold
-  readonly BuildingsBold = BuildingsBold
-  readonly LockKeyholeMinimalisticBold = LockKeyholeMinimalisticBold
+  readonly toast = inject(ToastService);
+  readonly facade = inject(ContactsFacadeService);
+  readonly contactService = inject(ContactFormService);
+  readonly customerApi = inject(CustomerApiService);
+  readonly api = inject(ContactoApiService);
+  readonly form = this.contactService.form;
+  readonly isEditing = computed(() => !!this.contact);
+  readonly isLoading = signal(false);
 
-  readonly isEditing = computed(() => !!this.contact)
+  readonly departamentosRapidos = DEPARTMENT_SHORTCUTS;
+  readonly departamentoOptions = DEPARTMENT_OPTIONS;
+  readonly empresaOptions = signal<SelectOption[]>([]);
 
-  readonly nome = signal('')
-  readonly cargo = signal('')
-  readonly email = signal('')
-  readonly telefone = signal('')
-  readonly departamento = signal('')
-  readonly empresa = signal('')
-  readonly isAtivo = signal(true)
-
-  readonly departamentosRapidos = ['Financeiro', 'Operações', 'TI', 'Compliance', 'Comercial', 'Jurídico']
-
-  readonly departamentoOptions = [
-    { label: 'Seleccionar departamento', value: '' },
-    { label: 'Financeiro', value: 'Financeiro' },
-    { label: 'Operações', value: 'Operações' },
-    { label: 'TI', value: 'Tecnologia' },
-    { label: 'Compliance', value: 'Compliance' },
-    { label: 'Comercial', value: 'Comercial' },
-    { label: 'Jurídico', value: 'Jurídico' },
-    { label: 'Administrativo', value: 'Administrativo' },
-    { label: 'Direção', value: 'Direção' },
-    { label: 'Compras', value: 'Compras' },
-  ]
-
-  readonly empresaOptions = [
-    { label: 'Seleccionar empresa', value: '' },
-    { label: 'Global Trade Solutions S.A.', value: 'Global Trade Solutions S.A.' },
-    { label: 'TechVision Lda.', value: 'TechVision Lda.' },
-    { label: 'Construtora Norte S.A.', value: 'Construtora Norte S.A.' },
-  ]
+  ngOnInit(): void {
+    this.customerApi.getAllCostumers().subscribe((clientes) => {
+      this.empresaOptions.set(
+        clientes.map((c) => ({ value: String(c.id), label: c.nomeEmpresarial }))
+      );
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['open']?.currentValue === true) {
+    if (changes["open"]?.currentValue === true) {
       if (this.contact) {
-        this.nome.set(this.contact.nome)
-        this.cargo.set(this.contact.cargo)
-        this.email.set(this.contact.email ?? '')
-        this.telefone.set(this.contact.telefone ?? '')
-        this.departamento.set(this.contact.departamento ?? '')
-        this.empresa.set(this.contact.empresaNome ?? '')
-        this.isAtivo.set(this.contact.situacao === 'ATIVO')
+        this.form.patchValue({
+          nome: this.contact.nome,
+          email: this.contact.email ?? "",
+          telefone: this.contact.telefone ?? "",
+          departamento: this.contact.departamento ?? "",
+          empresa: this.contact.clienteId ? String(this.contact.clienteId) : "",
+          situacao: this.contact.situacao === "ATIVO",
+        });
       } else {
-        this.nome.set('')
-        this.cargo.set('')
-        this.email.set('')
-        this.telefone.set('')
-        this.departamento.set('')
-        this.empresa.set('')
-        this.isAtivo.set(true)
+        this.form.reset({
+          situacao: true,
+          empresa: this.lockedClienteId ? String(this.lockedClienteId) : "",
+        });
       }
     }
   }
 
+  onSubmit(): void {
+    if (!this.form.valid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.isLoading.set(true);
+    const payload = this.contactService.getPayload();
+
+    const request$ = this.contact
+      ? this.api.update(this.contact.id, payload)
+      : this.api.create(payload);
+
+    request$.subscribe({
+      next: (response) => {
+        this.toast.success(
+          this.isEditing()
+            ? "Contacto atualizado: " + response.nome
+            : "Contacto criado: " + response.nome
+        );
+        this.facade.refresh();
+        this.openChange.emit(false);
+        this.isLoading.set(false);
+        this.close();
+      },
+      error: (error) => {
+        const body = error?.error;
+        const fieldErrors: Record<string, string> | undefined =
+          body?.fieldErrors;
+        const msg = fieldErrors
+          ? Object.values(fieldErrors).join(", ")
+          : body?.message || error?.message || "Erro ao gravar contacto";
+        this.toast.error("Falha", msg);
+        this.isLoading.set(false);
+      },
+    });
+  }
+
   setDepartamento(value: string): void {
-    this.departamento.set(value)
+    this.form.get("departamento")?.setValue(value);
   }
 
   close(): void {
-    this.openChange.emit(false)
+    this.openChange.emit(false);
+  }
+
+  isInvalid(field: string): boolean {
+    return this.contactService.isInvalid(field);
+  }
+
+  getError(field: string): string {
+    return this.contactService.getError(field);
+  }
+
+  get isFormValid(): boolean {
+    return this.form.valid;
+  }
+
+  get departamento(): string {
+    return this.form.get("departamento")?.value ?? "";
   }
 }

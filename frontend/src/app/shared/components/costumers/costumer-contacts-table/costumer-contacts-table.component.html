@@ -20,11 +20,12 @@
         </h3>
         <p class="text-xs text-gray-500 dark:text-gray-400">
           {{ facade.list.total() }}
-          contacto{{ facade.list.total() !== 1 ? 's' : '' }}
+          contacto{{ facade.list.total() !== 1 ? "s" : "" }}
         </p>
       </div>
     </div>
     <button
+      (click)="openCreateDrawer()"
       class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-600"
     >
       <ng-container solarIcon="UserPlusBold" [size]="16" />
@@ -59,7 +60,6 @@
 
 <ng-template #contactRow let-row>
   <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
-
     <td class="px-5 py-3.5">
       <div class="flex items-center gap-3">
         <app-avatar-text [name]="row.nome" />
@@ -70,7 +70,7 @@
     </td>
 
     <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
-      {{ row.departamento ?? '—' }}
+      {{ row.departamento ?? "—" }}
     </td>
 
     <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
@@ -88,7 +88,7 @@
           [color]="row.situacao === 'ATIVO' ? 'success' : 'error'"
           size="sm"
         >
-          {{ row.situacao === 'ATIVO' ? 'Ativo' : 'Inativo' }}
+          {{ row.situacao === "ATIVO" ? "Ativo" : "Inativo" }}
         </app-badge>
       </div>
     </td>
@@ -96,19 +96,32 @@
     <td class="px-5 py-3.5">
       <div class="flex items-center justify-end gap-1">
         <button
-          title="Enviar email"
+          title="Ver detalhes"
+          (click)="openDetailDrawer(row)"
           class="flex h-8 w-8 items-center justify-center rounded text-gray-400 transition-colors hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-brand-500/10"
         >
-          <ng-container solarIcon="LetterBold" [size]="18" />
-        </button>
-        <button
-          title="Mais opções"
-          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          <ng-container solarIcon="MenuDotsBold" [size]="18" />
+          <ng-container solarIcon="EyeBold" [size]="18" />
         </button>
       </div>
     </td>
-
   </tr>
 </ng-template>
+
+@if (drawerOpen()) {
+  <app-create-and-edit-contact
+    [open]="drawerOpen()"
+    [contact]="selectedContact()"
+    [lockedClienteId]="facade.cliente()?.id ?? null"
+    [lockedClienteNome]="facade.cliente()?.nomeEmpresarial ?? null"
+    (openChange)="onDrawerClose($event)"
+  />
+}
+
+@if (detailDrawerOpen()) {
+  <app-contact-detail-drawer
+    [open]="detailDrawerOpen()"
+    [contact]="selectedContact()"
+    (openChange)="detailDrawerOpen.set($event)"
+    (edit)="openEditDrawer($event)"
+  />
+}

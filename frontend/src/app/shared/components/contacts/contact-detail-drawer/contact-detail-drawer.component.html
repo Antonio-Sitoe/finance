@@ -9,7 +9,7 @@
     {{ contact?.nome ?? 'Detalhes' }}
   </span>
   <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
-    {{ contact?.cargo }}
+    {{ contact?.departamento ?? 'Contacto' }}
   </span>
 
   @if (contact) {
@@ -26,7 +26,9 @@
         <h3 class="text-lg font-bold text-gray-800 dark:text-white/90">
           {{ contact.nome }}
         </h3>
-        <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{{ contact.cargo }}</p>
+        @if (contact.departamento) {
+          <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{{ contact.departamento }}</p>
+        }
       </div>
 
       <app-badge
@@ -58,28 +60,8 @@
       </div>
     </div>
 
-    <!-- Secção: Departamento -->
-    @if (contact.departamento) {
-      <section class="mb-6">
-        <div class="mb-3 flex items-center gap-2">
-          <span class="text-gray-400">
-            <ng-container [solarIcon]="UserCircleBold" [size]="16" />
-          </span>
-          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-            Departamento
-          </h4>
-        </div>
-        <div class="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-white/[0.05] dark:bg-white/[0.02]">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-500 dark:bg-brand-500/10">
-            <ng-container [solarIcon]="UserCircleBold" [size]="18" />
-          </div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ contact.departamento }}</span>
-        </div>
-      </section>
-    }
-
     <!-- Secção: Empresa -->
-    @if (contact.empresaNome) {
+    @if (contact.clienteNome) {
       <section class="mb-6">
         <div class="mb-3 flex items-center gap-2">
           <span class="text-gray-400">
@@ -94,23 +76,19 @@
             <span
               class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-xs font-bold text-brand-600 dark:bg-brand-500/10 dark:text-brand-400"
             >
-              {{ getEmpresaInitials(contact.empresaNome) }}
+              {{ getEmpresaInitials(contact.clienteNome) }}
             </span>
             <div>
-              <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ contact.empresaNome }}</p>
-              @if (contact.empresaId) {
-                <p class="text-xs text-gray-400 dark:text-gray-500">ID: {{ contact.empresaId }}</p>
-              }
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ contact.clienteNome }}</p>
+              <p class="text-xs text-gray-400 dark:text-gray-500">ID #{{ contact.clienteId }}</p>
             </div>
           </div>
-          @if (contact.empresaId) {
-            <a
-              [routerLink]="['/costumers', contact.empresaId, 'contacts']"
-              class="text-xs font-medium text-brand-500 hover:text-brand-600 transition-colors"
-            >
-              Ver empresa
-            </a>
-          }
+          <a
+            [routerLink]="['/costumers', contact.clienteId, 'contacts']"
+            class="text-xs font-medium text-brand-500 hover:text-brand-600 transition-colors"
+          >
+            Ver empresa
+          </a>
         </div>
       </section>
     }
@@ -133,9 +111,9 @@
           </p>
         </div>
         <div class="rounded-lg border border-gray-200 p-3 dark:border-white/[0.05]">
-          <p class="text-xs font-medium text-gray-400 dark:text-gray-500">Última actividade</p>
+          <p class="text-xs font-medium text-gray-400 dark:text-gray-500">Atualizado em</p>
           <p class="mt-0.5 text-sm font-semibold text-gray-700 dark:text-gray-300">
-            {{ contact.ultimaAtividade ?? '—' }}
+            {{ contact.updatedAt ? formatDate(contact.updatedAt) : '—' }}
           </p>
         </div>
       </div>
@@ -151,13 +129,6 @@
     >
       <ng-container [solarIcon]="Pen2Bold" [size]="16" />
       Editar Contacto
-    </button>
-    <button
-      (click)="handleDeactivate()"
-      class="flex flex-1 items-center justify-center gap-2 rounded-lg border border-error-300 px-4 py-3 text-sm font-medium text-error-600 transition-colors hover:bg-error-50 dark:border-error-500/30 dark:text-error-400 dark:hover:bg-error-500/10 active:scale-[0.98]"
-    >
-      <ng-container [solarIcon]="ForbiddenCircleBold" [size]="16" />
-      Desativar
     </button>
   </div>
 </app-drawer>
