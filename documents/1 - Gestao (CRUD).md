@@ -4,24 +4,25 @@ Contactos vinculados ao cliente.
 
 ### Funcionalidades
 
-- [x] Criar contacto `POST /contacts`: criar contacto
-- [x] Editar contacto
-- [x] Listar contactos do cliente `GET /contacts`: listagem com filtros (cliente_id, departamento, situacao, q full-text), ordenação, paginação page/limit
-- [x] Desativar contacto
-- [x] Ver detalhes do contacto - `GET /contacts/{id}`: obter contacto (opcional ?include=client para join)
+- [] Criar contacto `POST /contacts`: criar contacto
+- [] Editar contacto
+- [] Listar contactos do cliente `GET /contacts`: listagem com filtros (cliente_id, departamento, situacao, q full-tet), ordenação, paginação page/limit
+- [] Desativar contacto
+- [] Ver detalhes do contacto - `GET /contacts/{id}`: obter contacto (opcional ?include=client para join)
+- [] criar contacto vinculado a empresa
 
 ---
 
 ### Filtros
 
-- [x] Buscar por nome
-- [x] Filtrar por departamento
-- [x] Filtrar por situação
-- [x] Filtrar por cliente
+- [] Buscar por nome
+- [] Filtrar por departamento
+- [] Filtrar por situação
+- [] Filtrar por cliente
 
 **Estatísticas / Relatórios**
 
-- [x]`GET /contacts/stats/count-by-client`: quantos contactos por cliente (top N)
+- []`GET /contacts/stats/count-by-client`: quantos contactos por cliente (top N)
 
 ---
 
@@ -31,16 +32,16 @@ CRUD igual ao cliente.
 
 ### Funcionalidades
 
-- [x] Criar fornecedor
-- [x] Editar fornecedor
-- [x] Listar fornecedores
-- [x] Desativar fornecedor
+- [] Criar fornecedor
+- [] Editar fornecedor
+- [] Listar fornecedores
+- [] Desativar fornecedor
 
 ---
 
 Filtros:
 
-- [x] Nome
+- [] Nome
 
 ---
 
@@ -50,9 +51,9 @@ Representa contas financeiras.
 
 ### Funcionalidades
 
-- [x] Criar conta
-- [x] Editar conta
-- [x] Listar contas
+- [] Criar conta
+- [] Editar conta
+- [] Listar contas
 - [x] Desativar conta
 
 ---

@@ -4,6 +4,7 @@
   [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Contactos' }]"
 >
   <button
+    (click)="drawerOpen.set(true)"
     class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
   >
     <span class="text-base leading-none">+</span>
@@ -41,3 +42,22 @@
 <div class="w-full">
   <app-contacts-list-table />
 </div>
+
+<!-- Drawers -->
+@if (drawerOpen()) {
+  <app-create-and-edit-contact
+    [open]="drawerOpen()"
+    [contact]="selectedContact()"
+    (openChange)="drawerOpen.set($event)"
+  />
+}
+
+@if (detailDrawerOpen()) {
+  <app-contact-detail-drawer
+    [open]="detailDrawerOpen()"
+    [contact]="selectedContact()"
+    (openChange)="detailDrawerOpen.set($event)"
+    (edit)="openEdit($event)"
+    (deactivate)="openDeactivate($event)"
+  />
+}

@@ -14,5 +14,6 @@ CRUD completo.
 
 - [x] Buscar por nome
 - [x] Filtrar por status
+      [] - Estatisticas de clientes
 
 ---

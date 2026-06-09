@@ -88,7 +88,7 @@ export class CreateAndEditCostumerComponent implements OnChanges {
             ? 'Cliente atualizado: ' + response.nomeEmpresarial
             : 'Cliente criado: ' + response.nomeEmpresarial,
         )
-        this.facade.list.reload()
+        this.facade.refresh()
         this.openChange.emit(false)
         this.isLoading.set(false)
       },

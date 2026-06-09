@@ -41,8 +41,6 @@ import {
   templateUrl: './contacts-list-table.component.html',
 })
 export class ContactsListTableComponent {
-  private readonly router = inject(Router)
-
   readonly MagnifierBold = MagnifierBold
   readonly Pen2Bold = Pen2Bold
   readonly EyeBold = EyeBold
@@ -69,22 +67,104 @@ export class ContactsListTableComponent {
   ]
 
   readonly mockData: IContact[] = [
-    { id: 1, nome: 'Ana Martins', cargo: 'Diretora Financeira - CFO', departamento: 'Financeiro', empresaNome: 'Global Trade Solutions S.A.', empresaId: 1, telefone: '+351 912 345 678', email: 'ana.martins@globaltrade.pt', situacao: 'ATIVO', createdAt: '2024-01-10T09:00:00Z', ultimaAtividade: 'Hoje, 10:45' },
-    { id: 2, nome: 'Ricardo Costa', cargo: 'Gestor de Compras', departamento: 'Compras', empresaNome: 'Global Trade Solutions S.A.', empresaId: 1, telefone: '+351 934 567 890', email: 'ricardo.costa@globaltrade.pt', situacao: 'ATIVO', createdAt: '2024-01-15T10:00:00Z', ultimaAtividade: 'Ontem, 14:20' },
-    { id: 3, nome: 'Sandra Teixeira', cargo: 'Assistente Administrativa', departamento: 'Administrativo', empresaNome: 'Global Trade Solutions S.A.', empresaId: 1, telefone: '+351 961 122 334', email: 'sandra.t@globaltrade.pt', situacao: 'INATIVO', createdAt: '2023-11-20T08:00:00Z', ultimaAtividade: '3 dias atrás' },
-    { id: 4, nome: 'Pedro Alves', cargo: 'Diretor Geral', departamento: 'Direção', empresaNome: 'TechVision Lda.', empresaId: 2, telefone: '+244 923 456 789', email: 'pedro.alves@techvision.ao', situacao: 'ATIVO', createdAt: '2024-02-01T11:00:00Z', ultimaAtividade: 'Hoje, 09:00' },
-    { id: 5, nome: 'João Silva', cargo: 'Engenheiro de Software', departamento: 'Tecnologia', empresaNome: 'TechVision Lda.', empresaId: 2, telefone: '+244 912 345 000', email: 'joao.silva@techvision.ao', situacao: 'ATIVO', createdAt: '2024-03-05T14:00:00Z', ultimaAtividade: 'Hoje, 11:30' },
-    { id: 6, nome: 'Maria Fernandes', cargo: 'Diretora de Projetos', departamento: 'Operações', empresaNome: 'Construtora Norte S.A.', empresaId: 3, telefone: '+351 253 998 001', email: 'm.fernandes@construtora-norte.pt', situacao: 'INATIVO', createdAt: '2023-09-12T07:00:00Z', ultimaAtividade: '15 dias atrás' },
+    {
+      id: 1,
+      nome: 'Ana Martins',
+      cargo: 'Diretora Financeira - CFO',
+      departamento: 'Financeiro',
+      empresaNome: 'Global Trade Solutions S.A.',
+      empresaId: 1,
+      telefone: '+351 912 345 678',
+      email: 'ana.martins@globaltrade.pt',
+      situacao: 'ATIVO',
+      createdAt: '2024-01-10T09:00:00Z',
+      ultimaAtividade: 'Hoje, 10:45',
+    },
+    {
+      id: 2,
+      nome: 'Ricardo Costa',
+      cargo: 'Gestor de Compras',
+      departamento: 'Compras',
+      empresaNome: 'Global Trade Solutions S.A.',
+      empresaId: 1,
+      telefone: '+351 934 567 890',
+      email: 'ricardo.costa@globaltrade.pt',
+      situacao: 'ATIVO',
+      createdAt: '2024-01-15T10:00:00Z',
+      ultimaAtividade: 'Ontem, 14:20',
+    },
+    {
+      id: 3,
+      nome: 'Sandra Teixeira',
+      cargo: 'Assistente Administrativa',
+      departamento: 'Administrativo',
+      empresaNome: 'Global Trade Solutions S.A.',
+      empresaId: 1,
+      telefone: '+351 961 122 334',
+      email: 'sandra.t@globaltrade.pt',
+      situacao: 'INATIVO',
+      createdAt: '2023-11-20T08:00:00Z',
+      ultimaAtividade: '3 dias atrás',
+    },
+    {
+      id: 4,
+      nome: 'Pedro Alves',
+      cargo: 'Diretor Geral',
+      departamento: 'Direção',
+      empresaNome: 'TechVision Lda.',
+      empresaId: 2,
+      telefone: '+244 923 456 789',
+      email: 'pedro.alves@techvision.ao',
+      situacao: 'ATIVO',
+      createdAt: '2024-02-01T11:00:00Z',
+      ultimaAtividade: 'Hoje, 09:00',
+    },
+    {
+      id: 5,
+      nome: 'João Silva',
+      cargo: 'Engenheiro de Software',
+      departamento: 'Tecnologia',
+      empresaNome: 'TechVision Lda.',
+      empresaId: 2,
+      telefone: '+244 912 345 000',
+      email: 'joao.silva@techvision.ao',
+      situacao: 'ATIVO',
+      createdAt: '2024-03-05T14:00:00Z',
+      ultimaAtividade: 'Hoje, 11:30',
+    },
+    {
+      id: 6,
+      nome: 'Maria Fernandes',
+      cargo: 'Diretora de Projetos',
+      departamento: 'Operações',
+      empresaNome: 'Construtora Norte S.A.',
+      empresaId: 3,
+      telefone: '+351 253 998 001',
+      email: 'm.fernandes@construtora-norte.pt',
+      situacao: 'INATIVO',
+      createdAt: '2023-09-12T07:00:00Z',
+      ultimaAtividade: '15 dias atrás',
+    },
   ]
 
   readonly empresaOptions = computed(() => {
-    const empresas = [...new Set(this.mockData.map(c => c.empresaNome).filter(Boolean))] as string[]
-    return [{ label: 'Todas as empresas', value: '' }, ...empresas.map(e => ({ label: e, value: e }))]
+    const empresas = [
+      ...new Set(this.mockData.map((c) => c.empresaNome).filter(Boolean)),
+    ] as string[]
+    return [
+      { label: 'Todas as empresas', value: '' },
+      ...empresas.map((e) => ({ label: e, value: e })),
+    ]
   })
 
   readonly departamentoOptions = computed(() => {
-    const depts = [...new Set(this.mockData.map(c => c.departamento).filter(Boolean))] as string[]
-    return [{ label: 'Todos os departamentos', value: '' }, ...depts.map(d => ({ label: d, value: d }))]
+    const depts = [
+      ...new Set(this.mockData.map((c) => c.departamento).filter(Boolean)),
+    ] as string[]
+    return [
+      { label: 'Todos os departamentos', value: '' },
+      ...depts.map((d) => ({ label: d, value: d })),
+    ]
   })
 
   readonly situacaoOptions = [
@@ -99,8 +179,12 @@ export class ContactsListTableComponent {
     const dept = this.filterDepartamento()
     const sit = this.filterSituacao()
 
-    return this.mockData.filter(c => {
-      const matchSearch = !search || c.nome.toLowerCase().includes(search) || c.email?.toLowerCase().includes(search) || c.cargo.toLowerCase().includes(search)
+    return this.mockData.filter((c) => {
+      const matchSearch =
+        !search ||
+        c.nome.toLowerCase().includes(search) ||
+        c.email?.toLowerCase().includes(search) ||
+        c.cargo.toLowerCase().includes(search)
       const matchEmpresa = !empresa || c.empresaNome === empresa
       const matchDept = !dept || c.departamento === dept
       const matchSit = !sit || c.situacao === sit
@@ -110,7 +194,12 @@ export class ContactsListTableComponent {
 
   getEmpresaInitials(nome?: string): string {
     if (!nome) return '?'
-    return nome.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
+    return nome
+      .split(' ')
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase()
   }
 
   openEdit(contact?: IContact): void {
