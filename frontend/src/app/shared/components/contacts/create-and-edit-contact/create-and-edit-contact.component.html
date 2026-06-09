@@ -9,13 +9,13 @@
     drawer-header
     class="text-base font-semibold text-gray-800 dark:text-white/90"
   >
-    {{ isEditing() ? "Editar Contacto" : "Novo Contacto" }}
+    {{ isEditing() ? 'Editar Contacto' : 'Novo Contacto' }}
   </span>
   <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
     {{
       isEditing()
-        ? "Actualize os dados do contacto"
-        : "Preencha os dados para criar um novo contacto"
+        ? 'Actualize os dados do contacto'
+        : 'Preencha os dados para criar um novo contacto'
     }}
   </span>
 
@@ -209,9 +209,11 @@
       variant="primary"
       class="flex-1"
       className="w-full justify-center"
+      [disabled]="form.invalid || isLoading()"
+      [loading]="isLoading()"
       (btnClick)="onSubmit()"
     >
-      {{ isEditing() ? "Guardar Alterações" : "Guardar Contacto" }}
+      {{ isEditing() ? 'Guardar Alterações' : 'Guardar Contacto' }}
     </app-button>
   </div>
 </app-drawer>
