@@ -1,5 +1,7 @@
 package com.finance.finance.modules.clientes.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -87,6 +89,21 @@ public class clienteController {
                 return ResponseEntity.ok(clienteService.listar(search, situacao, paginationRequest));
         }
 
+        @GetMapping("/all")
+        @Operation(summary = "Listar todos os clientes", description = "Lista todos os clientes sem paginação.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = ClienteResponseDTO.class)))
+        })
+        public ResponseEntity<List<ClienteResponseDTO>> todos() {
+                return ResponseEntity.ok(clienteService.todos());
+        }
+
+        @GetMapping("/ranking")
+        @Operation(summary = "Obter resumo do ranking de clientes")
+        public ResponseEntity<ClienteRankingResumoDTO> obterResumoRanking() {
+                return ResponseEntity.ok(clienteService.obterResumoRanking());
+        }
+
         @GetMapping("/{id}")
         @Operation(summary = "Obter cliente por ID", description = "Retorna um cliente específico pelo identificador.")
         @ApiResponses({
@@ -98,9 +115,4 @@ public class clienteController {
                 return ResponseEntity.ok(clienteService.obterPorId(id));
         }
 
-        @GetMapping("/ranking")
-        @Operation(summary = "Obter resumo do ranking de clientes")
-        public ResponseEntity<ClienteRankingResumoDTO> obterResumoRanking() {
-                return ResponseEntity.ok(clienteService.obterResumoRanking());
-        }
 }

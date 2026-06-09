@@ -16,6 +16,9 @@ import com.finance.finance.modules.clientes.repository.ClienteRepository;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -96,6 +99,12 @@ public class ClienteService {
         Page<ClienteResponseDTO> page = clientesPage
                 .map(ClienteMapper::toDto);
         return PageResponse.from(page);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ClienteResponseDTO> todos() {
+        return clienteRepository.findBySituacao(Situacao.ATIVO)
+                .stream().map(ClienteMapper::toDto).toList();
     }
 
     @Transactional(readOnly = true)

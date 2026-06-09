@@ -1,26 +1,5 @@
-# 4️⃣ Gestão de contactos
 
-Contactos vinculados ao cliente.
-
-### Funcionalidades
-
-- [] Criar contacto `POST /contacts`: criar contacto
-- [] Editar contacto
-- [] Listar contactos do cliente `GET /contacts`: listagem com filtros (cliente_id, departamento, situacao, q full-tet), ordenação, paginação page/limit
-- [] Desativar contacto
-- [] Ver detalhes do contacto - `GET /contacts/{id}`: obter contacto (opcional ?include=client para join)
-- [] criar contacto vinculado a empresa
-
----
-
-### Filtros
-
-- [] Buscar por nome
-- [] Filtrar por departamento
-- [] Filtrar por situação
-- [] Filtrar por cliente
-
-**Estatísticas / Relatórios**
+**Estatísticas por contactos / Relatórios**
 
 - []`GET /contacts/stats/count-by-client`: quantos contactos por cliente (top N)
 

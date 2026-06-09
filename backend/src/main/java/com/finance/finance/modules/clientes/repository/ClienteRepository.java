@@ -37,6 +37,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     Page<Cliente> findByNomeEmpresarialContainingIgnoreCase(String nomeEmpresarial, Pageable pageable);
 
+    List<Cliente> findBySituacao(Situacao situacao);
+
     Page<Cliente> findBySituacao(Situacao situacao, Pageable pageable);
 
     Page<Cliente> findByNomeEmpresarialContainingIgnoreCaseAndSituacao(
