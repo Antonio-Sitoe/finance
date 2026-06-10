@@ -13,10 +13,30 @@
 </app-page-header>
 
 <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6">
-  <app-card-stat icon="UsersGroupRoundedBold" title="Total" description="Total de contactos" value="0" />
-  <app-card-stat icon="UserCheckRoundedBold" title="Média por empresa" description="Média de contactos por empresa" value="0" />
-  <app-card-stat icon="UserBlockRoundedBold" title="Empresas com contactos" description="Número de empresas com ≥1 contacto" value="0" />
-  <app-card-stat icon="BuildingsBold" title="Empresas sem contactos" description="Número de empresas sem contactos" value="0" />
+  <app-card-stat
+    icon="UsersGroupRoundedBold"
+    title="Total"
+    description="Total de contactos"
+    [value]="facade.analytics().totalContactos.toString()"
+  />
+  <app-card-stat
+    icon="UserCheckRoundedBold"
+    title="Média por empresa"
+    description="Média de contactos por empresa"
+    [value]="facade.analytics().mediaContactosPorEmpresa.toString()"
+  />
+  <app-card-stat
+    icon="UserBlockRoundedBold"
+    title="Empresas com contactos"
+    description="Número de empresas com ≥1 contacto"
+    [value]="facade.analytics().empresasComContactos.toString()"
+  />
+  <app-card-stat
+    icon="BuildingsBold"
+    title="Empresas sem contactos"
+    description="Número de empresas sem contactos"
+    [value]="facade.analytics().empresasSemContactos.toString()"
+  />
 </div>
 
 <div class="w-full">

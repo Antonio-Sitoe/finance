@@ -67,6 +67,12 @@ public class FornecedorController {
                 return ResponseEntity.ok(service.atualizar(id, dto));
         }
 
+        @GetMapping("/resumo")
+        @Operation(summary = "Resumo de fornecedores", description = "Retorna total, ativos, inativos e alta conformidade (nota >= 8)")
+        public ResponseEntity<FornecedorResumoDTO> getResumo() {
+                return ResponseEntity.ok(service.getResumo());
+        }
+
         @PatchMapping("/{id}/situacao")
         @Operation(summary = "Ativar ou desativar fornecedor", description = "Alterna a situação do fornecedor entre ATIVO e INATIVO.")
         @ApiResponses({
@@ -88,12 +94,6 @@ public class FornecedorController {
                         @Parameter(description = "Filtro por situação", example = "ATIVO") @RequestParam(required = false) Situacao situacao,
                         @Valid @ModelAttribute PaginationRequest paginationRequest) {
                 return ResponseEntity.ok(service.listar(nome, situacao, paginationRequest));
-        }
-
-        @GetMapping("/resumo")
-        @Operation(summary = "Resumo de fornecedores", description = "Retorna total, ativos, inativos e alta conformidade (nota >= 8)")
-        public ResponseEntity<FornecedorResumoDTO> getResumo() {
-                return ResponseEntity.ok(service.getResumo());
         }
 
         @GetMapping("/{id}")

@@ -50,6 +50,5 @@ export class CostumerContactsTableComponent {
 
   onDrawerClose(open: boolean): void {
     this.drawerOpen.set(open);
-    if (!open) this.facade.refresh();
   }
 }

@@ -42,6 +42,5 @@ export class ContactsComponent {
 
   onDrawerClose(open: boolean): void {
     this.drawerOpen.set(open);
-    if (!open) this.facade.refresh();
   }
 }

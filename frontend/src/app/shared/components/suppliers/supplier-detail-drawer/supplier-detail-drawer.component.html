@@ -9,7 +9,7 @@
     {{ supplier?.nomeEmpresarial ?? 'Detalhes' }}
   </span>
   <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
-    {{ supplier?.emailFinanceiro || supplier?.telefone || '—' }}
+    {{ supplier?.email || supplier?.telefone || '—' }}
   </span>
 
   @if (supplier) {
@@ -30,20 +30,22 @@
         <h3 class="text-lg font-bold text-gray-800 dark:text-white/90">
           {{ supplier.nomeEmpresarial }}
         </h3>
-        @if (supplier.emailFinanceiro) {
+        @if (supplier.email) {
           <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-            {{ supplier.emailFinanceiro }}
+            {{ supplier.email }}
           </p>
         }
       </div>
 
       <div class="flex flex-wrap justify-center gap-2">
-        <app-badge variant="solid" [color]="supplier.situacao === 'ATIVO' ? 'success' : 'error'" size="sm">
+        <app-badge variant="solid" [color]="facade.badgeColor(supplier.situacao)" size="sm">
           {{ supplier.situacao === 'ATIVO' ? 'Activo' : 'Inactivo' }}
         </app-badge>
-        <app-badge variant="solid" [color]="ratingBadgeColor(supplier.classificacaoRisco)" size="sm">
-          {{ supplier.classificacaoRisco.toFixed(1) }} · {{ ratingLabel(supplier.classificacaoRisco) }}
-        </app-badge>
+        @if (supplier.nota != null) {
+          <app-badge variant="solid" [color]="facade.ratingBadgeColor(supplier.nota)" size="sm">
+            {{ supplier.nota }} · {{ facade.ratingLabel(supplier.nota) }}
+          </app-badge>
+        }
       </div>
     </div>
 
@@ -60,12 +62,12 @@
         </h4>
       </div>
       <div class="divide-y divide-dashed divide-gray-100 dark:divide-white/[0.05]">
-        @if (supplier.emailFinanceiro) {
+        @if (supplier.email) {
           <div class="flex items-center justify-between py-3">
             <span class="text-sm text-gray-500 dark:text-gray-400">Email</span>
-            <a [href]="'mailto:' + supplier.emailFinanceiro"
+            <a [href]="'mailto:' + supplier.email"
               class="text-sm font-medium text-brand-500 hover:underline dark:text-brand-400">
-              {{ supplier.emailFinanceiro }}
+              {{ supplier.email }}
             </a>
           </div>
         }
@@ -84,14 +86,14 @@
             </a>
           </div>
         }
-        @if (!supplier.emailFinanceiro && !supplier.telefone && !supplier.website) {
+        @if (!supplier.email && !supplier.telefone && !supplier.website) {
           <p class="py-3 text-sm text-gray-400 dark:text-gray-500">Sem dados de contacto</p>
         }
       </div>
     </section>
 
     <!-- Secção: Localização -->
-    @if (supplier.cidade || supplier.rua) {
+    @if (supplier.cidade || supplier.endereco) {
       <section class="mb-6">
         <div class="mb-3 flex items-center gap-2">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400">
@@ -104,9 +106,9 @@
           </h4>
         </div>
         <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
-          @if (supplier.rua) {
+          @if (supplier.endereco) {
             <p class="text-sm text-gray-700 dark:text-gray-300">
-              {{ supplier.rua }}@if (supplier.numero) {, {{ supplier.numero }}}
+              {{ supplier.endereco }}@if (supplier.numero) {, {{ supplier.numero }}}
               @if (supplier.complemento) { — {{ supplier.complemento }}}
             </p>
           }
@@ -115,7 +117,7 @@
           }
           @if (supplier.cidade) {
             <p class="mt-0.5 text-sm font-medium text-gray-700 dark:text-gray-300">
-              {{ supplier.cidade }}@if (supplier.distrito && supplier.distrito !== supplier.cidade) {, {{ supplier.distrito }}}
+              {{ supplier.cidade }}@if (supplier.estado) {, {{ supplier.estado }}}
             </p>
           }
         </div>
@@ -129,41 +131,31 @@
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"/>
         </svg>
         <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-          Avaliação de Risco
+          Avaliação
         </h4>
       </div>
       <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02] space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="text-2xl font-bold text-gray-800 dark:text-white/90">
-            {{ supplier.classificacaoRisco.toFixed(1) }}<span class="text-sm font-normal text-gray-400">/10</span>
-          </span>
-          <span class="text-sm font-bold" [class]="ratingTextColor(supplier.classificacaoRisco)">
-            {{ ratingLabel(supplier.classificacaoRisco) }}
-          </span>
-        </div>
-        <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-          <div
-            class="h-full rounded-full"
-            [class]="ratingBarColor(supplier.classificacaoRisco)"
-            [style.width.%]="supplier.classificacaoRisco * 10"
-          ></div>
-        </div>
+        @if (supplier.nota != null) {
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold text-gray-800 dark:text-white/90">
+              {{ supplier.nota }}<span class="text-sm font-normal text-gray-400">/10</span>
+            </span>
+            <span class="text-sm font-bold" [class]="facade.ratingTextColor(supplier.nota)">
+              {{ facade.ratingLabel(supplier.nota) }}
+            </span>
+          </div>
+          <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+            <div
+              class="h-full rounded-full"
+              [class]="facade.ratingBarColor(supplier.nota)"
+              [style.width.%]="supplier.nota * 10"
+            ></div>
+          </div>
+        } @else {
+          <p class="text-sm text-gray-400 dark:text-gray-500">Sem avaliação</p>
+        }
       </div>
     </section>
-
-    <!-- Datas -->
-    <div class="grid grid-cols-2 gap-3 mb-4">
-      <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
-        <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Criado em</span>
-        <p class="mt-0.5 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          {{ formatDate(supplier.createdAt) }}
-        </p>
-      </div>
-      <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
-        <span class="text-xs font-medium text-gray-400 dark:text-gray-500">Última ref.</span>
-        <p class="mt-0.5 text-sm font-semibold text-gray-700 dark:text-gray-300">—</p>
-      </div>
-    </div>
 
   }
 
@@ -177,9 +169,10 @@
       Editar Fornecedor
     </button>
     <button
+      (click)="handleToggleSituacao()"
       class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-error-200 px-4 py-2.5 text-sm font-medium text-error-500 transition-colors hover:bg-error-50 dark:border-error-500/20 dark:hover:bg-error-500/10"
     >
-      Desactivar Fornecedor
+      {{ supplier?.situacao === 'ATIVO' ? 'Desactivar Fornecedor' : 'Activar Fornecedor' }}
     </button>
   </div>
 </app-drawer>
