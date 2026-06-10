@@ -26,7 +26,7 @@ export class SupplierApiService {
     let params = new HttpParams()
       .set("page", String(query.page - 1))
       .set("size", String(query.size))
-      .set("sortedBy", "desc");
+      .set("sortOrder", "desc");
 
     if (filters["nome"]) params = params.set("nome", String(filters["nome"]));
     if (filters["situacao"])
