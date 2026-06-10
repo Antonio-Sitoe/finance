@@ -67,7 +67,7 @@ public class FornecedorController {
                 return ResponseEntity.ok(service.atualizar(id, dto));
         }
 
-        @GetMapping("/resumo")
+        @GetMapping({ "/resumo", "/analytics" })
         @Operation(summary = "Resumo de fornecedores", description = "Retorna total, ativos, inativos e alta conformidade (nota >= 8)")
         public ResponseEntity<FornecedorResumoDTO> getResumo() {
                 return ResponseEntity.ok(service.getResumo());
