@@ -21,6 +21,7 @@ CRUD igual ao cliente.
 Filtros:
 
 - [] Nome
+- [] Estatisticas de fornecedores
 
 ---
 
@@ -33,7 +34,7 @@ Representa contas financeiras.
 - [] Criar conta
 - [] Editar conta
 - [] Listar contas
-- [x] Desativar conta
+- [] Desativar conta
 
 ---
 
@@ -55,8 +56,8 @@ Categorias hierárquicas.
 
 ### Funcionalidades
 
-- [x] Criar categoria
-- [x] Editar categoria
-- [x] Excluir categoria
-- [x] Listar categorias
-- [x] Criar subcategoria
+- [] Criar categoria
+- [] Editar categoria
+- [] Excluir categoria
+- [] Listar categorias
+- [] Criar subcategoria
