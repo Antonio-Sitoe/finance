@@ -133,13 +133,6 @@
         >
           <ng-container [solarIcon]="Pen2Bold" [size]="18" />
         </button>
-        <button
-          (click)="toggleSituacaoClick.emit(row)"
-          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-error-50 hover:text-error-500 dark:hover:bg-error-500/10 dark:hover:text-error-400"
-          [title]="row.situacao === 'ATIVO' ? 'Desactivar' : 'Activar'"
-        >
-          <ng-container [solarIcon]="MenuDotsBold" [size]="18" />
-        </button>
       </div>
     </td>
   </tr>

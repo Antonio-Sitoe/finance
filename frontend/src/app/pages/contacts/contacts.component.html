@@ -60,5 +60,6 @@
     [contact]="selectedContact()"
     (openChange)="detailDrawerOpen.set($event)"
     (edit)="openEdit($event)"
+    (situacaoChange)="facade.refresh()"
   />
 }

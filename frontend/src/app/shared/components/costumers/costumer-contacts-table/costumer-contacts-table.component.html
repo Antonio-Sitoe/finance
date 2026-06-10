@@ -123,5 +123,6 @@
     [contact]="selectedContact()"
     (openChange)="detailDrawerOpen.set($event)"
     (edit)="openEditDrawer($event)"
+    (situacaoChange)="facade.refresh()"
   />
 }

@@ -43,7 +43,6 @@
   <app-suppliers-list-table
     (editClick)="openEdit($event)"
     (detailClick)="openDetail($event)"
-    (toggleSituacaoClick)="openToggleSituacao($event)"
   />
 </div>
 
@@ -61,6 +60,5 @@
     [supplier]="selectedSupplier()"
     (openChange)="detailDrawerOpen.set($event)"
     (edit)="openEdit($event)"
-    (toggleSituacao)="openToggleSituacao($event)"
   />
 }

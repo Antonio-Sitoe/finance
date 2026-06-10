@@ -10,6 +10,7 @@ import {
 import { RouterModule } from "@angular/router";
 import { DrawerComponent } from "@/shared/components/ui/drawer/drawer.component";
 import { BadgeComponent } from "@/shared/components/ui/badge/badge.component";
+import { SwitchComponent } from "@/shared/components/ui/input/switch.component";
 import { AvatarTextComponent } from "@/shared/components/ui/avatar/avatar-text.component";
 import { IContactDTO } from "@/shared/interfaces/contacts.dto";
 import { SITUATION } from "@/shared/interfaces/enum.dto";
@@ -30,6 +31,7 @@ import {
     RouterModule,
     DrawerComponent,
     BadgeComponent,
+    SwitchComponent,
     AvatarTextComponent,
     SolarDynamicIcon,
   ],

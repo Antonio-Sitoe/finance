@@ -161,18 +161,35 @@
 
   <!-- Footer -->
   <div drawer-footer class="flex w-full flex-col gap-3">
+    <!-- Estado do Fornecedor -->
+    <div
+      class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.02]"
+    >
+      <div>
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Estado do Fornecedor
+        </p>
+        <p
+          class="mt-0.5 text-xs font-semibold"
+          [class.text-success-500]="isActive"
+          [class.text-error-500]="!isActive"
+        >
+          {{ isActive ? 'Ativo' : 'Inativo' }}
+        </p>
+      </div>
+      <app-switch
+        label=""
+        [defaultChecked]="isActive"
+        [disabled]="isLoading()"
+        (valueChange)="toggleSituacao()"
+      />
+    </div>
     <button
       (click)="handleEdit()"
       class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-600 active:scale-[0.98]"
     >
       <ng-container [solarIcon]="Pen2Bold" [size]="16" />
       Editar Fornecedor
-    </button>
-    <button
-      (click)="handleToggleSituacao()"
-      class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-error-200 px-4 py-2.5 text-sm font-medium text-error-500 transition-colors hover:bg-error-50 dark:border-error-500/20 dark:hover:bg-error-500/10"
-    >
-      {{ supplier?.situacao === 'ATIVO' ? 'Desactivar Fornecedor' : 'Activar Fornecedor' }}
     </button>
   </div>
 </app-drawer>

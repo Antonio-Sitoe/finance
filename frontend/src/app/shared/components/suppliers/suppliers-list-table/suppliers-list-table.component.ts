@@ -11,7 +11,6 @@ import {
   MagnifierBold,
   Pen2Bold,
   EyeBold,
-  MenuDotsBold,
 } from '@solar-icons/angular'
 
 @Component({
@@ -29,14 +28,12 @@ export class SuppliersListTableComponent {
   readonly MagnifierBold = MagnifierBold
   readonly Pen2Bold = Pen2Bold
   readonly EyeBold = EyeBold
-  readonly MenuDotsBold = MenuDotsBold
 
   readonly facade = inject(SuppliersFacadeService)
   readonly columns = SUPPLIERS_COLUMNS
 
   @Output() editClick = new EventEmitter<ISupplier>()
   @Output() detailClick = new EventEmitter<ISupplier>()
-  @Output() toggleSituacaoClick = new EventEmitter<ISupplier>()
 
   initials(name: string): string {
     return name.split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase()
