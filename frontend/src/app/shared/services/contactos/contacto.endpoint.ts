@@ -1,8 +1,11 @@
-import { API_URL } from '@/shared/config/http'
+import { API_URL } from "@/shared/config/http";
 
 export const CONTACTO_ENDPOINTS = {
   LIST: `${API_URL}/contactos`,
-  BY_CLIENTE: (clienteId: number) => `${API_URL}/contactos/cliente/${clienteId}`,
+  BY_CLIENTE: (clienteId: number) =>
+    `${API_URL}/contactos/cliente/${clienteId}`,
   CREATE: `${API_URL}/contactos`,
   UPDATE: (id: number) => `${API_URL}/contactos/${id}`,
-} as const
+  SITUACAO: (id: number) => `${API_URL}/contactos/${id}/situacao`,
+  ANALYTICS: `${API_URL}/contactos/estatisticas`,
+} as const;

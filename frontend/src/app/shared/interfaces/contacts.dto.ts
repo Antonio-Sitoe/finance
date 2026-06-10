@@ -19,3 +19,17 @@ export interface IContactPayloadDTO {
   situacao: "ATIVO" | "INATIVO";
   clienteId: number | string;
 }
+
+export interface IContactSituacaoResponse {
+  id: number;
+  situacao: "ATIVO" | "INATIVO";
+  mensagem: string;
+}
+
+export interface EmpresaStatsDTO {
+  totalContactos: number;
+  totalEmpresas: number;
+  mediaContactosPorEmpresa: number;
+  empresasComContactos: number;
+  empresasSemContactos: number;
+}

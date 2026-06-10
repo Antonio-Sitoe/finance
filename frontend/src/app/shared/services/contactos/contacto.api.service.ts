@@ -3,8 +3,10 @@ import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { CONTACTO_ENDPOINTS } from "./contacto.endpoint";
 import {
+  EmpresaStatsDTO,
   IContactDTO,
   IContactPayloadDTO,
+  IContactSituacaoResponse,
 } from "@/shared/interfaces/contacts.dto";
 import { ListQuery, PageResult } from "@/shared/config/listing/listing.dto";
 
@@ -59,5 +61,16 @@ export class ContactoApiService {
 
   update(id: number, payload: IContactPayloadDTO): Observable<IContactDTO> {
     return this.http.patch<IContactDTO>(CONTACTO_ENDPOINTS.UPDATE(id), payload);
+  }
+
+  toggleSituacao(id: number): Observable<IContactSituacaoResponse> {
+    return this.http.patch<IContactSituacaoResponse>(
+      CONTACTO_ENDPOINTS.SITUACAO(id),
+      {}
+    );
+  }
+
+  analytics(): Observable<EmpresaStatsDTO> {
+    return this.http.get<EmpresaStatsDTO>(CONTACTO_ENDPOINTS.ANALYTICS);
   }
 }

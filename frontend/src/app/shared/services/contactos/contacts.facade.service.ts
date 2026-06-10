@@ -1,5 +1,5 @@
-﻿import { computed, inject, Injectable } from "@angular/core";
-import { IContactDTO } from "@/shared/interfaces/contacts.dto";
+﻿import { computed, inject, Injectable, signal } from "@angular/core";
+import { EmpresaStatsDTO, IContactDTO } from "@/shared/interfaces/contacts.dto";
 import { ListStore } from "@/shared/config/listing/list.store";
 import { ContactoApiService } from "./contacto.api.service";
 import { SITUATION } from "@/shared/interfaces/enum.dto";
@@ -10,6 +10,14 @@ export class ContactsFacadeService {
   private readonly api = inject(ContactoApiService);
 
   readonly list = new ListStore<IContactDTO>();
+
+  readonly analytics = signal<EmpresaStatsDTO>({
+    totalContactos: 0,
+    empresasComContactos: 0,
+    empresasSemContactos: 0,
+    mediaContactosPorEmpresa: 0,
+    totalEmpresas: 0,
+  });
 
   readonly searchTerm = computed(() =>
     String(this.list.query().filters?.["nome"] ?? "")
@@ -33,6 +41,12 @@ export class ContactsFacadeService {
 
   constructor() {
     this.list.connect((query) => this.api.getAll(query));
+
+    this.api.analytics().subscribe({
+      next: (data) => this.analytics.set(data),
+      error: (err) =>
+        console.error("Erro ao carregar análiticos de contactos", err),
+    });
   }
 
   search(value: string): void {
