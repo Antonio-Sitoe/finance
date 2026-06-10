@@ -19,6 +19,7 @@ import com.finance.finance.exceptions.ApiErrorResponse;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
+import com.finance.finance.modules.contacto.dto.ContactoEstatisticasResponseDTO;
 import com.finance.finance.modules.contacto.dto.ContactoPorClienteResponseDTO;
 import com.finance.finance.modules.contacto.dto.ContactoRequestDTO;
 import com.finance.finance.modules.contacto.dto.ContactoResponseDTO;
@@ -118,7 +119,8 @@ public class ContactoController {
                         @Parameter(description = "Filtro parcial por departamento") @RequestParam(required = false) String departamento,
                         @Parameter(description = "Filtro por situação") @RequestParam(required = false) Situacao situacao,
                         @Valid @ModelAttribute PaginationRequest paginationRequest) {
-                return ResponseEntity.ok(service.listarPorCliente(clienteId, nome, departamento, situacao, paginationRequest));
+                return ResponseEntity.ok(
+                                service.listarPorCliente(clienteId, nome, departamento, situacao, paginationRequest));
         }
 
         @GetMapping("/por-cliente")
@@ -128,5 +130,14 @@ public class ContactoController {
         })
         public ResponseEntity<List<ContactoPorClienteResponseDTO>> contactosPorClientesEstaticticas() {
                 return ResponseEntity.ok(service.contactosPorClientesEstaticticas());
+        }
+
+        @GetMapping("/estatisticas")
+        @Operation(summary = "Obter estatísticas de contactos por empresa", description = "Retorna estatísticas sobre a distribuição de contactos entre empresas.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Estatísticas retornadas com sucesso", content = @Content(schema = @Schema(implementation = ContactoEstatisticasResponseDTO.class)))
+        })
+        public ResponseEntity<ContactoEstatisticasResponseDTO> obterEstatisticasContactosPorEmpresa() {
+                return ResponseEntity.ok(service.obterEstatisticasContactosPorEmpresa());
         }
 }

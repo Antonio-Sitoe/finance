@@ -35,3 +35,30 @@ Contactos vinculados ao cliente.
 - [x] Buscar por nome
 - [x] Filtrar por departamento
 - [x] Filtrar por situação
+
+
+**Estatísticas por contactos / Relatórios**
+
+- [x]`GET /contacts/stats/count-by-client`: quantos contactos por cliente (top N)
+
+---
+
+# 5️⃣ Gestão de fornecedores (back and front)
+
+CRUD igual ao cliente.
+
+### Funcionalidades
+
+- [x] Criar fornecedor
+- [x] Editar fornecedor
+- [x] Listar fornecedores
+- [x] Desativar fornecedor
+
+---
+
+Filtros:
+
+- [x] Nome
+- [x] Estatisticas de fornecedores
+
+---

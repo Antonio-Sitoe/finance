@@ -14,6 +14,8 @@ import com.finance.finance.modules.fornecedor.mapper.FornecedorMapper;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
 import com.finance.finance.modules.fornecedor.dto.FornecedorRequestDTO;
 import com.finance.finance.modules.fornecedor.dto.FornecedorResponseDTO;
+import com.finance.finance.modules.fornecedor.dto.FornecedorResumoDTO;
+import com.finance.finance.modules.fornecedor.dto.FornecedorResumoProjection;
 import com.finance.finance.modules.fornecedor.dto.FornecedorStatusResponseDTO;
 import com.finance.finance.modules.fornecedor.repository.FornecedorRepository;
 
@@ -88,5 +90,16 @@ public class FornecedorService {
         Fornecedor fornecedor = fornecedorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado com id: " + id));
         return FornecedorMapper.toResponse(fornecedor);
+    }
+
+    @Transactional(readOnly = true)
+    public FornecedorResumoDTO getResumo() {
+        FornecedorResumoProjection p = fornecedorRepository.getResumoFornecedor();
+
+        return new FornecedorResumoDTO(
+                p.getTotal(),
+                p.getTotalAtivos(),
+                p.getTotalInativos(),
+                p.getAltaConformidade());
     }
 }

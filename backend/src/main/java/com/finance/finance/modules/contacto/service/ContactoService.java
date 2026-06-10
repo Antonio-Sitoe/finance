@@ -16,6 +16,8 @@ import com.finance.finance.modules.clientes.repository.ClienteRepository;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
+import com.finance.finance.modules.contacto.dto.ContactoEstatisticasResponseDTO;
+import com.finance.finance.modules.contacto.dto.ContactoEstatisticasProjection;
 import com.finance.finance.modules.contacto.dto.ContactoPorClienteResponseDTO;
 import com.finance.finance.modules.contacto.dto.ContactoRequestDTO;
 import com.finance.finance.modules.contacto.dto.ContactoResponseDTO;
@@ -138,6 +140,27 @@ public class ContactoService {
         @Transactional(readOnly = true)
         public List<ContactoPorClienteResponseDTO> contactosPorClientesEstaticticas() {
                 return contactoRepository.countContactosPorCliente();
+        }
+
+        @Transactional(readOnly = true)
+        public ContactoEstatisticasResponseDTO obterEstatisticasContactosPorEmpresa() {
+                ContactoEstatisticasProjection estatisticas = contactoRepository.obterEstatisticasContactosPorEmpresa();
+
+                return ContactoEstatisticasResponseDTO.builder()
+                                .totalEmpresas(valorLong(estatisticas.getTotalEmpresas()))
+                                .totalContactos(valorLong(estatisticas.getTotalContactos()))
+                                .mediaContactosPorEmpresa(valorDouble(estatisticas.getMediaContactosPorEmpresa()))
+                                .empresasComContactos(valorLong(estatisticas.getEmpresasComContactos()))
+                                .empresasSemContactos(valorLong(estatisticas.getEmpresasSemContactos()))
+                                .build();
+        }
+
+        private long valorLong(Number value) {
+                return value != null ? value.longValue() : 0L;
+        }
+
+        private double valorDouble(Number value) {
+                return value != null ? value.doubleValue() : 0.0d;
         }
 
         private Cliente validateCheckCliente(ContactoRequestDTO contacto) {

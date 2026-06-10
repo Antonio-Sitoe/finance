@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.finance.finance.modules.contacto.dto.ContactoEstatisticasProjection;
 import com.finance.finance.modules.contacto.dto.ContactoPorClienteResponseDTO;
 import com.finance.finance.modules.contacto.model.Contacto;
 import java.util.List;
@@ -33,5 +34,24 @@ public interface ContactoRepository extends JpaRepository<Contacto, Long>, JpaSp
                         "LEFT JOIN ct.cliente cl " +
                         "GROUP BY ct.cliente.id, cl.nomeEmpresarial")
         List<ContactoPorClienteResponseDTO> countContactosPorCliente();
+
+        @Query(value = """
+                            SELECT
+                                    CAST(COUNT(*) AS BIGINT) AS totalEmpresas,
+                                    CAST(COALESCE(SUM(total_contactos), 0) AS BIGINT) AS totalContactos,
+                                    CAST(COALESCE(ROUND(AVG(total_contactos), 2), 0) AS DOUBLE PRECISION) AS mediaContactosPorEmpresa,
+                                    CAST(COUNT(*) FILTER (WHERE total_contactos > 0) AS BIGINT) AS empresasComContactos,
+                                    CAST(COUNT(*) FILTER (WHERE total_contactos = 0) AS BIGINT) AS empresasSemContactos
+                            FROM (
+                            SELECT
+                                    cl.id,
+                                    COUNT(ct.id) AS total_contactos
+                            FROM clientes cl
+                            LEFT JOIN contactos ct
+                                    ON cl.id = ct.cliente_id
+                            GROUP BY cl.id
+                            ) t
+                        """, nativeQuery = true)
+        ContactoEstatisticasProjection obterEstatisticasContactosPorEmpresa();
 
 }

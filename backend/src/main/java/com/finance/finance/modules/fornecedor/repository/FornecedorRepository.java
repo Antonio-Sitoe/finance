@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.finance.finance.modules.fornecedor.dto.FornecedorResumoProjection;
 import com.finance.finance.modules.fornecedor.model.Fornecedor;
 import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
 
@@ -25,6 +26,16 @@ public interface FornecedorRepository extends JpaRepository<Fornecedor, Long>, J
             LIMIT 5
             """)
     List<GlobalSearchResponseDTO> findByIdAndNomeEmpresarial(@Param("q") String q);
+
+    @Query(value = """
+                SELECT
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN situacao = 'ATIVO' THEN 1 ELSE 0 END) AS totalAtivos,
+                    SUM(CASE WHEN situacao = 'INATIVO' THEN 1 ELSE 0 END) AS totalInativos,
+                    SUM(CASE WHEN nota >= 8 THEN 1 ELSE 0 END) AS altaConformidade
+                FROM fornecedor
+            """, nativeQuery = true)
+    FornecedorResumoProjection getResumoFornecedor();
 
     Optional<Fornecedor> findByEmail(String email);
 
