@@ -1,0 +1,37 @@
+<app-page-header
+  title="Contas Bancárias"
+  description="Contas registadas no sistema para gestão de ativos e liquidez."
+  [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Contas Bancárias' }]"
+>
+  <button
+    (click)="openNew()"
+    class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+  >
+    <span class="text-base leading-none">+</span>
+    Nova Conta
+  </button>
+</app-page-header>
+
+<div class="w-full">
+  <app-accounts-list-table
+    (editClick)="openEdit($event)"
+    (detailClick)="openDetail($event)"
+  />
+</div>
+
+@if (drawerOpen()) {
+  <app-create-and-edit-account
+    [open]="drawerOpen()"
+    [account]="selectedAccount()"
+    (openChange)="onDrawerClose($event)"
+  />
+}
+
+@if (detailDrawerOpen()) {
+  <app-account-detail-drawer
+    [open]="detailDrawerOpen()"
+    [account]="selectedAccount()"
+    (openChange)="detailDrawerOpen.set($event)"
+    (edit)="openEdit($event)"
+  />
+}

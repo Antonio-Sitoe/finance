@@ -62,3 +62,17 @@ Filtros:
 - [x] Estatisticas de fornecedores
 
 ---
+
+
+# 6️⃣ Gestão de contas (bancárias / caixa)
+
+Representa contas financeiras.
+
+### Funcionalidades
+
+- [x] Criar conta
+- [x] Editar conta
+- [x] Listar contas
+- [x] Desativar conta
+
+---

@@ -1,5 +1,6 @@
 import {
   BuildingsBold,
+  CardBold,
   EyeBold,
   EyeClosedBold,
   ForbiddenCircleBold,
@@ -29,6 +30,7 @@ import { provideSolarIcons } from "@solar-icons/angular";
 export const appIconsConfig = [
   provideSolarIcons({
     BuildingsBold,
+    CardBold,
     AltArrowLeftBold,
     StarsBoldDuotone,
     EyeBold,

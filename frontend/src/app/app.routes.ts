@@ -14,6 +14,7 @@ import { CostumersComponent } from './pages/costumers/costumers.component'
 import { CostumerContactsComponent } from './pages/costumer-contacts/costumer-contacts.component'
 import { ContactsComponent } from './pages/contacts/contacts.component'
 import { SuppliersComponent } from './pages/suppliers/suppliers.component'
+import { AccountsComponent } from './pages/accounts/accounts.component'
 
 export const routes: Routes = [
   {
@@ -50,6 +51,11 @@ export const routes: Routes = [
         path: 'suppliers',
         component: SuppliersComponent,
         title: 'Fornecedores | FinanceApp Administrative Panel',
+      },
+      {
+        path: 'accounts',
+        component: AccountsComponent,
+        title: 'Contas Bancárias | FinanceApp Administrative Panel',
       },
       {
         path: 'profile',

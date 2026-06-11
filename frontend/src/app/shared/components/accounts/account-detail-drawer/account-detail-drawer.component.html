@@ -1,0 +1,131 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="sm"
+  [showFooter]="!!account"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    {{ account?.nome ?? 'Detalhes' }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ account?.contaCorrente || '—' }}
+  </span>
+
+  @if (account) {
+
+    <!-- Hero -->
+    <div
+      class="-mx-6 -mt-5 mb-6 flex flex-col items-center gap-3 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 pb-6 pt-8 text-center dark:border-white/[0.05] dark:from-gray-800/40 dark:to-transparent"
+    >
+      <div
+        class="flex h-20 w-20 items-center justify-center rounded-full bg-brand-50 text-brand-600 ring-4 ring-white dark:bg-brand-500/10 dark:text-brand-400 dark:ring-gray-900"
+      >
+        <ng-container [solarIcon]="CardBold" [size]="32" />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white/90">
+          {{ account.nome }}
+        </h3>
+        <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+          Agência {{ account.agencia }}
+        </p>
+      </div>
+
+      <app-badge variant="solid" [color]="facade.badgeColor(account.situacao)" size="sm">
+        {{ account.situacao === 'ATIVO' ? 'Activo' : 'Inactivo' }}
+      </app-badge>
+    </div>
+
+    <!-- Secção: Dados Bancários -->
+    <section class="mb-6">
+      <div class="mb-3 flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M2 7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7Zm2 2h16V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2Zm0 2v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6H4Z"
+            fill="currentColor"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          Dados Bancários
+        </h4>
+      </div>
+      <div class="divide-y divide-dashed divide-gray-100 dark:divide-white/[0.05]">
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Conta Corrente</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ account.contaCorrente }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Agência</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ account.agencia }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Adicionada em</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ account.dataInclusao | date: "dd/MM/yyyy, HH:mm" }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Secção: Observação -->
+    @if (account.observacao) {
+      <section class="mb-6">
+        <div class="mb-3 flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M6 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8.83a3 3 0 0 0-.88-2.13l-3.82-3.82A3 3 0 0 0 14.17 2H6Zm1 9a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm1 3a1 1 0 1 0 0 2h5a1 1 0 1 0 0-2H8Z"
+              fill="currentColor"/>
+          </svg>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            Observação
+          </h4>
+        </div>
+        <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
+          <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+            {{ account.observacao }}
+          </p>
+        </div>
+      </section>
+    }
+
+  }
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full flex-col gap-3">
+    <!-- Estado da Conta -->
+    <div
+      class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.02]"
+    >
+      <div>
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Estado da Conta
+        </p>
+        <p
+          class="mt-0.5 text-xs font-semibold"
+          [class.text-success-500]="isActive"
+          [class.text-error-500]="!isActive"
+        >
+          {{ isActive ? 'Ativo' : 'Inativo' }}
+        </p>
+      </div>
+      <app-switch
+        label=""
+        [defaultChecked]="isActive"
+        [disabled]="isLoading()"
+        (valueChange)="toggleSituacao()"
+      />
+    </div>
+    <button
+      (click)="handleEdit()"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-600 active:scale-[0.98]"
+    >
+      <ng-container [solarIcon]="Pen2Bold" [size]="16" />
+      Editar Conta
+    </button>
+  </div>
+</app-drawer>

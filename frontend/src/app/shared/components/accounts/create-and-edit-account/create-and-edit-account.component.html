@@ -1,0 +1,128 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="md"
+  [showFooter]="true"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    {{ isEditing() ? 'Editar Conta' : 'Nova Conta' }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ isEditing() ? 'Actualize os dados da conta bancária' : 'Preencha os dados para registar uma nova conta bancária' }}
+  </span>
+
+  <form class="space-y-10" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <!-- ── Secção 1: Dados Bancários ───────────────────────── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <span class="text-brand-500">
+          <ng-container [solarIcon]="CardBold" [size]="16" />
+        </span>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Dados Bancários
+        </h4>
+      </div>
+
+      <div class="space-y-4">
+        <div class="space-y-1.5">
+          <app-label>Nome da Conta <span class="text-error-500">*</span></app-label>
+          <app-input-field
+            type="text"
+            placeholder="Ex: Conta Principal BCI"
+            formControlName="nome"
+            [error]="isInvalid('nome')"
+            [hint]="getError('nome')"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <app-label>Agência <span class="text-error-500">*</span></app-label>
+            <app-input-field
+              type="text"
+              placeholder="Ex: 0001"
+              formControlName="agencia"
+              [error]="isInvalid('agencia')"
+              [hint]="getError('agencia')"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <app-label>Conta Corrente <span class="text-error-500">*</span></app-label>
+            <app-input-field
+              type="text"
+              placeholder="Ex: 123456-7"
+              formControlName="contaCorrente"
+              [error]="isInvalid('contaCorrente')"
+              [hint]="getError('contaCorrente')"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Secção 2: Informação ────────────────────────────── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-brand-500">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2Zm0 5a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 12 7Zm1 10h-2v-6h2v6Z"
+            fill="currentColor"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Informação
+        </h4>
+      </div>
+
+      <div class="space-y-1.5">
+        <app-label>Observação <span class="text-error-500">*</span></app-label>
+        <app-text-area
+          placeholder="Informações adicionais sobre esta conta..."
+          [rows]="4"
+          formControlName="observacao"
+          [error]="isInvalid('observacao')"
+          [hint]="getError('observacao')"
+        />
+      </div>
+    </section>
+
+    <!-- ── Secção 3: Estado ────────────────────────────────── -->
+    <section class="space-y-5">
+      <div
+        class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-white/[0.08] dark:bg-white/[0.02]"
+      >
+        <div>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado da Conta</p>
+          <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+            Define se a conta está apta para movimentos
+          </p>
+        </div>
+        <app-switch label="" formControlName="situacao" />
+      </div>
+    </section>
+
+  </form>
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full gap-3">
+    <app-button
+      variant="outline"
+      class="flex-1"
+      className="w-full justify-center"
+      (btnClick)="close()"
+    >
+      Cancelar
+    </app-button>
+    <app-button
+      variant="primary"
+      class="flex-1"
+      className="w-full justify-center"
+      [disabled]="form.invalid || isLoading()"
+      [loading]="isLoading()"
+      (btnClick)="onSubmit()"
+    >
+      {{ isEditing() ? 'Guardar Alterações' : 'Guardar Conta' }}
+    </app-button>
+  </div>
+</app-drawer>
