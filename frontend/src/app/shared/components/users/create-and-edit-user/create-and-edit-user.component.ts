@@ -68,6 +68,10 @@ export class CreateAndEditUserComponent implements OnChanges {
   }
 
   submit(): void {
+    if (!this.userForm.form.valid) {
+      this.userForm.form.markAllAsTouched()
+      return
+    }
     const loadingId = this.toast.loading(
       this.isEditing() ? 'A gravar...' : 'A criar...',
     )
