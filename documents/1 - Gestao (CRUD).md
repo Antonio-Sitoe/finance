@@ -5,6 +5,7 @@ Categorias hierárquicas.
 
 ### Funcionalidades
 
+- [] desenhar UIS
 - [] Criar categoria
 - [] criacao em lote, pedir IA Gerar um form que pode criar categorias em lote
 - [] Editar categoria
