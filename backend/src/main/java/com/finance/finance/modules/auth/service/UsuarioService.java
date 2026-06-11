@@ -3,6 +3,7 @@ package com.finance.finance.modules.auth.service;
 import com.finance.finance.modules.auth.dto.UsuarioAnalytcsResponseDto;
 import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
 import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
+import com.finance.finance.modules.auth.dto.UsuarioStatusResponseDTO;
 import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
 import com.finance.finance.modules.auth.mapper.UsuarioMapper;
 import com.finance.finance.modules.auth.model.Usuario;
@@ -51,6 +52,22 @@ public class UsuarioService {
         Usuario usuario = buscarOuFalhar(id);
         usuario.setSituacao(Situacao.INATIVO);
         usuarioRepository.save(usuario);
+    }
+
+    public UsuarioStatusResponseDTO activarOuDesativar(Long id) {
+        Usuario usuario = buscarOuFalhar(id);
+
+        String mensagem;
+        if (usuario.getSituacao() == Situacao.ATIVO) {
+            usuario.setSituacao(Situacao.INATIVO);
+            mensagem = "Usuário desativado com sucesso";
+        } else {
+            usuario.setSituacao(Situacao.ATIVO);
+            mensagem = "Usuário ativado com sucesso";
+        }
+
+        usuarioRepository.save(usuario);
+        return new UsuarioStatusResponseDTO(usuario.getId(), usuario.getSituacao(), mensagem);
     }
 
     @Transactional(readOnly = true)

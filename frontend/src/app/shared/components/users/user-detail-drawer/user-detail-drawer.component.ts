@@ -76,32 +76,27 @@ export class UserDetailDrawerComponent implements OnInit {
   toggleSituacao(): void {
     if (!this.user || this.isLoading()) return
     const loadingId = this.toast.loading('A mudar o estado do utilizador...')
-    const nova =
-      this.situacao() === SITUATION.ATIVO ? SITUATION.INATIVO : SITUATION.ATIVO
     this.isLoading.set(true)
-    this.api
-      .updateUser(this.user.id, {
-        nome: this.user.nome,
-        email: this.user.email,
-        perfil: this.user.perfil,
-        situacao: nova,
-      })
-      .subscribe({
-        next: () => {
-          this.toast.dismiss(loadingId)
-          this.toast.success('Estado mudado')
-          this.situacao.set(nova)
-          this.facade.list.reload()
-          this.facade.getUserAnalytics()
-          this.isLoading.set(false)
-        },
-        error: (err) => {
-          this.toast.dismiss(loadingId)
-          const msg = err?.error?.message || 'Erro ao atualizar estado'
-          this.toast.error('Falha', msg)
-          this.isLoading.set(false)
-        },
-      })
+    this.api.toggleSituacao(this.user.id).subscribe({
+      next: (res) => {
+        this.toast.dismiss(loadingId)
+        this.toast.success(res.mensagem || 'Estado mudado')
+        this.situacao.set(
+          res.situacao === SITUATION.INATIVO
+            ? SITUATION.INATIVO
+            : SITUATION.ATIVO,
+        )
+        this.facade.list.reload()
+        this.facade.getUserAnalytics()
+        this.isLoading.set(false)
+      },
+      error: (err) => {
+        this.toast.dismiss(loadingId)
+        const msg = err?.error?.message || 'Erro ao atualizar estado'
+        this.toast.error('Falha', msg)
+        this.isLoading.set(false)
+      },
+    })
   }
 
   statusColor(situacao: string): BadgeColor {

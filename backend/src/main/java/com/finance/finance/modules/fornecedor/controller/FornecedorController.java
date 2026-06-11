@@ -92,8 +92,10 @@ public class FornecedorController {
         public ResponseEntity<PageResponse<FornecedorResponseDTO>> listar(
                         @Parameter(description = "Filtro parcial por nome empresarial", example = "Tech") @RequestParam(required = false) String nome,
                         @Parameter(description = "Filtro por situação", example = "ATIVO") @RequestParam(required = false) Situacao situacao,
+                        @Parameter(description = "Nota mínima (0-10)", example = "8") @RequestParam(required = false) Integer notaMin,
+                        @Parameter(description = "Nota máxima (0-10)", example = "7") @RequestParam(required = false) Integer notaMax,
                         @Valid @ModelAttribute PaginationRequest paginationRequest) {
-                return ResponseEntity.ok(service.listar(nome, situacao, paginationRequest));
+                return ResponseEntity.ok(service.listar(nome, situacao, notaMin, notaMax, paginationRequest));
         }
 
         @GetMapping("/{id}")

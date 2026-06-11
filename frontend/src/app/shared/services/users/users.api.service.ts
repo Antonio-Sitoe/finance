@@ -7,6 +7,7 @@ import {
   IUsuario,
   UpdateUsuarioDto,
   UsuarioAnalytcsResponseDto,
+  UsuarioSituacaoResponse,
   UsuariosResponse,
 } from '@/shared/interfaces/users.dto'
 import { ListQuery } from '@/shared/config/listing/listing.dto'
@@ -40,5 +41,12 @@ export class UsersApiService {
 
   updateUser(id: number, dto: UpdateUsuarioDto): Observable<IUsuario> {
     return this.http.put<IUsuario>(USERS_API_ENDPOINTS.UPDATE(id), dto)
+  }
+
+  toggleSituacao(id: number): Observable<UsuarioSituacaoResponse> {
+    return this.http.patch<UsuarioSituacaoResponse>(
+      USERS_API_ENDPOINTS.SITUACAO(id),
+      {},
+    )
   }
 }

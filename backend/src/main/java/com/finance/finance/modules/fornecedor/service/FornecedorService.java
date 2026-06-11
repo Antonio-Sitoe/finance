@@ -70,7 +70,7 @@ public class FornecedorService {
 
     @Transactional(readOnly = true)
     public PageResponse<FornecedorResponseDTO> listar(String nome, Situacao situacao,
-            PaginationRequest paginationRequest) {
+            Integer notaMin, Integer notaMax, PaginationRequest paginationRequest) {
 
         Pageable pageable = paginationRequest.toPageable("nomeEmpresarial");
         Specification<Fornecedor> spec = Specification.unrestricted();
@@ -81,6 +81,12 @@ public class FornecedorService {
         }
         if (situacao != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("situacao"), situacao));
+        }
+        if (notaMin != null) {
+            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("nota"), notaMin));
+        }
+        if (notaMax != null) {
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("nota"), notaMax));
         }
         return PageResponse.from(fornecedorRepository.findAll(spec, pageable).map(FornecedorMapper::toResponse));
     }

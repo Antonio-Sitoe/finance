@@ -26,6 +26,12 @@ export interface UpdateUsuarioDto {
   senha?: string
 }
 
+export interface UsuarioSituacaoResponse {
+  id: number
+  situacao: keyof typeof SITUATION
+  mensagem: string
+}
+
 export type UsuariosResponse = PageResult<IUsuario>
 
 export interface UsuarioAnalytcsResponseDto {

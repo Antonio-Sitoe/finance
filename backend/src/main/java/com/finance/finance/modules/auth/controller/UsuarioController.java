@@ -3,6 +3,7 @@ package com.finance.finance.modules.auth.controller;
 import com.finance.finance.modules.auth.dto.UsuarioAnalytcsResponseDto;
 import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
 import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
+import com.finance.finance.modules.auth.dto.UsuarioStatusResponseDTO;
 import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
 import com.finance.finance.modules.auth.service.UsuarioService;
 import com.finance.finance.exceptions.ApiErrorResponse;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -63,6 +65,17 @@ public class UsuarioController {
             @Parameter(description = "ID do usuário", example = "1") @PathVariable Long id,
             @RequestBody @Valid UsuarioUpdateRequestDTO dto) {
         return ResponseEntity.ok(usuarioService.atualizar(id, dto));
+    }
+
+    @PatchMapping("/{id}/situacao")
+    @Operation(summary = "Ativar ou desativar usuário", description = "Alterna a situação do usuário entre ATIVO e INATIVO.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Situação alterada com sucesso", content = @Content(schema = @Schema(implementation = UsuarioStatusResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<UsuarioStatusResponseDTO> activarOuDesativar(
+            @Parameter(description = "ID do usuário", example = "1") @PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.activarOuDesativar(id));
     }
 
     @DeleteMapping("/{id}")
