@@ -2,7 +2,7 @@ import { Routes } from '@angular/router'
 import { EcommerceComponent } from './pages/dashboard/ecommerce/ecommerce.component'
 import { ProfileComponent } from './pages/profile/profile.component'
 
-import { NotFoundComponent } from './pages/other-page/not-found/not-found.component'
+import { NotFoundComponent } from './pages/not-found/not-found.component'
 import { AppLayoutComponent } from './shared/layout/app-layout/app-layout.component'
 import { LineChartComponent } from './pages/charts/line-chart/line-chart.component'
 import { BarChartComponent } from './pages/charts/bar-chart/bar-chart.component'
@@ -95,6 +95,6 @@ export const routes: Routes = [
   {
     path: '**',
     component: NotFoundComponent,
-    title: 'Angular NotFound Dashboard | FinanceApp Administrative Panel',
+    title: 'Página não encontrada | FinanceApp Administrative Panel',
   },
 ]

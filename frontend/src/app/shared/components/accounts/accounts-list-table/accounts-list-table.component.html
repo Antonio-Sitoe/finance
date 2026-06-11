@@ -1,0 +1,108 @@
+<app-datatable
+  [store]="facade.list"
+  [syncUrl]="true"
+  [columns]="columns"
+  [rowTemplate]="accountRow"
+  [filtersTemplate]="accountFilters"
+/>
+
+<!-- ── Filtros ─────────────────────────────────────────────── -->
+<ng-template #accountFilters>
+  <div
+    class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]"
+  >
+    <div class="relative flex-1">
+      <span
+        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
+      >
+        <ng-container [solarIcon]="'MagnifierBold'" [size]="16" />
+      </span>
+      <app-input-field
+        placeholder="Pesquisar por nome..."
+        className="pl-9"
+        [value]="facade.searchTerm()"
+        (valueChange)="facade.search($event.toString())"
+      />
+    </div>
+    <app-select
+      placeholder="Todos os estados"
+      [options]="facade.situacaoOptions"
+      [value]="facade.filterSituacao()"
+      (valueChange)="facade.filterBySituacao($event)"
+      className="w-full sm:w-44"
+    />
+  </div>
+</ng-template>
+
+<!-- ── Linha da tabela ─────────────────────────────────────── -->
+<ng-template #accountRow let-row>
+  <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
+
+    <!-- Conta -->
+    <td class="px-5 py-3.5">
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400"
+        >
+          <ng-container [solarIcon]="'CardBold'" [size]="18" />
+        </div>
+        <div>
+          <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ row.nome }}
+          </span>
+          <span class="text-xs text-gray-400 dark:text-gray-500">
+            {{ row.observacao || '—' }}
+          </span>
+        </div>
+      </div>
+    </td>
+
+    <!-- Agência -->
+    <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
+      {{ row.agencia || '—' }}
+    </td>
+
+    <!-- Conta Corrente -->
+    <td class="px-5 py-3.5 text-sm font-medium text-gray-700 dark:text-gray-300">
+      {{ row.contaCorrente || '—' }}
+    </td>
+
+    <!-- Inclusão -->
+    <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
+      {{ row.dataInclusao | date: 'dd/MM/yyyy' }}
+    </td>
+
+    <!-- Estado -->
+    <td class="px-5 py-3.5">
+      <div class="flex items-center justify-center">
+        <app-badge
+          variant="light"
+          [color]="facade.badgeColor(row.situacao)"
+          size="sm"
+        >
+          {{ row.situacao === 'ATIVO' ? 'Activo' : 'Inactivo' }}
+        </app-badge>
+      </div>
+    </td>
+
+    <!-- Acções -->
+    <td class="px-5 py-3.5">
+      <div class="flex items-center justify-end gap-1">
+        <button
+          (click)="detailClick.emit(row)"
+          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          title="Ver detalhes"
+        >
+          <ng-container [solarIcon]="'EyeBold'" [size]="18" />
+        </button>
+        <button
+          (click)="editClick.emit(row)"
+          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          title="Editar"
+        >
+          <ng-container [solarIcon]="'Pen2Bold'" [size]="18" />
+        </button>
+      </div>
+    </td>
+  </tr>
+</ng-template>
