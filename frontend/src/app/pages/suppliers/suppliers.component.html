@@ -17,25 +17,25 @@
     icon="BuildingsBold"
     title="Total"
     description="Fornecedores registados"
-    [value]="facade.analytics().total.toString()"
+    [value]="(facade.analytics()?.total ?? 0).toString()"
   />
   <app-card-stat
     icon="UserCheckRoundedBold"
     title="Activos"
     description="Contratos activos"
-    [value]="facade.analytics().totalAtivos.toString()"
+    [value]="(facade.analytics()?.totalAtivos ?? 0).toString()"
   />
   <app-card-stat
     icon="UserBlockRoundedBold"
     title="Inactivos"
     description="Contratos suspensos"
-    [value]="facade.analytics().totalInativos.toString()"
+    [value]="(facade.analytics()?.totalInativos ?? 0).toString()"
   />
   <app-card-stat
     icon="ShieldUserBold"
     title="Alta Conformidade"
     description="Avaliação ≥ 8.0"
-    [value]="facade.analytics().altaConformidade.toString()"
+    [value]="(facade.analytics()?.altaConformidade ?? 0).toString()"
   />
 </div>
 
