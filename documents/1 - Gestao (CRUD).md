@@ -9,7 +9,6 @@ Representa contas financeiras.
 - [] Editar conta
 - [] Listar contas
 - [] Desativar conta
-- [] Estatisticas
 
 ---
 
