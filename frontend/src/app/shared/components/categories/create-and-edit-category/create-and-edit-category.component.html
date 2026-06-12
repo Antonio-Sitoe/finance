@@ -1,0 +1,139 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="md"
+  [showFooter]="true"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    {{ isEditing() ? 'Editar Categoria' : 'Nova Categoria' }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ isEditing() ? 'Actualize os dados da categoria' : 'Preencha os dados para registar uma nova categoria' }}
+  </span>
+
+  <form class="space-y-10" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <!-- ── Secção 1: Identificação ────────────────────────── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <span class="text-brand-500">
+          <ng-container [solarIcon]="'LayersBold'" [size]="16" />
+        </span>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Identificação
+        </h4>
+      </div>
+
+      <div class="space-y-4">
+        <div class="space-y-1.5">
+          <app-label>Nome da Categoria <span class="text-error-500">*</span></app-label>
+          <app-input-field
+            type="text"
+            placeholder="Ex: Despesas Operacionais"
+            formControlName="nome"
+            [error]="isInvalid('nome')"
+            [hint]="getError('nome')"
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <app-label>Categoria Pai</app-label>
+          <app-select
+            placeholder="Sem categoria pai (raiz)"
+            [options]="parentOptions()"
+            formControlName="categoriaPaiId"
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <app-label>Descrição</app-label>
+          <app-text-area
+            placeholder="Informações adicionais sobre esta categoria..."
+            [rows]="3"
+            formControlName="descricao"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Secção 2: Tipo de Movimentação ──────────────────── -->
+    <section class="space-y-5">
+      <div class="flex items-center gap-2.5">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-brand-500">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M7 3a1 1 0 0 1 .78.37l4 5a1 1 0 1 1-1.56 1.26L8 6.85V20a1 1 0 1 1-2 0V6.85L3.78 9.63a1 1 0 0 1-1.56-1.26l4-5A1 1 0 0 1 7 3Zm10 18a1 1 0 0 1-.78-.37l-4-5a1 1 0 1 1 1.56-1.26L16 17.15V4a1 1 0 1 1 2 0v13.15l2.22-2.78a1 1 0 0 1 1.56 1.26l-4 5A1 1 0 0 1 17 21Z"
+            fill="currentColor"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          Tipo de Movimentação <span class="text-error-500">*</span>
+        </h4>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div
+          class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.02]"
+        >
+          <div>
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Débito</p>
+            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Saídas / despesas</p>
+          </div>
+          <app-checkbox formControlName="debito" />
+        </div>
+        <div
+          class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.02]"
+        >
+          <div>
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Crédito</p>
+            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Entradas / receitas</p>
+          </div>
+          <app-checkbox formControlName="credito" />
+        </div>
+      </div>
+
+      @if (hasTipoError()) {
+        <p class="text-sm text-error-500">
+          Seleccione pelo menos um tipo: débito, crédito ou ambos.
+        </p>
+      }
+    </section>
+
+    <!-- ── Secção 3: Estado ────────────────────────────────── -->
+    <section class="space-y-5">
+      <div
+        class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-white/[0.08] dark:bg-white/[0.02]"
+      >
+        <div>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado da Categoria</p>
+          <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+            Define se a categoria está disponível para uso
+          </p>
+        </div>
+        <app-switch label="" formControlName="situacao" />
+      </div>
+    </section>
+
+  </form>
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full gap-3">
+    <app-button
+      variant="outline"
+      class="flex-1"
+      className="w-full justify-center"
+      (btnClick)="close()"
+    >
+      Cancelar
+    </app-button>
+    <app-button
+      variant="primary"
+      class="flex-1"
+      className="w-full justify-center"
+      [disabled]="form.invalid || isLoading()"
+      [loading]="isLoading()"
+      (btnClick)="onSubmit()"
+    >
+      {{ isEditing() ? 'Guardar Alterações' : 'Guardar Categoria' }}
+    </app-button>
+  </div>
+</app-drawer>

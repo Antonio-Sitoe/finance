@@ -1,0 +1,139 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="sm"
+  [showFooter]="!!category"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    {{ category?.nome ?? 'Detalhes' }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ category ? facade.typeLabel(category) : '—' }}
+  </span>
+
+  @if (category) {
+
+    <!-- Hero -->
+    <div
+      class="-mx-6 -mt-5 mb-6 flex flex-col items-center gap-3 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 pb-6 pt-8 text-center dark:border-white/[0.05] dark:from-gray-800/40 dark:to-transparent"
+    >
+      <div
+        class="flex h-20 w-20 items-center justify-center rounded-full bg-brand-50 text-brand-600 ring-4 ring-white dark:bg-brand-500/10 dark:text-brand-400 dark:ring-gray-900"
+      >
+        <ng-container [solarIcon]="'LayersBold'" [size]="32" />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white/90">
+          {{ category.nome }}
+        </h3>
+        <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+          {{ category.categoriaPaiNome ? 'Subcategoria de ' + category.categoriaPaiNome : 'Categoria raiz' }}
+        </p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-2">
+        <app-badge variant="solid" [color]="facade.badgeColor(category.situacao)" size="sm">
+          {{ category.situacao === 'ATIVO' ? 'Activo' : 'Inactivo' }}
+        </app-badge>
+        @if (category.debito) {
+          <app-badge variant="solid" color="error" size="sm">Débito</app-badge>
+        }
+        @if (category.credito) {
+          <app-badge variant="solid" color="success" size="sm">Crédito</app-badge>
+        }
+      </div>
+    </div>
+
+    <!-- Secção: Classificação -->
+    <section class="mb-6">
+      <div class="mb-3 flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2Z"
+            fill="currentColor"/>
+        </svg>
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          Classificação
+        </h4>
+      </div>
+      <div class="divide-y divide-dashed divide-gray-100 dark:divide-white/[0.05]">
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Tipo</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ facade.typeLabel(category) }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Categoria Pai</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ category.categoriaPaiNome || '—' }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Nível</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ category.categoriaPaiNome ? 'Subcategoria' : 'Categoria raiz' }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Secção: Descrição -->
+    @if (category.descricao) {
+      <section class="mb-6">
+        <div class="mb-3 flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M6 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8.83a3 3 0 0 0-.88-2.13l-3.82-3.82A3 3 0 0 0 14.17 2H6Zm1 9a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm1 3a1 1 0 1 0 0 2h5a1 1 0 1 0 0-2H8Z"
+              fill="currentColor"/>
+          </svg>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            Descrição
+          </h4>
+        </div>
+        <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
+          <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+            {{ category.descricao }}
+          </p>
+        </div>
+      </section>
+    }
+
+  }
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full flex-col gap-3">
+    <!-- Estado da Categoria -->
+    <div
+      class="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.02]"
+    >
+      <div>
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Estado da Categoria
+        </p>
+        <p
+          class="mt-0.5 text-xs font-semibold"
+          [class.text-success-500]="isActive"
+          [class.text-error-500]="!isActive"
+        >
+          {{ isActive ? 'Ativo' : 'Inativo' }}
+        </p>
+      </div>
+      <app-switch
+        label=""
+        [defaultChecked]="isActive"
+        [disabled]="isLoading()"
+        (valueChange)="toggleSituacao()"
+      />
+    </div>
+    <button
+      (click)="handleEdit()"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-600 active:scale-[0.98]"
+    >
+      <ng-container [solarIcon]="'Pen2Bold'" [size]="16" />
+      Editar Categoria
+    </button>
+  </div>
+</app-drawer>
