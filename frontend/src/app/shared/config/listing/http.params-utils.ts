@@ -5,12 +5,15 @@ export function toHttpParams(Q: ListQuery): HttpParams {
   let p = new HttpParams()
     .set("page", String(Q.page))
     .set("size", String(Q.size));
+
   if (Q.sortBy) p = p.set("sortBy", Q.sortBy);
   if (Q.sortOrder) p = p.set("sortOrder", Q.sortOrder);
 
-  const F = Q.filters ?? {};
-  Object.entries(F).forEach(([key, value]) => {
-    p = p.set(key, String(value));
+  Object.entries(Q.filters ?? {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      p = p.set(key, String(value));
+    }
   });
+
   return p;
 }
