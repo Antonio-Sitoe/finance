@@ -17,14 +17,15 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long>, Jpa
 
     boolean existsByNomeAndCategoriaPaiIdAndIdNot(String nome, Long categoriaPaiId, Long id);
 
-    @Query(value = """
-                SELECT
-                    COUNT(ct.id) as total,
-                    SUM(CASE WHEN ct.debito = true THEN 1 ELSE 0 END) as totalDebito,
-                    SUM(CASE WHEN ct.credito = true THEN 1 ELSE 0 END) as totalCredito,
-                    SUM(CASE WHEN ct.situacao = 'INATIVO' THEN 1 ELSE 0 END) as totalInativos
-                FROM categoria ct
-            """, nativeQuery = true)
+    @Query("""
+                SELECT new com.finance.finance.modules.categoria.dto.CategoriaResumoDTO(
+                    COUNT(ct),
+                    COALESCE(SUM(CASE WHEN ct.debito = true THEN 1 ELSE 0 END), 0),
+                    COALESCE(SUM(CASE WHEN ct.credito = true THEN 1 ELSE 0 END), 0),
+                    COALESCE(SUM(CASE WHEN ct.situacao = com.finance.finance.modules.common.enums.Situacao.INATIVO THEN 1 ELSE 0 END), 0)
+                )
+                FROM Categoria ct
+            """)
     CategoriaResumoDTO getResumo();
 
 }

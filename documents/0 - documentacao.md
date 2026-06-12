@@ -76,3 +76,17 @@ Representa contas financeiras.
 - [x] Desativar conta
 
 ---
+
+# 7️⃣ Gestão de categorias financeiras
+
+Categorias hierárquicas.
+
+### Funcionalidades
+
+- [x] desenhar UIS
+- [x] Criar categoria
+- [x] Editar categoria
+- [x] Excluir categoria
+- [x] Listar categorias
+- [x] Criar subcategoria
+- [x] Estatisticas
