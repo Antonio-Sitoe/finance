@@ -19,14 +19,15 @@ import com.finance.finance.exceptions.ApiErrorResponse;
 import com.finance.finance.modules.categoria.dto.CategoriaRequestDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaResponseDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaStatusResponseDTO;
+import com.finance.finance.modules.categoria.dto.CategoriaValueLabelDTO;
 import com.finance.finance.modules.categoria.service.CategoriaService;
-import com.finance.finance.modules.common.dto.BulkResponseDTO;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,31 +55,6 @@ public class CategoriaController {
     public ResponseEntity<CategoriaResponseDTO> criar(
             @RequestBody @Validated(CategoriaRequestDTO.Create.class) CategoriaRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(dto));
-    }
-
-    @PostMapping("/bulk")
-    @Operation(
-            summary = "Criar categorias em lote",
-            description = "Cria múltiplas categorias numa única operação. "
-                    + "Os itens válidos são gravados e os inválidos são reportados na lista 'erros', sem bloquear os restantes. "
-                    + "Retorna 201 se todos foram criados, 207 se houve sucesso parcial, 422 se todos falharam.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Todas as categorias criadas com sucesso", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
-            @ApiResponse(responseCode = "207", description = "Sucesso parcial — alguns itens falharam", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Lista vazia ou nula", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "422", description = "Todos os itens falharam", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class)))
-    })
-    public ResponseEntity<BulkResponseDTO<CategoriaResponseDTO>> criarBulk(
-            @RequestBody @Valid List<CategoriaRequestDTO> dtos) {
-        BulkResponseDTO<CategoriaResponseDTO> resultado = service.criarBulk(dtos);
-
-        if (resultado.erros().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
-        } else if (resultado.criados().isEmpty()) {
-            return ResponseEntity.status(422).body(resultado);
-        } else {
-            return ResponseEntity.status(207).body(resultado);
-        }
     }
 
     @PatchMapping("/{id}")
@@ -118,6 +94,16 @@ public class CategoriaController {
             @Parameter(description = "Filtro por situação", example = "ATIVO") @RequestParam(required = false) Situacao situacao,
             @Valid @ModelAttribute PaginationRequest paginationRequest) {
         return ResponseEntity.ok(service.listar(nome, debito, credito, situacao, paginationRequest));
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "Listar todas as categorias (id e nome)", description = "Retorna todas as categorias num formato resumido (id e nome), sem paginação. "
+            + "Destinado a alimentar selects/dropdowns, como a escolha de categoria pai.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoriaValueLabelDTO.class))))
+    })
+    public ResponseEntity<List<CategoriaValueLabelDTO>> todos() {
+        return ResponseEntity.ok(service.todos());
     }
 
     @GetMapping("/{id}")

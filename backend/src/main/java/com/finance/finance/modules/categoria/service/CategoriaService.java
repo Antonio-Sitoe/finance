@@ -3,6 +3,7 @@ package com.finance.finance.modules.categoria.service;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +13,10 @@ import com.finance.finance.exceptions.ResourceNotFoundException;
 import com.finance.finance.modules.categoria.dto.CategoriaRequestDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaResponseDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaStatusResponseDTO;
-import com.finance.finance.modules.common.dto.BulkResponseDTO;
+import com.finance.finance.modules.categoria.dto.CategoriaValueLabelDTO;
 import com.finance.finance.modules.categoria.mapper.CategoriaMapper;
 import com.finance.finance.modules.categoria.model.Categoria;
 import com.finance.finance.modules.categoria.repository.CategoriaRepository;
-import com.finance.finance.modules.categoria.utils.CategoriaBulkProcessResult;
 import com.finance.finance.modules.categoria.utils.CategoriaHelper;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
@@ -38,23 +38,6 @@ public class CategoriaService {
 
         Categoria categoria = CategoriaMapper.toEntity(data, categoriaPai);
         return CategoriaMapper.toResponse(categoriaRepository.save(categoria));
-    }
-
-    @Transactional
-    public BulkResponseDTO<CategoriaResponseDTO> criarBulk(List<CategoriaRequestDTO> dtos) {
-        if (dtos == null || dtos.isEmpty()) {
-            throw new BusinessException("A lista de categorias não pode estar vazia");
-        }
-
-        CategoriaBulkProcessResult resultado = categoriaHelper.processarBulk(dtos);
-
-        List<CategoriaResponseDTO> criados = resultado.paraGravar().isEmpty()
-                ? List.of()
-                : categoriaRepository.saveAll(resultado.paraGravar()).stream()
-                        .map(CategoriaMapper::toResponse)
-                        .toList();
-
-        return new BulkResponseDTO<CategoriaResponseDTO>(criados, resultado.erros());
     }
 
     @Transactional
@@ -116,6 +99,16 @@ public class CategoriaService {
         }
 
         return PageResponse.from(categoriaRepository.findAll(spec, pageable).map(CategoriaMapper::toResponse));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoriaValueLabelDTO> todos() {
+        return categoriaRepository.findAll(Sort.by(Sort.Direction.ASC, "nome")).stream()
+                .map(categoria -> CategoriaValueLabelDTO.builder()
+                        .id(categoria.getId())
+                        .nome(categoria.getNome())
+                        .build())
+                .toList();
     }
 
     @Transactional(readOnly = true)
