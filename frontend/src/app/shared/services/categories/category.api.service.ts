@@ -23,10 +23,10 @@ export class CategoryApiService {
         page: query.page - 1,
         sortOrder: "desc",
         filters: {
-          nome: filters["nome"],
-          situacao: filters["situacao"],
-          debito: filters["tipo"] === "debito" ? true : false,
-          credito: filters["tipo"] === "credito" ? true : false,
+          nome: filters["nome"] ?? "",
+          situacao: filters["situacao"] ?? "",
+          ...(filters["tipo"] === "debito" ? { debito: true } : {}),
+          ...(filters["tipo"] === "credito" ? { credito: true } : {}),
         },
       }),
     });

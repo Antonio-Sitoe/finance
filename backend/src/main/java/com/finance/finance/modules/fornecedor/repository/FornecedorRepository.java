@@ -7,13 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import com.finance.finance.modules.fornecedor.dto.FornecedorResumoProjection;
 import com.finance.finance.modules.fornecedor.model.Fornecedor;
 import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
 
-@Repository
 public interface FornecedorRepository extends JpaRepository<Fornecedor, Long>, JpaSpecificationExecutor<Fornecedor> {
 
     @Query("""
