@@ -60,6 +60,7 @@ export class CategoryDetailDrawerComponent implements OnInit {
             : SITUATION.ATIVO
         );
         this.facade.refresh();
+        this.facade.getAnalytics();
         this.isLoading.set(false);
       },
       error: (err) => {

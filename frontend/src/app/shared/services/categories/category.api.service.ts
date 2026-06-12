@@ -1,5 +1,6 @@
 import {
   ICategory,
+  ICategoryAnalytics,
   ICategoryOption,
   ICategoryPayload,
   ICategorySituacaoResponse,
@@ -53,5 +54,9 @@ export class CategoryApiService {
       CATEGORY_ENDPOINTS.SITUACAO(id),
       {}
     );
+  }
+
+  getAnalytics(): Observable<ICategoryAnalytics> {
+    return this.http.get<ICategoryAnalytics>(CATEGORY_ENDPOINTS.ANALYTICS);
   }
 }

@@ -12,6 +12,7 @@ import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.exceptions.ResourceNotFoundException;
 import com.finance.finance.modules.categoria.dto.CategoriaRequestDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaResponseDTO;
+import com.finance.finance.modules.categoria.dto.CategoriaResumoDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaStatusResponseDTO;
 import com.finance.finance.modules.categoria.dto.CategoriaValueLabelDTO;
 import com.finance.finance.modules.categoria.mapper.CategoriaMapper;
@@ -109,6 +110,11 @@ public class CategoriaService {
                         .nome(categoria.getNome())
                         .build())
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public CategoriaResumoDTO getResumo() {
+        return categoriaRepository.getResumo();
     }
 
     @Transactional(readOnly = true)

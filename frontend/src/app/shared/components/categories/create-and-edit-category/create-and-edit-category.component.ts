@@ -120,6 +120,7 @@ export class CreateAndEditCategoryComponent implements OnChanges {
             : 'Categoria criada: ' + response.nome,
         )
         this.facade.refresh()
+        this.facade.getAnalytics()
         this.isLoading.set(false)
         this.close()
       },

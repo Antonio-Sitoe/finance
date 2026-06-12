@@ -7,4 +7,5 @@ export const CATEGORY_ENDPOINTS = {
   DETAIL: (id: number) => `${API_URL}/categorias/${id}`,
   UPDATE: (id: number) => `${API_URL}/categorias/${id}`,
   SITUACAO: (id: number) => `${API_URL}/categorias/${id}/situacao`,
+  ANALYTICS: `${API_URL}/categorias/resumo`,
 } as const;

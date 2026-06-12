@@ -1,0 +1,64 @@
+<app-page-header
+  title="Categorias"
+  description="Hierarquia de categorias de despesa e receita para classificação de lançamentos."
+  [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Categorias' }]"
+>
+  <button
+    (click)="openNew()"
+    class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+  >
+    <span class="text-base leading-none">+</span>
+    Nova Categoria
+  </button>
+</app-page-header>
+
+<div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6">
+  <app-card-stat
+    icon="LayersBold"
+    title="Total"
+    description="Categorias registadas"
+    [value]="facade.analytics().total.toString()"
+  />
+  <app-card-stat
+    icon="GraphNewUpBold"
+    title="Crédito"
+    description="Categorias de receita"
+    [value]="facade.analytics().totalCredito.toString()"
+  />
+  <app-card-stat
+    icon="GraphDownNewBold"
+    title="Débito"
+    description="Categorias de despesa"
+    [value]="facade.analytics().totalDebito.toString()"
+  />
+  <app-card-stat
+    icon="ForbiddenCircleBold"
+    title="Inactivas"
+    description="Categorias desactivadas"
+    [value]="facade.analytics().totalInativos.toString()"
+  />
+</div>
+
+<div class="w-full">
+  <app-categories-list-table
+    (editClick)="openEdit($event)"
+    (detailClick)="openDetail($event)"
+  />
+</div>
+
+@if (drawerOpen()) {
+  <app-create-and-edit-category
+    [open]="drawerOpen()"
+    [category]="selectedCategory()"
+    (openChange)="onDrawerClose($event)"
+  />
+}
+
+@if (detailDrawerOpen()) {
+  <app-category-detail-drawer
+    [open]="detailDrawerOpen()"
+    [category]="selectedCategory()"
+    (openChange)="detailDrawerOpen.set($event)"
+    (edit)="openEdit($event)"
+  />
+}

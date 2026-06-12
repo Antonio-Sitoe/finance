@@ -1,5 +1,8 @@
-import { computed, inject, Injectable } from "@angular/core";
-import { ICategory } from "@/shared/interfaces/categories.dto";
+import { computed, inject, Injectable, signal } from "@angular/core";
+import {
+  ICategory,
+  ICategoryAnalytics,
+} from "@/shared/interfaces/categories.dto";
 import { ListStore } from "@/shared/config/listing/list.store";
 import { CategoryApiService } from "./category.api.service";
 import { SITUATION } from "@/shared/interfaces/enum.dto";
@@ -13,6 +16,13 @@ export class CategoriesFacadeService {
   private readonly api = inject(CategoryApiService);
 
   readonly list = new ListStore<ICategory>();
+
+  readonly analytics = signal<ICategoryAnalytics>({
+    total: 0,
+    totalDebito: 0,
+    totalCredito: 0,
+    totalInativos: 0,
+  });
 
   readonly searchTerm = computed(() =>
     String(this.list.query().filters?.["nome"] ?? "")
@@ -31,6 +41,16 @@ export class CategoriesFacadeService {
 
   constructor() {
     this.list.connect((query) => this.api.getAll(query));
+    this.getAnalytics();
+  }
+
+  getAnalytics(): void {
+    this.api.getAnalytics().subscribe({
+      next: (data) => this.analytics.set(data),
+      error: (err) => {
+        console.error("Erro ao carregar análiticos de categorias", err);
+      },
+    });
   }
 
   search(value: string): void {

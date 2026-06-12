@@ -25,6 +25,13 @@ export interface ICategoryOption {
   nome: string;
 }
 
+export interface ICategoryAnalytics {
+  total: number;
+  totalDebito: number;
+  totalCredito: number;
+  totalInativos: number;
+}
+
 export interface ICategorySituacaoResponse {
   id: number;
   situacao: Situacao;
