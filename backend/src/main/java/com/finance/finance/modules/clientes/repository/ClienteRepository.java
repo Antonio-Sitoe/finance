@@ -12,20 +12,20 @@ import org.springframework.data.repository.query.Param;
 import com.finance.finance.modules.clientes.model.Cliente;
 import com.finance.finance.modules.clientes.dto.ClienteRankingResumoDTO;
 import com.finance.finance.modules.common.enums.Situacao;
-import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
+import com.finance.finance.modules.relatorios.dto.search.ClienteSearchItemDTO;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     @Query("""
-            SELECT new com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO(
-                c.id, 'CLIENTE', c.nomeEmpresarial, c.email, concat('/clientes/', cast(c.id as String))
+            SELECT new com.finance.finance.modules.relatorios.dto.search.ClienteSearchItemDTO(
+                c.id, c.nomeEmpresarial, c.email, c.nota, c.situacao
             )
             FROM Cliente c
             WHERE lower(c.nomeEmpresarial) LIKE lower(concat('%', :q, '%'))
+               OR lower(c.email) LIKE lower(concat('%', :q, '%'))
             ORDER BY c.nomeEmpresarial
-            LIMIT 5
             """)
-    List<GlobalSearchResponseDTO> findByIdAndNomeEmpresarial(@Param("q") String q);
+    List<ClienteSearchItemDTO> searchGlobal(@Param("q") String q, Pageable pageable);
 
     boolean existsByEmail(String email);
 

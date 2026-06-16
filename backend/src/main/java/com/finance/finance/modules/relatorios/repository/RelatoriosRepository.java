@@ -3,13 +3,14 @@ package com.finance.finance.modules.relatorios.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.finance.finance.modules.Lancamento.model.Lancamento;
-import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
+import com.finance.finance.modules.relatorios.dto.search.LancamentoSearchItemDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualProjecaoDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioMensalDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioPorCategoria;
@@ -120,14 +121,24 @@ public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, J
     // ── Global Search (JPQL) ─────────────────────────────────────────────────
 
     @Query("""
-            SELECT new com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO(
-                l.id, 'LANCAMENTO', l.descricao, cast(l.situacao as String), concat('/lancamentos/', cast(l.id as String))
+            SELECT new com.finance.finance.modules.relatorios.dto.search.LancamentoSearchItemDTO(
+                l.id,
+                l.descricao,
+                coalesce(c.nomeEmpresarial, f.nomeEmpresarial),
+                l.valor,
+                l.dataLancamento,
+                l.dataVencimento,
+                l.situacao,
+                l.tipo
             )
             FROM Lancamento l
+            LEFT JOIN l.cliente c
+            LEFT JOIN l.fornecedor f
             WHERE lower(l.descricao) LIKE lower(concat('%', :q, '%'))
-            ORDER BY l.descricao
-            LIMIT 5
+               OR lower(coalesce(c.nomeEmpresarial, '')) LIKE lower(concat('%', :q, '%'))
+               OR lower(coalesce(f.nomeEmpresarial, '')) LIKE lower(concat('%', :q, '%'))
+            ORDER BY l.dataLancamento DESC
             """)
-    List<GlobalSearchResponseDTO> lancamentoSearch(@Param("q") String q);
+    List<LancamentoSearchItemDTO> searchGlobal(@Param("q") String q, Pageable pageable);
 
 }

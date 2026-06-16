@@ -1,13 +1,14 @@
 package com.finance.finance.modules.relatorios.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.finance.finance.modules.clientes.repository.ClienteRepository;
 import com.finance.finance.modules.fornecedor.repository.FornecedorRepository;
 import com.finance.finance.modules.relatorios.dto.DashboardDTO;
-import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
+import com.finance.finance.modules.relatorios.dto.search.GlobalSearchResultDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualProjecaoDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioMensalDTO;
@@ -63,17 +64,20 @@ public class RelatorioService {
         return relatorio;
     }
 
-    public List<GlobalSearchResponseDTO> globalSearch(String q) {
+    public GlobalSearchResultDTO globalSearch(String q, Integer limit) {
+        if (q == null || q.isBlank()) {
+            return GlobalSearchResultDTO.empty();
+        }
 
-        List<GlobalSearchResponseDTO> results = new ArrayList<>();
+        String termo = q.trim();
+        Pageable pageable = (limit == null || limit <= 0)
+                ? Pageable.unpaged()
+                : PageRequest.of(0, limit);
 
-        results.addAll(clienteRepository.findByIdAndNomeEmpresarial(q));
-
-        results.addAll(fornecedorRepository.findByIdAndNomeEmpresarial(q));
-
-        results.addAll(repository.lancamentoSearch(q));
-
-        return results;
+        return new GlobalSearchResultDTO(
+                clienteRepository.searchGlobal(termo, pageable),
+                fornecedorRepository.searchGlobal(termo, pageable),
+                repository.searchGlobal(termo, pageable));
     }
 
 }

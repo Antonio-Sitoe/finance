@@ -90,3 +90,23 @@ Categorias hierárquicas.
 - [x] Listar categorias
 - [x] Criar subcategoria
 - [x] Estatisticas
+
+
+---
+
+# 1️⃣1️⃣ Pesquisa Global
+
+Pesquisa unificada em todo o sistema. Acessível pela topbar em qualquer página.
+
+* [x] Buscar cliente (por nome ou email)
+* [x] Buscar fornecedor (por nome)
+* [x] Buscar lançamento (por descrição)
+
+Retorna até 5 resultados por entidade com id, tipo, título, subtítulo e URL
+de navegação directa para o registo.
+
+**Endpoint:** `GET /analitics/search?q={termo}`
+
+**Dois modos:**
+- Dropdown rápido na topbar (resultados inline ao digitar)
+- Página completa `/search?q={termo}` ao pressionar Enter
