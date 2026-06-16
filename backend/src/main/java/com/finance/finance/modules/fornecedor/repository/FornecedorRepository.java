@@ -3,6 +3,7 @@ package com.finance.finance.modules.fornecedor.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -10,20 +11,20 @@ import org.springframework.data.repository.query.Param;
 
 import com.finance.finance.modules.fornecedor.dto.FornecedorResumoProjection;
 import com.finance.finance.modules.fornecedor.model.Fornecedor;
-import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
+import com.finance.finance.modules.relatorios.dto.search.FornecedorSearchItemDTO;
 
 public interface FornecedorRepository extends JpaRepository<Fornecedor, Long>, JpaSpecificationExecutor<Fornecedor> {
 
     @Query("""
-            SELECT new com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO(
-                f.id, 'FORNECEDOR', f.nomeEmpresarial, f.email, concat('/fornecedores/', cast(f.id as String))
+            SELECT new com.finance.finance.modules.relatorios.dto.search.FornecedorSearchItemDTO(
+                f.id, f.nomeEmpresarial, f.email, f.nota, f.situacao
             )
             FROM Fornecedor f
             WHERE lower(f.nomeEmpresarial) LIKE lower(concat('%', :q, '%'))
+               OR lower(f.email) LIKE lower(concat('%', :q, '%'))
             ORDER BY f.nomeEmpresarial
-            LIMIT 5
             """)
-    List<GlobalSearchResponseDTO> findByIdAndNomeEmpresarial(@Param("q") String q);
+    List<FornecedorSearchItemDTO> searchGlobal(@Param("q") String q, Pageable pageable);
 
     @Query(value = """
                 SELECT

@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.finance.finance.modules.relatorios.dto.DashboardDTO;
-import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
+import com.finance.finance.modules.relatorios.dto.search.GlobalSearchResultDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioPercentual;
 import com.finance.finance.modules.relatorios.dto.RelatorioPorCategoria;
@@ -30,17 +30,20 @@ public class RelatorioController {
     @Operation(
         summary = "Pesquisa global",
         description = "Pesquisa em clientes, fornecedores e lançamentos pelo termo fornecido. "
-                + "Devolve até 5 resultados por entidade, com id, tipo, título, subtítulo e URL de navegação."
+                + "Devolve os resultados agrupados por entidade, com dados ricos para apresentação. "
+                + "Use 'limit' para controlar o nº máximo de itens por grupo (0 = todos, para a página de pesquisa)."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Resultados encontrados com sucesso"),
             @ApiResponse(responseCode = "400", description = "Parâmetro de pesquisa em falta")
     })
     @GetMapping("/search")
-    public List<GlobalSearchResponseDTO> search(
+    public GlobalSearchResultDTO search(
             @Parameter(description = "Termo de pesquisa (mínimo 1 caractere)", example = "João")
-            @RequestParam String q) {
-        return service.globalSearch(q);
+            @RequestParam String q,
+            @Parameter(description = "Máximo de resultados por grupo (0 = sem limite)", example = "5")
+            @RequestParam(required = false, defaultValue = "5") Integer limit) {
+        return service.globalSearch(q, limit);
     }
 
     @Operation(summary = "Relatório anual", description = "Retorna o resumo financeiro do ano corrente: total de lançamentos, saldo anual e detalhamento mensal.")
