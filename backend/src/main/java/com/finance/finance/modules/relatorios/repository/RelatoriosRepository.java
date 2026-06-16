@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import com.finance.finance.modules.Lancamento.model.Lancamento;
 import com.finance.finance.modules.relatorios.dto.GlobalSearchResponseDTO;
@@ -16,7 +15,6 @@ import com.finance.finance.modules.relatorios.dto.RelatorioMensalDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioPorCategoria;
 import com.finance.finance.modules.relatorios.dto.RelatorioSituacaoDTO;
 
-@Repository
 public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, JpaSpecificationExecutor<Lancamento> {
 
     @Query(value = """

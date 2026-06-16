@@ -1,4 +1,3 @@
-
 ---
 # 8️⃣ Gestão de lançamentos financeiros
 
@@ -6,25 +5,26 @@ Esse é **o módulo principal do sistema**.
 
 ### Parcelamento
 
-* [x] Criar lançamento parcelado
-* [x] Gerar parcelas automaticamente
+* [] Criar lançamento parcelado
+* [] Gerar parcelas automaticamente
+
 ### Filtros
 Muito importantes.
-* [x] Filtrar por categoria
-* [x] Filtrar por cliente
-* [x] Filtrar por fornecedor
-* [x] Filtrar por conta
-* [x] Filtrar por status
+* [] Filtrar por categoria
+* [] Filtrar por cliente
+* [] Filtrar por fornecedor
+* [] Filtrar por conta
+* [] Filtrar por status
 
 ### Funcionalidades
 
-* [x] Criar lançamento
-* [x] Editar lançamento
-* [x] Excluir lançamento
-* [x] Marcar como pago
-* [x] Marcar como pendente
-* [x]  criar/atualizar em lote (CSV/JSON), com validação por linha e resumo de erros
-* [x] `GET /lancamentos/export`: import/export CSV/Excel
+* [] Criar lançamento
+* [] Editar lançamento
+* [] Excluir lançamento
+* [] Marcar como pago
+* [] Marcar como pendente
+* []  criar/atualizar em lote (CSV/JSON), com validação por linha e resumo de erros
+* [] `GET /lancamentos/export`: import/export CSV/Excel
 
 
 

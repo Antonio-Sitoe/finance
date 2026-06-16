@@ -6,13 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.stereotype.Repository;
 
 import com.finance.finance.modules.Lancamento.model.Lancamento;
 
 import jakarta.persistence.QueryHint;
 
-@Repository
 public interface LancamentoRepository extends JpaRepository<Lancamento, Long>, JpaSpecificationExecutor<Lancamento> {
 
         @QueryHints(value = {
