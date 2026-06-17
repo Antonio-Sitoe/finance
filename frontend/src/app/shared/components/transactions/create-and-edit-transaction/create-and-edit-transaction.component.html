@@ -1,0 +1,351 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="md"
+  [showFooter]="true"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    {{ isEditing() ? 'Editar Lançamento' : 'Novo Lançamento' }}
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ isEditing() ? 'Actualize os dados do lançamento' : 'Preencha os dados para registar um novo lançamento' }}
+  </span>
+
+  <!-- ── Mode Tabs (only when creating) ──────────────────── -->
+  @if (!isEditing()) {
+    <div class="flex gap-1 rounded-xl border border-gray-200 bg-gray-50 p-1 dark:border-white/[0.08] dark:bg-white/[0.04]">
+      <button
+        type="button"
+        (click)="setMode('normal')"
+        [class]="mode() === 'normal'
+          ? 'flex flex-1 items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-800 shadow-sm dark:bg-gray-800 dark:text-white/90'
+          : 'flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
+      >
+        <ng-container [solarIcon]="'DocumentAddBold'" [size]="15" />
+        Lançamento Normal
+      </button>
+      <button
+        type="button"
+        (click)="setMode('parcelado')"
+        [class]="mode() === 'parcelado'
+          ? 'flex flex-1 items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-800 shadow-sm dark:bg-gray-800 dark:text-white/90'
+          : 'flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
+      >
+        <ng-container [solarIcon]="'WidgetBold'" [size]="15" />
+        Parcelado
+      </button>
+    </div>
+  }
+
+  <!-- ── RECEITA / DESPESA toggle (shared across both modes) ── -->
+  <div class="grid grid-cols-2 gap-3">
+    <button
+      type="button"
+      (click)="setTipo('RECEITA')"
+      [class]="tipo() === 'RECEITA'
+        ? 'flex items-center gap-3 rounded-xl border-2 border-success-500 bg-success-50 p-4 text-left transition-all dark:bg-success-500/10'
+        : 'flex items-center gap-3 rounded-xl border-2 border-gray-200 bg-gray-50 p-4 text-left transition-all hover:border-success-300 hover:bg-success-50/50 dark:border-white/[0.08] dark:bg-white/[0.02]'"
+    >
+      <div [class]="tipo() === 'RECEITA'
+        ? 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-success-100 text-success-600 dark:bg-success-500/20 dark:text-success-400'
+        : 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500 dark:bg-white/[0.06] dark:text-gray-400'"
+      >
+        <ng-container [solarIcon]="'AltArrowUpBold'" [size]="18" />
+      </div>
+      <div>
+        <p [class]="tipo() === 'RECEITA' ? 'text-sm font-semibold text-success-700 dark:text-success-400' : 'text-sm font-semibold text-gray-700 dark:text-gray-300'">
+          Receita
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Entrada de valor</p>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      (click)="setTipo('DESPESA')"
+      [class]="tipo() === 'DESPESA'
+        ? 'flex items-center gap-3 rounded-xl border-2 border-error-500 bg-error-50 p-4 text-left transition-all dark:bg-error-500/10'
+        : 'flex items-center gap-3 rounded-xl border-2 border-gray-200 bg-gray-50 p-4 text-left transition-all hover:border-error-300 hover:bg-error-50/50 dark:border-white/[0.08] dark:bg-white/[0.02]'"
+    >
+      <div [class]="tipo() === 'DESPESA'
+        ? 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-error-100 text-error-600 dark:bg-error-500/20 dark:text-error-400'
+        : 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500 dark:bg-white/[0.06] dark:text-gray-400'"
+      >
+        <ng-container [solarIcon]="'AltArrowDownBold'" [size]="18" />
+      </div>
+      <div>
+        <p [class]="tipo() === 'DESPESA' ? 'text-sm font-semibold text-error-700 dark:text-error-400' : 'text-sm font-semibold text-gray-700 dark:text-gray-300'">
+          Despesa
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Saída de valor</p>
+      </div>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- NORMAL FORM                                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  @if (mode() === 'normal') {
+    <form class="space-y-8" [formGroup]="normalForm" (ngSubmit)="onSubmit()">
+
+      <!-- Identificação -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-brand-500"><ng-container [solarIcon]="'DocumentTextBold'" [size]="16" /></span>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Identificação</h4>
+        </div>
+        <div class="space-y-4">
+          <div class="space-y-1.5">
+            <app-label>Descrição <span class="text-error-500">*</span></app-label>
+            <app-input-field
+              type="text"
+              placeholder="Ex: Pagamento de fornecedor, Recebimento de cliente..."
+              formControlName="descricao"
+              [error]="isNormalInvalid('descricao')"
+              [hint]="getNormalError('descricao')"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <app-label>Valor (MZN) <span class="text-error-500">*</span></app-label>
+            <div class="relative">
+              <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-sm font-semibold text-gray-400 dark:text-gray-500">MZN</span>
+              <input
+                type="number" step="0.01" min="0.01" placeholder="0,00"
+                formControlName="valor"
+                class="h-11 w-full rounded-lg border border-gray-300 bg-white pl-14 pr-4 text-sm text-gray-800 placeholder-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-white/[0.12] dark:bg-gray-900 dark:text-white/90 dark:placeholder-white/30"
+                [class.border-error-500]="isNormalInvalid('valor')"
+              />
+            </div>
+            @if (isNormalInvalid('valor')) {
+              <p class="mt-1 text-xs text-error-500">{{ getNormalError('valor') }}</p>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- Datas -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-brand-500"><ng-container [solarIcon]="'CalendarBold'" [size]="16" /></span>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Datas</h4>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <app-label>Data de Lançamento</app-label>
+            <input type="date" formControlName="dataLancamento"
+              class="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-white/[0.12] dark:bg-gray-900 dark:text-white/90"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <app-label>Data de Vencimento <span class="text-error-500">*</span></app-label>
+            <input type="date" formControlName="dataVencimento"
+              class="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-white/[0.12] dark:bg-gray-900 dark:text-white/90"
+              [class.border-error-500]="isNormalInvalid('dataVencimento')"
+            />
+            @if (isNormalInvalid('dataVencimento')) {
+              <p class="mt-1 text-xs text-error-500">{{ getNormalError('dataVencimento') }}</p>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- Associações -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-brand-500"><ng-container [solarIcon]="'LinkBold'" [size]="16" /></span>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Associações</h4>
+        </div>
+        <div class="space-y-4">
+          <div class="space-y-1.5">
+            <app-label>Conta Bancária <span class="text-error-500">*</span></app-label>
+            <app-select placeholder="Seleccionar conta" [options]="contaOptions()" formControlName="contaId"
+              [error]="isNormalInvalid('contaId')" [hint]="getNormalError('contaId')" />
+          </div>
+          <div class="space-y-1.5">
+            <app-label>Categoria <span class="text-error-500">*</span></app-label>
+            <app-select placeholder="Seleccionar categoria" [options]="categoriaOptions()" formControlName="categoriaId"
+              [error]="isNormalInvalid('categoriaId')" [hint]="getNormalError('categoriaId')" />
+          </div>
+          @if (tipo() === 'RECEITA') {
+            <div class="space-y-1.5">
+              <app-label>Cliente</app-label>
+              <app-select placeholder="Seleccionar cliente (opcional)" [options]="clienteOptions()" formControlName="clienteId" />
+            </div>
+          }
+          @if (tipo() === 'DESPESA') {
+            <div class="space-y-1.5">
+              <app-label>Fornecedor</app-label>
+              <app-select placeholder="Seleccionar fornecedor (opcional)" [options]="fornecedorOptions()" formControlName="fornecedorId" />
+            </div>
+          }
+        </div>
+      </section>
+
+    </form>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PARCELADO FORM                                          -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  @if (mode() === 'parcelado') {
+    <form class="space-y-8" [formGroup]="parceladoForm" (ngSubmit)="onSubmit()">
+
+      <!-- Identificação + Valores -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-brand-500"><ng-container [solarIcon]="'DocumentTextBold'" [size]="16" /></span>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Identificação</h4>
+        </div>
+        <div class="space-y-4">
+          <div class="space-y-1.5">
+            <app-label>Descrição <span class="text-error-500">*</span></app-label>
+            <app-input-field
+              type="text"
+              placeholder="Ex: Contrato de manutenção anual"
+              formControlName="descricao"
+              [error]="isParceladoInvalid('descricao')"
+              [hint]="isParceladoInvalid('descricao') ? 'Descrição é obrigatória' : ''"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <app-label>Valor Total (MZN) <span class="text-error-500">*</span></app-label>
+              <div class="relative">
+                <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-sm font-semibold text-gray-400 dark:text-gray-500">MZN</span>
+                <input
+                  type="number" step="0.01" min="0.01" placeholder="0,00"
+                  formControlName="valorTotal"
+                  class="h-11 w-full rounded-lg border border-gray-300 bg-white pl-14 pr-4 text-sm text-gray-800 placeholder-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-white/[0.12] dark:bg-gray-900 dark:text-white/90"
+                  [class.border-error-500]="isParceladoInvalid('valorTotal')"
+                />
+              </div>
+              @if (isParceladoInvalid('valorTotal')) {
+                <p class="mt-1 text-xs text-error-500">Valor deve ser maior que zero</p>
+              }
+            </div>
+            <div class="space-y-1.5">
+              <app-label>Número de Parcelas <span class="text-error-500">*</span></app-label>
+              <app-select placeholder="Seleccionar" [options]="parcelaOptions" formControlName="totalParcela" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Data + Categoria -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-brand-500"><ng-container [solarIcon]="'CalendarBold'" [size]="16" /></span>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Datas e Categoria</h4>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <app-label>Data da 1ª Parcela <span class="text-error-500">*</span></app-label>
+            <input type="date" formControlName="dataVencimento"
+              class="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-white/[0.12] dark:bg-gray-900 dark:text-white/90"
+              [class.border-error-500]="isParceladoInvalid('dataVencimento')"
+            />
+            @if (isParceladoInvalid('dataVencimento')) {
+              <p class="mt-1 text-xs text-error-500">Data da 1ª parcela é obrigatória</p>
+            }
+          </div>
+          <div class="space-y-1.5">
+            <app-label>Categoria <span class="text-error-500">*</span></app-label>
+            <app-select placeholder="Seleccionar categoria" [options]="categoriaOptions()" formControlName="categoriaId"
+              [error]="isParceladoInvalid('categoriaId')" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Conta + Entidade -->
+      <section class="space-y-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-brand-500"><ng-container [solarIcon]="'LinkBold'" [size]="16" /></span>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Associações</h4>
+        </div>
+        <div class="space-y-4">
+          <div class="space-y-1.5">
+            <app-label>Conta Bancária <span class="text-error-500">*</span></app-label>
+            <app-select placeholder="Seleccionar conta" [options]="contaOptions()" formControlName="contaId"
+              [error]="isParceladoInvalid('contaId')" />
+          </div>
+          @if (tipo() === 'RECEITA') {
+            <div class="space-y-1.5">
+              <app-label>Cliente</app-label>
+              <app-select placeholder="Seleccionar cliente (opcional)" [options]="clienteOptions()" formControlName="clienteId" />
+            </div>
+          }
+          @if (tipo() === 'DESPESA') {
+            <div class="space-y-1.5">
+              <app-label>Fornecedor</app-label>
+              <app-select placeholder="Seleccionar fornecedor (opcional)" [options]="fornecedorOptions()" formControlName="fornecedorId" />
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Preview de Parcelas -->
+      @if (installmentPreview().length > 0 && valorTotalNum() > 0) {
+        <section class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="text-brand-500"><ng-container [solarIcon]="'WidgetBold'" [size]="16" /></span>
+              <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Pré-visualização das Parcelas</h4>
+            </div>
+            <span class="text-xs font-medium text-brand-500">
+              {{ formatValor(valorParcela()) }} MZN / parcela
+            </span>
+          </div>
+          <div class="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 dark:divide-white/[0.05] dark:border-white/[0.08]">
+            @for (item of installmentPreview(); track item.num) {
+              <div class="flex items-center gap-4 bg-white px-4 py-3 dark:bg-gray-900/50">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-white/[0.06]">
+                  <span class="text-xs font-bold text-gray-600 dark:text-gray-400">{{ item.num }}</span>
+                </div>
+                <div class="flex flex-1 items-center justify-between">
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ formatValor(item.valor) }} MZN</span>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                    <ng-container [solarIcon]="'CalendarBold'" [size]="12" />
+                    {{ item.date }}
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- Observações -->
+      <section class="space-y-3">
+        <app-label>Observações (Opcional)</app-label>
+        <app-text-area
+          placeholder="Ex: Referente ao contrato de manutenção do segundo semestre..."
+          [rows]="3"
+          formControlName="observacoes"
+        />
+      </section>
+
+    </form>
+  }
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full gap-3">
+    <app-button variant="outline" class="flex-1" className="w-full justify-center" (btnClick)="close()">
+      Cancelar
+    </app-button>
+    <app-button
+      variant="primary"
+      class="flex-1"
+      className="w-full justify-center"
+      [disabled]="(mode() === 'normal' ? normalForm.invalid : parceladoForm.invalid) || isLoading()"
+      [loading]="isLoading()"
+      (btnClick)="onSubmit()"
+    >
+      @if (mode() === 'normal') {
+        {{ isEditing() ? 'Guardar Alterações' : 'Guardar Lançamento' }}
+      } @else {
+        Criar {{ totalParcelaNum() }} Lançamento{{ totalParcelaNum() !== 1 ? 's' : '' }}
+      }
+    </app-button>
+  </div>
+</app-drawer>

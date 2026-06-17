@@ -12,6 +12,7 @@ import {
   MagnifierBold,
   MapBold,
   MapPointBold,
+  BillListBold,
   NotebookBold,
   Pen2Bold,
   PhoneCallingBold,
@@ -26,20 +27,23 @@ import {
   WalletBold,
   StarsBoldDuotone,
   AltArrowLeftBold,
-} from "@solar-icons/angular";
-import { provideSolarIcons } from "@solar-icons/angular";
+  WalletMoneyBold,
+} from '@solar-icons/angular'
+import { provideSolarIcons } from '@solar-icons/angular'
 
 export const appIconsConfig = [
   provideSolarIcons({
     BuildingsBold,
     CardBold,
     LayersBold,
+    BillListBold,
+    WalletMoneyBold,
+    GraphDownNewBold,
     AltArrowLeftBold,
     StarsBoldDuotone,
     EyeBold,
     EyeClosedBold,
     ForbiddenCircleBold,
-    GraphDownNewBold,
     GraphNewUpBold,
     LetterBold,
     LockKeyholeMinimalisticBold,
@@ -59,4 +63,4 @@ export const appIconsConfig = [
     UsersGroupRoundedBold,
     WalletBold,
   }),
-];
+]

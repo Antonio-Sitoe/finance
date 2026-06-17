@@ -1,0 +1,186 @@
+<app-drawer
+  [open]="open"
+  (openChange)="openChange.emit($event)"
+  size="sm"
+  [showFooter]="!!transaction"
+>
+  <!-- Header -->
+  <span drawer-header class="text-base font-semibold text-gray-800 dark:text-white/90">
+    Detalhes do Lançamento
+  </span>
+  <span drawer-header class="text-sm text-gray-500 dark:text-gray-400">
+    {{ transaction?.descricao ?? '—' }}
+  </span>
+
+  @if (transaction) {
+
+    <!-- Hero -->
+    <div
+      class="-mx-6 -mt-5 mb-6 flex flex-col items-center gap-3 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 pb-6 pt-8 text-center dark:border-white/[0.05] dark:from-gray-800/40 dark:to-transparent"
+    >
+      <!-- Tipo icon circle -->
+      <div
+        [class]="transaction.tipo === 'RECEITA'
+          ? 'flex h-20 w-20 items-center justify-center rounded-full bg-success-50 text-success-600 ring-4 ring-white dark:bg-success-500/10 dark:text-success-400 dark:ring-gray-900'
+          : 'flex h-20 w-20 items-center justify-center rounded-full bg-error-50 text-error-600 ring-4 ring-white dark:bg-error-500/10 dark:text-error-400 dark:ring-gray-900'"
+      >
+        <ng-container
+          [solarIcon]="transaction.tipo === 'RECEITA' ? 'AltArrowUpBold' : 'AltArrowDownBold'"
+          [size]="32"
+        />
+      </div>
+
+      <div>
+        <!-- Valor -->
+        <p
+          [class]="transaction.tipo === 'RECEITA'
+            ? 'text-2xl font-bold text-success-600 dark:text-success-400'
+            : 'text-2xl font-bold text-error-600 dark:text-error-400'"
+        >
+          {{ transaction.tipo === 'RECEITA' ? '+' : '-' }}
+          {{ facade.formatValor(transaction.valor) }} MZN
+        </p>
+        <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+          {{ transaction.descricao }}
+        </p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-2">
+        <app-badge
+          variant="solid"
+          [color]="transaction.tipo === 'RECEITA' ? 'success' : 'error'"
+          size="sm"
+        >
+          {{ transaction.tipo === 'RECEITA' ? 'Receita' : 'Despesa' }}
+        </app-badge>
+        <app-badge
+          variant="solid"
+          [color]="localSituacao() === 'PAGO' ? 'success' : 'warning'"
+          size="sm"
+        >
+          {{ localSituacao() === 'PAGO' ? 'Pago' : 'Pendente' }}
+        </app-badge>
+      </div>
+    </div>
+
+    <!-- Parcelas -->
+    @if (transaction.totalParcela && transaction.totalParcela > 1) {
+      <section class="mb-6">
+        <div class="mb-3 flex items-center gap-2">
+          <ng-container [solarIcon]="'WidgetBold'" [size]="16" class="text-gray-400" />
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            Parcelas
+          </h4>
+        </div>
+        <div class="flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 dark:border-white/[0.05] dark:bg-white/[0.02]">
+          <ng-container [solarIcon]="'WidgetBold'" [size]="16" class="text-brand-500" />
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Parcela {{ transaction.parcela }} de {{ transaction.totalParcela }}
+          </span>
+        </div>
+      </section>
+    }
+
+    <!-- Datas -->
+    <section class="mb-6">
+      <div class="mb-3 flex items-center gap-2">
+        <ng-container [solarIcon]="'CalendarBold'" [size]="16" class="text-gray-400" />
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          Datas
+        </h4>
+      </div>
+      <div class="divide-y divide-dashed divide-gray-100 dark:divide-white/[0.05]">
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Lançado em</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ facade.formatDate(transaction.dataLancamento) }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Vencimento</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ facade.formatDate(transaction.dataVencimento) }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Associações -->
+    <section class="mb-6">
+      <div class="mb-3 flex items-center gap-2">
+        <ng-container [solarIcon]="'LinkBold'" [size]="16" class="text-gray-400" />
+        <h4 class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          Associações
+        </h4>
+      </div>
+      <div class="divide-y divide-dashed divide-gray-100 dark:divide-white/[0.05]">
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Conta</span>
+          <span class="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
+            <ng-container [solarIcon]="'BankBold'" [size]="14" />
+            {{ transaction.conta?.name ?? '—' }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between py-3">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Categoria</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ transaction.categoria?.name ?? '—' }}
+          </span>
+        </div>
+        @if (transaction.tipo === 'RECEITA' && transaction.cliente) {
+          <div class="flex items-center justify-between py-3">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Cliente</span>
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {{ transaction.cliente.name }}
+            </span>
+          </div>
+        }
+        @if (transaction.tipo === 'DESPESA' && transaction.fornecedor) {
+          <div class="flex items-center justify-between py-3">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Fornecedor</span>
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {{ transaction.fornecedor.name }}
+            </span>
+          </div>
+        }
+      </div>
+    </section>
+
+  }
+
+  <!-- Footer -->
+  <div drawer-footer class="flex w-full flex-col gap-3">
+    <!-- Toggle Situacao -->
+    <button
+      (click)="toggleSituacao()"
+      [disabled]="isToggling()"
+      [class]="isPago
+        ? 'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-warning-300 bg-warning-50 px-4 py-3 text-sm font-medium text-warning-700 transition-colors hover:bg-warning-100 disabled:opacity-50 dark:border-warning-500/30 dark:bg-warning-500/10 dark:text-warning-400 dark:hover:bg-warning-500/20'
+        : 'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-success-300 bg-success-50 px-4 py-3 text-sm font-medium text-success-700 transition-colors hover:bg-success-100 disabled:opacity-50 dark:border-success-500/30 dark:bg-success-500/10 dark:text-success-400 dark:hover:bg-success-500/20'"
+    >
+      <ng-container
+        [solarIcon]="isPago ? 'ClockCircleBold' : 'CheckCircleBold'"
+        [size]="16"
+      />
+      {{ isPago ? 'Marcar como Pendente' : 'Marcar como Pago' }}
+    </button>
+
+    <div class="grid grid-cols-2 gap-3">
+      <button
+        (click)="handleEdit()"
+        class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-600 active:scale-[0.98]"
+      >
+        <ng-container [solarIcon]="'Pen2Bold'" [size]="16" />
+        Editar
+      </button>
+      <button
+        (click)="handleDelete()"
+        [disabled]="isDeleting()"
+        class="inline-flex items-center justify-center gap-2 rounded-lg border border-error-300 bg-error-50 px-4 py-3 text-sm font-medium text-error-700 transition-colors hover:bg-error-100 disabled:opacity-50 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-400 dark:hover:bg-error-500/20"
+      >
+        <ng-container [solarIcon]="'TrashBinTrashBold'" [size]="16" />
+        Eliminar
+      </button>
+    </div>
+  </div>
+</app-drawer>

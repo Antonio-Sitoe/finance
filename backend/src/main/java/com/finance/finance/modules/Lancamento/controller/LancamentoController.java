@@ -14,6 +14,7 @@ import com.finance.finance.exceptions.ApiErrorResponse;
 import com.finance.finance.modules.Lancamento.dto.LancamentoParceladoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoResponseDTO;
+import com.finance.finance.modules.Lancamento.dto.LancamentoResumoDTO;
 import com.finance.finance.modules.Lancamento.dto.LancamentoStatusResponseDTO;
 import com.finance.finance.modules.Lancamento.service.LancamentoService;
 import com.finance.finance.modules.common.dto.BulkResponseDTO;
@@ -126,6 +127,13 @@ public class LancamentoController {
                         @Parameter(description = "ID do lançamento", example = "1") @PathVariable Long id) {
                 service.deletar(id);
                 return ResponseEntity.noContent().build();
+        }
+
+        @GetMapping("/resumo")
+        @Operation(summary = "Resumo de lançamentos", description = "Retorna totais agregados: receitas, despesas, saldo e contagem.")
+        @ApiResponse(responseCode = "200", description = "Resumo calculado com sucesso", content = @Content(schema = @Schema(implementation = LancamentoResumoDTO.class)))
+        public ResponseEntity<LancamentoResumoDTO> resumo() {
+                return ResponseEntity.ok(service.resumo());
         }
 
         @GetMapping

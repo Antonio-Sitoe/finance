@@ -1,0 +1,161 @@
+<app-datatable
+  [store]="facade.list"
+  [syncUrl]="true"
+  [columns]="columns"
+  [rowTemplate]="transactionRow"
+  [filtersTemplate]="transactionFilters"
+/>
+
+<!-- ── Filtros ─────────────────────────────────────────────── -->
+<ng-template #transactionFilters>
+  <div
+    class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center dark:border-white/[0.05]"
+  >
+    <div class="relative flex-1">
+      <span
+        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
+      >
+        <ng-container [solarIcon]="'MagnifierBold'" [size]="16" />
+      </span>
+      <app-input-field
+        placeholder="Pesquisar por descrição..."
+        className="pl-9"
+        [value]="facade.searchTerm()"
+        (valueChange)="facade.search($event.toString())"
+      />
+    </div>
+    <app-select
+      placeholder="Todos os tipos"
+      [options]="facade.tipoOptions"
+      [value]="facade.filterTipo()"
+      (valueChange)="facade.filterByTipo($event)"
+      className="w-full sm:w-44"
+    />
+    <app-select
+      placeholder="Todos os estados"
+      [options]="facade.situacaoOptions"
+      [value]="facade.filterSituacao()"
+      (valueChange)="facade.filterBySituacao($event)"
+      className="w-full sm:w-44"
+    />
+  </div>
+</ng-template>
+
+<!-- ── Linha da tabela ─────────────────────────────────────── -->
+<ng-template #transactionRow let-row>
+  <tr
+    class="hover:bg-gray-50 dark:hover:bg-white/[0.02]"
+    [class]="facade.rowBorderClass(row)"
+  >
+
+    <!-- Tipo -->
+    <td class="px-5 py-3.5">
+      <div class="flex justify-center">
+        @if (row.tipo === 'RECEITA') {
+          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-400">
+            <ng-container [solarIcon]="'AltArrowUpBold'" [size]="16" />
+          </span>
+        } @else {
+          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-error-50 text-error-600 dark:bg-error-500/10 dark:text-error-400">
+            <ng-container [solarIcon]="'AltArrowDownBold'" [size]="16" />
+          </span>
+        }
+      </div>
+    </td>
+
+    <!-- Descrição -->
+    <td class="px-5 py-3.5">
+      <div>
+        <span class="block text-sm font-medium text-gray-800 dark:text-white/90">
+          {{ row.descricao }}
+        </span>
+        @if (row.parcela && row.totalParcela) {
+          <span class="text-xs text-gray-400 dark:text-gray-500">
+            Parcela {{ row.parcela }}/{{ row.totalParcela }}
+          </span>
+        } @else if (row.cliente?.name) {
+          <span class="text-xs text-gray-400 dark:text-gray-500">{{ row.cliente!.name }}</span>
+        } @else if (row.fornecedor?.name) {
+          <span class="text-xs text-gray-400 dark:text-gray-500">{{ row.fornecedor!.name }}</span>
+        }
+      </div>
+    </td>
+
+    <!-- Categoria -->
+    <td class="px-5 py-3.5">
+      @if (row.categoria) {
+        <span
+          class="inline-flex rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-500/10 dark:text-brand-400"
+        >
+          {{ row.categoria.name }}
+        </span>
+      } @else {
+        <span class="text-sm text-gray-400">—</span>
+      }
+    </td>
+
+    <!-- Conta -->
+    <td class="px-5 py-3.5">
+      @if (row.conta) {
+        <div class="flex items-center gap-2">
+          <ng-container [solarIcon]="'BankBold'" [size]="14" />
+          <span class="text-sm text-gray-700 dark:text-gray-300">{{ row.conta.name }}</span>
+        </div>
+      } @else {
+        <span class="text-sm text-gray-400">—</span>
+      }
+    </td>
+
+    <!-- Valor -->
+    <td class="px-5 py-3.5">
+      <span class="text-sm font-semibold" [class]="facade.valorClass(row)">
+        {{ facade.formatValor(row.valor) }} MZN
+      </span>
+    </td>
+
+    <!-- Vencimento -->
+    <td class="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
+      {{ facade.formatDate(row.dataVencimento) }}
+    </td>
+
+    <!-- Estado -->
+    <td class="px-5 py-3.5">
+      <div class="flex justify-center">
+        <app-badge
+          variant="light"
+          [color]="facade.situacaoBadgeColor(row)"
+          size="sm"
+        >
+          {{ facade.situacaoLabel(row) }}
+        </app-badge>
+      </div>
+    </td>
+
+    <!-- Acções -->
+    <td class="px-5 py-3.5">
+      <div class="flex items-center justify-end gap-1">
+        <button
+          (click)="detailClick.emit(row)"
+          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          title="Ver detalhes"
+        >
+          <ng-container [solarIcon]="'EyeBold'" [size]="18" />
+        </button>
+        <button
+          (click)="editClick.emit(row)"
+          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          title="Editar"
+        >
+          <ng-container [solarIcon]="'Pen2Bold'" [size]="18" />
+        </button>
+        <button
+          (click)="deleteClick.emit(row)"
+          class="flex h-8 w-8 items-center justify-center rounded text-gray-400 hover:bg-error-50 hover:text-error-500 dark:hover:bg-error-500/10"
+          title="Eliminar"
+        >
+          <ng-container [solarIcon]="'TrashBinTrashBold'" [size]="18" />
+        </button>
+      </div>
+    </td>
+  </tr>
+</ng-template>

@@ -16,6 +16,7 @@ import { ContactsComponent } from './pages/contacts/contacts.component'
 import { SuppliersComponent } from './pages/suppliers/suppliers.component'
 import { AccountsComponent } from './pages/accounts/accounts.component'
 import { CategoriesComponent } from './pages/categories/categories.component'
+import { TransactionsComponent } from './pages/transactions/transactions.component'
 
 export const routes: Routes = [
   {
@@ -67,6 +68,12 @@ export const routes: Routes = [
         path: 'profile',
         component: ProfileComponent,
         title: 'Angular Profile Dashboard | FinanceApp Administrative Panel',
+      },
+      {
+        path: 'transactions',
+        component: TransactionsComponent,
+        title:
+          'Angular Transactions Dashboard | FinanceApp Administrative Panel',
       },
 
       {

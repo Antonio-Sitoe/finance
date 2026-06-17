@@ -63,6 +63,11 @@ export class AppSidebarComponent {
       name: 'Contactos',
       path: '/contactos',
     },
+    {
+      icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.25 7A2.75 2.75 0 0 1 5 4.25h14A2.75 2.75 0 0 1 21.75 7v1.268a2.25 2.25 0 0 1 0 4.464V17A2.75 2.75 0 0 1 19 19.75H5A2.75 2.75 0 0 1 2.25 17V7ZM20.25 13.5V11a.75.75 0 0 1 0-1.5V8H3.75v9c0 .69.56 1.25 1.25 1.25h14c.69 0 1.25-.56 1.25-1.25v-3.5ZM3.75 6.5V7h16.5v-.5c0-.69-.56-1.25-1.25-1.25H5c-.69 0-1.25.56-1.25 1.25Zm11 8.25a.75.75 0 0 1 .75-.75h2a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1-.75-.75Z" fill="currentColor"/></svg>`,
+      name: 'Lançamentos',
+      path: '/transactions',
+    },
   ]
   // Others nav items
   othersItems: NavItem[] = [

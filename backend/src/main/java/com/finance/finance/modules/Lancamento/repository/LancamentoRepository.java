@@ -1,13 +1,16 @@
 package com.finance.finance.modules.Lancamento.repository;
 
+import java.math.BigDecimal;
 import java.util.stream.Stream;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 
 import com.finance.finance.modules.Lancamento.model.Lancamento;
+import com.finance.finance.modules.common.enums.TipoLancamento;
 
 import jakarta.persistence.QueryHint;
 
@@ -24,4 +27,7 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long>, J
                         + "LEFT JOIN FETCH l.fornecedor "
                         + "ORDER BY l.dataVencimento ASC")
         Stream<Lancamento> streamAll();
+
+        @Query("SELECT COALESCE(SUM(l.valor), 0) FROM Lancamento l WHERE l.tipo = :tipo")
+        BigDecimal sumValorByTipo(@Param("tipo") TipoLancamento tipo);
 }

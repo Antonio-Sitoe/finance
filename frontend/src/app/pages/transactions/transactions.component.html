@@ -1,0 +1,103 @@
+<app-page-header
+  title="Lançamentos"
+  description="Receitas, despesas e movimentações financeiras."
+  [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Lançamentos' }]"
+>
+  <div class="flex items-center gap-2">
+    <button
+      (click)="facade.exportCsv()"
+      class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+    >
+      <ng-container [solarIcon]="'DownloadMinimalisticBold'" [size]="16" />
+      Exportar CSV
+    </button>
+
+    <div class="relative">
+      <button
+        (click)="toggleNewDropdown()"
+        class="dropdown-toggle inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+      >
+        <span class="text-base leading-none">+</span>
+        Novo Lançamento
+        <ng-container [solarIcon]="'AltArrowDownBold'" [size]="14" />
+      </button>
+
+      <app-dropdown
+        [isOpen]="newDropdownOpen()"
+        (close)="newDropdownOpen.set(false)"
+        className="w-52 p-1.5"
+      >
+        <app-dropdown-item
+          (itemClick)="openNew()"
+          className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
+        >
+          <ng-container [solarIcon]="'DocumentAddBold'" [size]="16" />
+          Lançamento Normal
+        </app-dropdown-item>
+        <app-dropdown-item
+          (itemClick)="openParcelado()"
+          className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
+        >
+          <ng-container [solarIcon]="'WidgetBold'" [size]="16" />
+          Lançamento Parcelado
+        </app-dropdown-item>
+        <app-dropdown-item
+          (itemClick)="openBulkImport()"
+          className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
+        >
+          <ng-container [solarIcon]="'UploadMinimalisticBold'" [size]="16" />
+          Importar CSV
+        </app-dropdown-item>
+      </app-dropdown>
+    </div>
+  </div>
+</app-page-header>
+
+<div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6">
+  <app-card-stat
+    icon="BillListBold"
+    title="Total de Lançamentos"
+    description="Registos no sistema"
+    [value]="facade.list.total().toString()"
+  />
+  <app-card-stat
+    icon="GraphNewUpBold"
+    title="Total de Receitas"
+    description="Soma das entradas"
+    [value]="facade.formatValor(facade.analytics().valorReceita) + ' MZN'"
+  />
+  <app-card-stat
+    icon="GraphDownNewBold"
+    title="Total de Despesas"
+    description="Soma das saídas"
+    [value]="facade.formatValor(facade.analytics().valorDespesa) + ' MZN'"
+  />
+  <app-card-stat
+    icon="WalletMoneyBold"
+    title="Saldo Actual"
+    description="Receitas menos despesas"
+    [value]="facade.formatValor(facade.analytics().saldo) + ' MZN'"
+  />
+</div>
+
+<div class="w-full">
+  <app-transactions-list-table
+    (editClick)="openEdit($event)"
+    (detailClick)="openDetail($event)"
+    (deleteClick)="openDetail($event)"
+  />
+</div>
+
+<app-create-and-edit-transaction
+  [open]="drawerOpen()"
+  [transaction]="selectedTransaction()"
+  [initialMode]="drawerMode()"
+  (openChange)="drawerOpen.set($event)"
+/>
+
+<app-transaction-detail-drawer
+  [open]="detailDrawerOpen()"
+  [transaction]="selectedTransaction()"
+  (openChange)="detailDrawerOpen.set($event)"
+  (edit)="openEdit($event)"
+/>

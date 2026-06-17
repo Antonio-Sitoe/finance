@@ -23,6 +23,7 @@ import com.finance.finance.modules.Lancamento.dto.LancamentoCsvRow;
 import com.finance.finance.modules.Lancamento.dto.LancamentoParceladoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoResponseDTO;
+import com.finance.finance.modules.Lancamento.dto.LancamentoResumoDTO;
 import com.finance.finance.modules.Lancamento.dto.LancamentoStatusResponseDTO;
 import com.finance.finance.modules.Lancamento.mapper.LancamentoMapper;
 import com.finance.finance.modules.Lancamento.model.Lancamento;
@@ -309,6 +310,15 @@ public class LancamentoService {
                 .findAll(spec, pagination.toPageable("dataVencimento"))
                 .map(LancamentoMapper::toDto);
         return PageResponse.from(page);
+    }
+
+    @Transactional(readOnly = true)
+    public LancamentoResumoDTO resumo() {
+        long total = lancamentoRepository.count();
+        BigDecimal receita = lancamentoRepository.sumValorByTipo(TipoLancamento.RECEITA);
+        BigDecimal despesa = lancamentoRepository.sumValorByTipo(TipoLancamento.DESPESA);
+        BigDecimal saldo = receita.subtract(despesa);
+        return new LancamentoResumoDTO(total, receita.doubleValue(), despesa.doubleValue(), saldo.doubleValue());
     }
 
     @Transactional(readOnly = true)
