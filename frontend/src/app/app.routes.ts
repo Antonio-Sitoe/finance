@@ -17,6 +17,7 @@ import { SuppliersComponent } from "./pages/suppliers/suppliers.component";
 import { AccountsComponent } from "./pages/accounts/accounts.component";
 import { CategoriesComponent } from "./pages/categories/categories.component";
 import { TransactionsComponent } from "./pages/transactions/transactions.component";
+import { TransactionsImportComponent } from "./pages/transactions/import/transactions-import.component";
 import { GlobalSearchComponent } from "./pages/global-search/global-search.component";
 
 export const routes: Routes = [
@@ -69,6 +70,11 @@ export const routes: Routes = [
         path: "transactions",
         component: TransactionsComponent,
         title: "Lançamentos | FinanceApp Administrative Panel",
+      },
+      {
+        path: "transactions/import",
+        component: TransactionsImportComponent,
+        title: "Importar Lançamentos | FinanceApp Administrative Panel",
       },
       {
         path: "global-search",

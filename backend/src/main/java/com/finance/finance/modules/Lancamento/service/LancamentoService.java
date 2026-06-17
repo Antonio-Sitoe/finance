@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -84,69 +85,56 @@ public class LancamentoService {
             throw new BusinessException("O ficheiro CSV nao contem lancamentos");
         }
 
-        List<Lancamento> paraGravar = new ArrayList<>();
+        List<LancamentoCsvRow> rows = new ArrayList<>();
         List<BulkErroDTO> erros = new ArrayList<>();
 
+        // Parsing das linhas — erros de formato são reportados pela posição.
         for (int i = 0; i < linhas.size(); i++) {
             int pos = i + 1;
-            String identificador = "(linha " + pos + ")";
+            try {
+                rows.add(parseLinha(linhas.get(i)));
+            } catch (IllegalArgumentException | DateTimeParseException e) {
+                rows.add(null); // mantém o alinhamento posição ↔ linha
+                erros.add(new BulkErroDTO(pos, "(linha " + pos + ")", e.getMessage()));
+            }
+        }
+
+        return processarRows(rows, erros);
+    }
+
+    @Transactional
+    public BulkResponseDTO<LancamentoResponseDTO> criarBulkJson(List<LancamentoCsvRow> rows) {
+        if (rows == null || rows.isEmpty()) {
+            throw new BusinessException("A lista de lancamentos esta vazia");
+        }
+        return processarRows(new ArrayList<>(rows), new ArrayList<>());
+    }
+
+    /**
+     * Valida e constrói os lançamentos de cada linha, gravando os válidos e
+     * reportando os inválidos em {@code erros}, alinhados pela posição (1-based).
+     * Entradas {@code null} (linhas com erro de parsing) são ignoradas aqui.
+     */
+    private BulkResponseDTO<LancamentoResponseDTO> processarRows(
+            List<LancamentoCsvRow> rows, List<BulkErroDTO> erros) {
+
+        List<Lancamento> paraGravar = new ArrayList<>();
+
+        for (int i = 0; i < rows.size(); i++) {
+            LancamentoCsvRow row = rows.get(i);
+            if (row == null) {
+                continue; // já reportado no parsing
+            }
+
+            int pos = i + 1;
+            String identificador = (row.descricao() != null && !row.descricao().isBlank())
+                    ? row.descricao()
+                    : "(linha " + pos + ")";
 
             try {
-                LancamentoCsvRow row = parseLinha(linhas.get(i));
-                if (row.descricao() != null && !row.descricao().isBlank()) {
-                    identificador = row.descricao();
-                }
-
-                Conta conta = buscarContaAtiva(row.contaId());
-                Categoria categoria = buscarCategoria(row.categoriaId());
-                Cliente cliente = row.clienteId() != null ? buscarCliente(row.clienteId()) : null;
-                Fornecedor fornecedor = row.fornecedorId() != null ? buscarFornecedor(row.fornecedorId()) : null;
-
-                LocalDateTime dataLancamento = row.dataLancamento() != null ? row.dataLancamento()
-                        : LocalDateTime.now();
-                validarDatas(dataLancamento, row.dataVencimento());
-
-                TipoLancamento tipo = row.tipo() != null ? row.tipo() : TipoLancamento.DESPESA;
-
-                if (row.totalParcelas() != null && row.totalParcelas() >= 2) {
-                    int n = row.totalParcelas();
-                    BigDecimal valorParcela = row.valor().divide(BigDecimal.valueOf(n), 2, RoundingMode.DOWN);
-                    BigDecimal ultimaValor = row.valor().subtract(valorParcela.multiply(BigDecimal.valueOf(n - 1)));
-
-                    for (int p = 1; p <= n; p++) {
-                        paraGravar.add(Lancamento.builder()
-                                .descricao(row.descricao() + " " + p + "/" + n)
-                                .parcela(p)
-                                .totalParcela(n)
-                                .valor(p == n ? ultimaValor : valorParcela)
-                                .dataLancamento(dataLancamento)
-                                .dataVencimento(row.dataVencimento().plusMonths(p - 1))
-                                .situacao(PagamentoEnum.PENDENTE)
-                                .tipo(tipo)
-                                .conta(conta)
-                                .categoria(categoria)
-                                .cliente(cliente)
-                                .fornecedor(fornecedor)
-                                .build());
-                    }
-                } else {
-                    paraGravar.add(Lancamento.builder()
-                            .descricao(row.descricao())
-                            .parcela(1)
-                            .totalParcela(1)
-                            .valor(row.valor())
-                            .dataLancamento(dataLancamento)
-                            .dataVencimento(row.dataVencimento())
-                            .situacao(PagamentoEnum.PENDENTE)
-                            .tipo(tipo)
-                            .conta(conta)
-                            .categoria(categoria)
-                            .cliente(cliente)
-                            .fornecedor(fornecedor)
-                            .build());
-                }
+                paraGravar.addAll(montarLancamentos(row));
             } catch (ResourceNotFoundException | BusinessException | IllegalArgumentException
-                    | IllegalStateException e) {
+                    | IllegalStateException | DateTimeParseException e) {
                 erros.add(new BulkErroDTO(pos, identificador, e.getMessage()));
             }
         }
@@ -158,6 +146,69 @@ public class LancamentoService {
                         .toList();
 
         return new BulkResponseDTO<>(criados, erros);
+    }
+
+    /** Constrói os lançamentos de uma linha (expande parcelas se aplicável). */
+    private List<Lancamento> montarLancamentos(LancamentoCsvRow row) {
+        if (row.valor() == null) {
+            throw new IllegalArgumentException("O valor e obrigatorio");
+        }
+        if (row.dataVencimento() == null) {
+            throw new IllegalArgumentException("A data de vencimento e obrigatoria");
+        }
+
+        Conta conta = buscarContaAtiva(row.contaId());
+        Categoria categoria = buscarCategoria(row.categoriaId());
+        Cliente cliente = row.clienteId() != null ? buscarCliente(row.clienteId()) : null;
+        Fornecedor fornecedor = row.fornecedorId() != null ? buscarFornecedor(row.fornecedorId()) : null;
+
+        LocalDateTime dataLancamento = row.dataLancamento() != null ? row.dataLancamento()
+                : LocalDateTime.now();
+        validarDatas(dataLancamento, row.dataVencimento());
+
+        TipoLancamento tipo = row.tipo() != null ? row.tipo() : TipoLancamento.DESPESA;
+
+        List<Lancamento> resultado = new ArrayList<>();
+
+        if (row.totalParcelas() != null && row.totalParcelas() >= 2) {
+            int n = row.totalParcelas();
+            BigDecimal valorParcela = row.valor().divide(BigDecimal.valueOf(n), 2, RoundingMode.DOWN);
+            BigDecimal ultimaValor = row.valor().subtract(valorParcela.multiply(BigDecimal.valueOf(n - 1)));
+
+            for (int p = 1; p <= n; p++) {
+                resultado.add(Lancamento.builder()
+                        .descricao(row.descricao() + " " + p + "/" + n)
+                        .parcela(p)
+                        .totalParcela(n)
+                        .valor(p == n ? ultimaValor : valorParcela)
+                        .dataLancamento(dataLancamento)
+                        .dataVencimento(row.dataVencimento().plusMonths(p - 1))
+                        .situacao(PagamentoEnum.PENDENTE)
+                        .tipo(tipo)
+                        .conta(conta)
+                        .categoria(categoria)
+                        .cliente(cliente)
+                        .fornecedor(fornecedor)
+                        .build());
+            }
+        } else {
+            resultado.add(Lancamento.builder()
+                    .descricao(row.descricao())
+                    .parcela(1)
+                    .totalParcela(1)
+                    .valor(row.valor())
+                    .dataLancamento(dataLancamento)
+                    .dataVencimento(row.dataVencimento())
+                    .situacao(PagamentoEnum.PENDENTE)
+                    .tipo(tipo)
+                    .conta(conta)
+                    .categoria(categoria)
+                    .cliente(cliente)
+                    .fornecedor(fornecedor)
+                    .build());
+        }
+
+        return resultado;
     }
 
     @Transactional
@@ -332,7 +383,7 @@ public class LancamentoService {
         Conta conta = contaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta nao encontrada com id: " + id));
         if (conta.getSituacao() == Situacao.INATIVO) {
-            throw new IllegalStateException("Nao e possivel criar um lancamento para uma conta inativa.");
+            throw new BusinessException("Nao e possivel criar um lancamento para uma conta inativa.");
         }
         return conta;
     }
@@ -375,7 +426,7 @@ public class LancamentoService {
                     .filter(l -> !l.isBlank())
                     .toList();
         } catch (IOException e) {
-            throw new RuntimeException("Erro ao ler o ficheiro CSV: " + e.getMessage());
+            throw new BusinessException("Erro ao ler o ficheiro CSV: " + e.getMessage());
         }
     }
 

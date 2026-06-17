@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.finance.finance.exceptions.ApiErrorResponse;
+import com.finance.finance.modules.Lancamento.dto.LancamentoCsvRow;
 import com.finance.finance.modules.Lancamento.dto.LancamentoParceladoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoResponseDTO;
@@ -68,7 +69,29 @@ public class LancamentoController {
         })
         public ResponseEntity<BulkResponseDTO<LancamentoResponseDTO>> criarBulk(
                         @Parameter(description = "Ficheiro CSV com os lançamentos") @RequestParam MultipartFile file) {
-                BulkResponseDTO<LancamentoResponseDTO> resultado = service.criarBulk(file);
+                return bulkResponse(service.criarBulk(file));
+        }
+
+        @PostMapping("/bulk/json")
+        @Operation(
+                        summary = "Criar lançamentos em lote via JSON",
+                        description = "Recebe um array de lançamentos (ex.: CSV já convertido e editado no cliente) "
+                                        + "e cria múltiplos lançamentos. Os itens válidos são gravados e os inválidos "
+                                        + "reportados em 'erros' pela posição no array (1-based). "
+                                        + "Retorna 201 se todos criados, 207 se sucesso parcial, 422 se todos falharam.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Todos os lançamentos criados com sucesso", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
+                        @ApiResponse(responseCode = "207", description = "Sucesso parcial — alguns itens falharam", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "Lista inválida ou em falta", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                        @ApiResponse(responseCode = "422", description = "Todos os itens falharam", content = @Content(schema = @Schema(implementation = BulkResponseDTO.class)))
+        })
+        public ResponseEntity<BulkResponseDTO<LancamentoResponseDTO>> criarBulkJson(
+                        @RequestBody List<LancamentoCsvRow> rows) {
+                return bulkResponse(service.criarBulkJson(rows));
+        }
+
+        private ResponseEntity<BulkResponseDTO<LancamentoResponseDTO>> bulkResponse(
+                        BulkResponseDTO<LancamentoResponseDTO> resultado) {
                 if (resultado.erros().isEmpty()) {
                         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
                 } else if (resultado.criados().isEmpty()) {

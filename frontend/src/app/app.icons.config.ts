@@ -28,8 +28,15 @@ import {
   StarsBoldDuotone,
   AltArrowLeftBold,
   WalletMoneyBold,
-} from '@solar-icons/angular'
-import { provideSolarIcons } from '@solar-icons/angular'
+  AltArrowUpBold,
+  AltArrowDownBold,
+  UploadMinimalisticBold,
+  DownloadMinimalisticBold,
+  FilterBold,
+  CheckCircleBold,
+  TrashBinMinimalisticBold,
+} from "@solar-icons/angular";
+import { provideSolarIcons } from "@solar-icons/angular";
 
 export const appIconsConfig = [
   provideSolarIcons({
@@ -37,6 +44,8 @@ export const appIconsConfig = [
     CardBold,
     LayersBold,
     BillListBold,
+    AltArrowUpBold,
+    AltArrowDownBold,
     WalletMoneyBold,
     GraphDownNewBold,
     AltArrowLeftBold,
@@ -62,5 +71,10 @@ export const appIconsConfig = [
     UserRoundedBold,
     UsersGroupRoundedBold,
     WalletBold,
+    UploadMinimalisticBold,
+    DownloadMinimalisticBold,
+    FilterBold,
+    CheckCircleBold,
+    TrashBinMinimalisticBold,
   }),
-]
+];

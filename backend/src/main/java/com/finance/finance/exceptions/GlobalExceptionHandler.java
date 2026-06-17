@@ -46,6 +46,14 @@ public class GlobalExceptionHandler {
                 return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI(), null, null);
         }
 
+        @ExceptionHandler({ IllegalArgumentException.class, IllegalStateException.class })
+        public ResponseEntity<ApiErrorResponse> handleIllegalArgumentOrState(
+                        RuntimeException ex,
+                        HttpServletRequest request) {
+                logger.warn("Validation/state violation: {} - path={}", ex.getMessage(), request.getRequestURI());
+                return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI(), null, null);
+        }
+
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<ApiErrorResponse> handleValidation(
                         MethodArgumentNotValidException ex,

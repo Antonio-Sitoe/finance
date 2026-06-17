@@ -110,3 +110,33 @@ de navegação directa para o registo.
 **Dois modos:**
 - Dropdown rápido na topbar (resultados inline ao digitar)
 - Página completa `/search?q={termo}` ao pressionar Enter
+
+
+----
+# 8️⃣ Gestão de lançamentos financeiros
+
+Esse é **o módulo principal do sistema**.
+
+### Parcelamento
+
+* [x] Criar lançamento parcelado
+* [x] Gerar parcelas automaticamente
+
+### Filtros
+Muito importantes.
+* [x] Filtrar por categoria
+* [x] Filtrar por cliente
+* [x] Filtrar por fornecedor
+* [x] Filtrar por conta
+* [x] Filtrar por status
+
+### Funcionalidades
+
+* [X] Criar lançamento
+* [X] Editar lançamento
+* [X] Excluir lançamento
+* [X] Marcar como pago
+* [X] Marcar como pendente
+* [X]  criar/atualizar em lote (CSV/JSON), com validação por linha e resumo de erros
+* [X] `GET /lancamentos/export`: import/export CSV/Excel
+
