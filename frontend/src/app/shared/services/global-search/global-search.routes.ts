@@ -7,5 +7,5 @@ export type GlobalSearchEntity = 'cliente' | 'fornecedor' | 'lancamento'
 export const GLOBAL_SEARCH_ROUTES: Record<GlobalSearchEntity, string> = {
   cliente: '/costumers',
   fornecedor: '/suppliers',
-  lancamento: '/lancamentos',
+  lancamento: '/transactions',
 }

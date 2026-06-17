@@ -39,6 +39,11 @@ export class AppSidebarComponent {
       path: "/users",
     },
     {
+      icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 2.75A2.25 2.25 0 0 0 3.75 5v14A2.25 2.25 0 0 0 6 21.25h12A2.25 2.25 0 0 0 20.25 19V8.31a2.25 2.25 0 0 0-.66-1.59l-3.31-3.31a2.25 2.25 0 0 0-1.59-.66H6ZM5.25 5A.75.75 0 0 1 6 4.25h8V7a2.25 2.25 0 0 0 2.25 2.25h2.5V19a.75.75 0 0 1-.75.75H6a.75.75 0 0 1-.75-.75V5Zm10.25-.44 2.94 2.94H16.25A.75.75 0 0 1 15.5 6.75V4.56ZM8 12.25a.75.75 0 0 0 0 1.5h8a.75.75 0 0 0 0-1.5H8Zm0 3.5a.75.75 0 0 0 0 1.5h5a.75.75 0 0 0 0-1.5H8Z" fill="currentColor"/></svg>`,
+      name: "Lançamentos",
+      path: "/transactions",
+    },
+    {
       icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6Zm3-1a1 1 0 0 0-1 1v12h14V6a1 1 0 0 0-1-1H6Zm1 3a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm4 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm4 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM7 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm4 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm4 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM8 17v-2h2v2H8Zm4-2v2h2v-2h-2Z" fill="currentColor"/></svg>`,
       name: "Fornecedores",
       path: "/suppliers",
