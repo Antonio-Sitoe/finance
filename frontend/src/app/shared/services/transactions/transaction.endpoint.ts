@@ -8,6 +8,8 @@ export const TRANSACTION_ENDPOINTS = {
   SITUACAO: (id: number) => `${API_URL}/lancamentos/${id}/situacao`,
   DELETE: (id: number) => `${API_URL}/lancamentos/${id}`,
   PARCELADO: `${API_URL}/lancamentos/parcelado`,
+  BULK: `${API_URL}/lancamentos/bulk`,
+  BULK_JSON: `${API_URL}/lancamentos/bulk/json`,
   RESUMO: `${API_URL}/lancamentos/resumo`,
   EXPORT_CSV: `${API_URL}/lancamentos/export/csv`,
 } as const
