@@ -1,0 +1,13 @@
+<app-global-search-command
+  [open]="search.open()"
+  [query]="search.query()"
+  [loading]="search.loading()"
+  [activeTab]="search.activeTab()"
+  [counts]="search.counts()"
+  [results]="search.results()"
+  (openChange)="$event ? search.openModal() : search.closeModal()"
+  (queryChange)="search.setQuery($event)"
+  (tabChange)="search.setTab($event)"
+  (viewAll)="onViewAll($event)"
+  (select)="onSelect($event)"
+/>
