@@ -1,0 +1,57 @@
+<div
+  class="flex items-center gap-3 border-b border-gray-100 px-5 py-4 dark:border-gray-800"
+>
+  <span class="shrink-0 text-gray-400 dark:text-gray-500">
+    @if (loading) {
+      <svg
+        class="h-5 w-5 animate-spin text-brand-500"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"
+        ></path>
+      </svg>
+    } @else {
+      <ng-container [solarIcon]="'MagnifierBold'" [size]="20" />
+    }
+  </span>
+
+  <input
+    #inputEl
+    type="text"
+    [value]="value"
+    [placeholder]="placeholder"
+    (input)="onInput($event)"
+    class="flex-1 border-none bg-transparent p-0 text-base text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-0 dark:text-white/90 dark:placeholder:text-gray-500"
+  />
+
+  <button
+    type="button"
+    (click)="closeClick.emit()"
+    class="hidden rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium text-gray-400 transition hover:text-gray-600 sm:inline-block dark:border-gray-700 dark:text-gray-500 dark:hover:text-gray-300"
+  >
+    ESC
+  </button>
+
+  <button
+    type="button"
+    (click)="closeClick.emit()"
+    class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 sm:hidden dark:hover:bg-white/5 dark:hover:text-gray-300"
+    aria-label="Fechar"
+  >
+    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  </button>
+</div>
