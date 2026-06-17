@@ -1,0 +1,94 @@
+<app-command [open]="open" (close)="close()">
+  <app-command-input
+    [value]="query"
+    [loading]="loading"
+    placeholder="Pesquisar clientes, fornecedores ou lançamentos..."
+    (valueChange)="queryChange.emit($event)"
+    (closeClick)="close()"
+  />
+
+  <div
+    class="border-b border-gray-100 bg-gray-50/50 px-4 py-2 dark:border-gray-800 dark:bg-white/[0.02]"
+  >
+    <app-global-search-tabs
+      [active]="activeTab"
+      [counts]="counts"
+      (tabChange)="tabChange.emit($event)"
+    />
+  </div>
+
+  <app-command-list>
+    @if (!hasResults) {
+      <app-command-empty
+        [title]="
+          query
+            ? 'Nenhum resultado encontrado'
+            : 'Comece a escrever para pesquisar'
+        "
+        [description]="
+          query
+            ? 'Tente outro termo de pesquisa.'
+            : 'Procure por clientes, fornecedores ou lançamentos.'
+        "
+      />
+    } @else {
+      @if (show("clientes") && clientes.length) {
+        <app-command-group
+          heading="Clientes"
+          [showViewAll]="
+            results.clientes.length > clientes.length || activeTab === 'all'
+          "
+          (viewAll)="viewAll.emit('clientes')"
+        >
+          @for (cliente of clientes; track cliente.id) {
+            <app-command-item
+              (select)="select.emit({ type: 'cliente', id: cliente.id })"
+            >
+              <app-search-client-item [client]="cliente" />
+            </app-command-item>
+          }
+        </app-command-group>
+      }
+
+      @if (show("fornecedores") && fornecedores.length) {
+        <app-command-group
+          heading="Fornecedores"
+          [showViewAll]="
+            results.fornecedores.length > fornecedores.length ||
+            activeTab === 'all'
+          "
+          (viewAll)="viewAll.emit('fornecedores')"
+        >
+          @for (fornecedor of fornecedores; track fornecedor.id) {
+            <app-command-item
+              (select)="select.emit({ type: 'fornecedor', id: fornecedor.id })"
+            >
+              <app-search-supplier-item [supplier]="fornecedor" />
+            </app-command-item>
+          }
+        </app-command-group>
+      }
+
+      @if (show("lancamentos") && lancamentos.length) {
+        <app-command-group
+          heading="Lançamentos"
+          [showViewAll]="
+            results.lancamentos.length > lancamentos.length ||
+            activeTab === 'all'
+          "
+          (viewAll)="viewAll.emit('lancamentos')"
+        >
+          @for (lancamento of lancamentos; track lancamento.id) {
+            <app-command-item
+              (select)="select.emit({ type: 'lancamento', id: lancamento.id })"
+            >
+              <app-search-transaction-item [transaction]="lancamento" />
+            </app-command-item>
+          }
+        </app-command-group>
+      }
+    }
+  </app-command-list>
+
+  <app-command-footer />
+</app-command>

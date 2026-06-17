@@ -1,0 +1,18 @@
+@if (open) {
+  <div
+    class="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[12vh] sm:pt-[15vh]"
+  >
+    <div
+      class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm dark:bg-black/60"
+      (click)="onBackdrop()"
+    ></div>
+
+    <div
+      class="animate-in fade-in zoom-in-95 relative flex max-h-[70vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl duration-150 dark:border-gray-800 dark:bg-gray-900"
+      role="dialog"
+      aria-modal="true"
+    >
+      <ng-content></ng-content>
+    </div>
+  </div>
+}
