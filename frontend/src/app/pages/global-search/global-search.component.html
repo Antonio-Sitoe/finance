@@ -1,0 +1,126 @@
+<app-page-header
+  title="Pesquisa Global"
+  description="Pesquise clientes, fornecedores e lançamentos num só lugar."
+  [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Pesquisa Global' }]"
+/>
+
+<!-- Filtros -->
+<div class="mb-6">
+  <app-global-search-fields
+    [query]="query()"
+    [activeTab]="activeTab()"
+    [counts]="counts()"
+    (queryChange)="onQueryChange($event)"
+    (tabChange)="onTabChange($event)"
+  />
+</div>
+
+<!-- Cabeçalho de resultados -->
+@if (query() && !loading()) {
+  <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+    @if (hasResults()) {
+      <span class="font-medium text-gray-700 dark:text-gray-200">{{ counts().total }}</span>
+      resultado(s) para
+      <span class="font-medium text-gray-700 dark:text-gray-200">"{{ query() }}"</span>
+    } @else {
+      Sem resultados para
+      <span class="font-medium text-gray-700 dark:text-gray-200">"{{ query() }}"</span>
+    }
+  </p>
+}
+
+@if (loading()) {
+  <div
+    class="flex items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white py-16 dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <svg class="h-5 w-5 animate-spin text-brand-500" viewBox="0 0 24 24" fill="none">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+    <span class="text-sm text-gray-500 dark:text-gray-400">A pesquisar…</span>
+  </div>
+} @else if (!hasResults()) {
+  <div
+    class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <app-command-empty
+      [title]="query() ? 'Nenhum resultado encontrado' : 'Comece a pesquisar'"
+      [description]="
+        query()
+          ? 'Tente outro termo ou ajuste os filtros.'
+          : 'Escreva no campo acima para procurar registos.'
+      "
+    />
+  </div>
+} @else {
+  <div class="space-y-8">
+    <!-- Clientes -->
+    @if (show('clientes') && results().clientes.length) {
+      <section
+        class="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
+      >
+        <header
+          class="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800"
+        >
+          <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">Clientes</h3>
+          <span class="text-sm text-gray-400 dark:text-gray-500">
+            {{ results().clientes.length }} resultado(s)
+          </span>
+        </header>
+        <div class="divide-y divide-gray-100 p-2 dark:divide-gray-800">
+          @for (cliente of results().clientes; track cliente.id) {
+            <app-command-item>
+              <app-search-client-item [client]="cliente" />
+            </app-command-item>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Fornecedores -->
+    @if (show('fornecedores') && results().fornecedores.length) {
+      <section
+        class="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
+      >
+        <header
+          class="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800"
+        >
+          <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">Fornecedores</h3>
+          <span class="text-sm text-gray-400 dark:text-gray-500">
+            {{ results().fornecedores.length }} resultado(s)
+          </span>
+        </header>
+        <div class="divide-y divide-gray-100 p-2 dark:divide-gray-800">
+          @for (fornecedor of results().fornecedores; track fornecedor.id) {
+            <app-command-item>
+              <app-search-supplier-item [supplier]="fornecedor" />
+            </app-command-item>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Lançamentos -->
+    @if (show('lancamentos') && results().lancamentos.length) {
+      <section
+        class="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
+      >
+        <header
+          class="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800"
+        >
+          <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">Lançamentos</h3>
+          <span class="text-sm text-gray-400 dark:text-gray-500">
+            {{ results().lancamentos.length }} resultado(s)
+          </span>
+        </header>
+        <div class="divide-y divide-gray-100 p-2 dark:divide-gray-800">
+          @for (lancamento of results().lancamentos; track lancamento.id) {
+            <app-command-item>
+              <app-search-transaction-item [transaction]="lancamento" />
+            </app-command-item>
+          }
+        </div>
+      </section>
+    }
+  </div>
+}
