@@ -16,19 +16,12 @@ import {
   IGlobalSearchResults,
 } from "@/shared/interfaces/global-search.dto";
 
-/**
- * Estado e orquestração do command palette global (modal).
- * Mantém aberto/fechado, termo, tab activa e resultados (limitados a 5/grupo),
- * com pesquisa debounced. A página de pesquisa usa o `GlobalSearchApiService`
- * directamente (sem limite).
- */
 @Injectable({
   providedIn: "root",
 })
 export class GloabalSearchFacadeService {
   private readonly api = inject(GlobalSearchApiService);
 
-  /** Nº máximo de itens por grupo no modal. */
   private readonly MODAL_LIMIT = 5;
 
   readonly open = signal(false);
@@ -57,9 +50,9 @@ export class GloabalSearchFacadeService {
         tap(() => this.loading.set(true)),
         switchMap((q) =>
           q.trim()
-            ? this.api.globalSearch(q, this.MODAL_LIMIT).pipe(
-                catchError(() => of(EMPTY_GLOBAL_SEARCH_RESULTS))
-              )
+            ? this.api
+                .globalSearch(q, this.MODAL_LIMIT)
+                .pipe(catchError(() => of(EMPTY_GLOBAL_SEARCH_RESULTS)))
             : of(EMPTY_GLOBAL_SEARCH_RESULTS)
         ),
         takeUntilDestroyed()
@@ -70,7 +63,6 @@ export class GloabalSearchFacadeService {
       });
   }
 
-  // ── Abrir / fechar ──────────────────────────────────────────
   openModal(): void {
     this.open.set(true);
   }
@@ -83,7 +75,6 @@ export class GloabalSearchFacadeService {
     this.open.update((v) => !v);
   }
 
-  // ── Pesquisa ────────────────────────────────────────────────
   setQuery(q: string): void {
     this.query.set(q);
     this.term$.next(q);
