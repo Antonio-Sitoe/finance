@@ -69,7 +69,7 @@
         </header>
         <div class="divide-y divide-gray-100 p-2 dark:divide-gray-800">
           @for (cliente of results().clientes; track cliente.id) {
-            <app-command-item>
+            <app-command-item (select)="openRecord('cliente')">
               <app-search-client-item [client]="cliente" />
             </app-command-item>
           }
@@ -92,7 +92,7 @@
         </header>
         <div class="divide-y divide-gray-100 p-2 dark:divide-gray-800">
           @for (fornecedor of results().fornecedores; track fornecedor.id) {
-            <app-command-item>
+            <app-command-item (select)="openRecord('fornecedor')">
               <app-search-supplier-item [supplier]="fornecedor" />
             </app-command-item>
           }
@@ -115,7 +115,7 @@
         </header>
         <div class="divide-y divide-gray-100 p-2 dark:divide-gray-800">
           @for (lancamento of results().lancamentos; track lancamento.id) {
-            <app-command-item>
+            <app-command-item (select)="openRecord('lancamento')">
               <app-search-transaction-item [transaction]="lancamento" />
             </app-command-item>
           }

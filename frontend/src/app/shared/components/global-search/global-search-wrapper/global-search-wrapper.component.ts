@@ -5,6 +5,7 @@ import {
   GlobalSearchSelection,
 } from "@/shared/components/global-search/global-search-command/global-search-command.component";
 import { GlobalSearchTab } from "@/shared/interfaces/global-search.dto";
+import { GLOBAL_SEARCH_ROUTES } from "@/shared/services/global-search/global-search.routes";
 import { Router } from "@angular/router";
 
 @Component({
@@ -34,11 +35,6 @@ export class GlobalSearchWrapperComponent {
 
   onSelect(selection: GlobalSearchSelection): void {
     this.search.closeModal();
-    const routes: Record<GlobalSearchSelection["type"], string> = {
-      cliente: "/costumers",
-      fornecedor: "/suppliers",
-      lancamento: "/lancamentos",
-    };
-    this.router.navigate([routes[selection.type]]);
+    this.router.navigate([GLOBAL_SEARCH_ROUTES[selection.type]]);
   }
 }

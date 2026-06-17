@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { of, Subject } from "rxjs";
 import {
   catchError,
@@ -19,6 +19,10 @@ import { SearchClientItemComponent } from "@/shared/components/global-search/ite
 import { SearchSupplierItemComponent } from "@/shared/components/global-search/items/search-supplier-item.component";
 import { SearchTransactionItemComponent } from "@/shared/components/global-search/items/search-transaction-item.component";
 import { GlobalSearchApiService } from "@/shared/services/global-search/global-search.api.service";
+import {
+  GlobalSearchEntity,
+  GLOBAL_SEARCH_ROUTES,
+} from "@/shared/services/global-search/global-search.routes";
 
 import {
   EMPTY_GLOBAL_SEARCH_RESULTS,
@@ -43,6 +47,7 @@ import {
 })
 export class GlobalSearchComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly api = inject(GlobalSearchApiService);
 
   readonly query = signal("");
@@ -108,5 +113,12 @@ export class GlobalSearchComponent {
 
   onTabChange(tab: GlobalSearchTab): void {
     this.activeTab.set(tab);
+  }
+
+  /**
+   * Sem páginas de detalhe ainda — navega para a listagem da entidade.
+   */
+  openRecord(entity: GlobalSearchEntity): void {
+    this.router.navigate([GLOBAL_SEARCH_ROUTES[entity]]);
   }
 }
