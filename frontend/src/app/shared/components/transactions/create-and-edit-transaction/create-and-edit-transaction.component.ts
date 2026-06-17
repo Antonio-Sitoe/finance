@@ -21,6 +21,7 @@ import { LabelComponent } from '@/shared/components/ui/label/label.component'
 import { InputFieldComponent } from '@/shared/components/ui/input/input-field.component'
 import { TextAreaComponent } from '@/shared/components/ui/input/text-area.component'
 import { SelectComponent, SelectOption } from '@/shared/components/ui/select/select.component'
+import { DatePickerComponent } from '@/shared/components/ui/date-picker/date-picker.component'
 import { ButtonComponent } from '@/shared/components/ui/button/button.component'
 import { TransactionFormService } from '@/shared/services/transactions/transaction.form.service'
 import { TransactionApiService } from '@/shared/services/transactions/transaction.api.service'
@@ -55,6 +56,7 @@ const PARCELA_OPTIONS: SelectOption[] = [
     InputFieldComponent,
     TextAreaComponent,
     SelectComponent,
+    DatePickerComponent,
     ButtonComponent,
     SolarDynamicIcon,
     ReactiveFormsModule,

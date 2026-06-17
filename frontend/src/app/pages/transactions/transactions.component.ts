@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core'
+import { Router } from '@angular/router'
 import { PageHeaderComponent } from '@/shared/components/common/page-header/page-header.component'
 import { CardStatComponent } from '@/shared/components/common/card-stat/card-stat.component'
 import { TransactionsListTableComponent } from '@/shared/components/transactions/transactions-list-table/transactions-list-table.component'
@@ -29,6 +30,7 @@ import { SolarDynamicIcon } from '@solar-icons/angular'
 })
 export class TransactionsComponent {
   readonly facade = inject(TransactionsFacadeService)
+  private readonly router = inject(Router)
 
   readonly selectedTransaction = signal<ITransaction | null>(null)
   readonly drawerOpen = signal(false)
@@ -56,7 +58,7 @@ export class TransactionsComponent {
 
   openBulkImport(): void {
     this.newDropdownOpen.set(false)
-    // TODO: abrir modal de importação CSV
+    this.router.navigate(['/transactions/import'])
   }
 
   openEdit(transaction: ITransaction): void {
