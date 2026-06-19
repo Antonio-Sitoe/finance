@@ -1,4 +1,4 @@
-package com.finance.finance.modules.relatorios.dto;
+package com.finance.finance.modules.relatorios.dto.dashboard;
 
 import java.math.BigDecimal;
 
@@ -9,6 +9,7 @@ public record DashboardDTO(
         BigDecimal totalReceitasMes,
         BigDecimal totalDespesasMes,
         BigDecimal saldoAtual,
+        BigDecimal resultadoMes,
         BigDecimal contasAPagar,
         BigDecimal contasAReceber) {
 }

@@ -1,13 +1,15 @@
 package com.finance.finance.modules.relatorios.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.finance.finance.modules.clientes.repository.ClienteRepository;
+import com.finance.finance.modules.common.dto.BasicLabelValueDTO;
 import com.finance.finance.modules.fornecedor.repository.FornecedorRepository;
-import com.finance.finance.modules.relatorios.dto.DashboardDTO;
 import com.finance.finance.modules.relatorios.dto.search.GlobalSearchResultDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualProjecaoDTO;
@@ -15,6 +17,8 @@ import com.finance.finance.modules.relatorios.dto.RelatorioMensalDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioPercentual;
 import com.finance.finance.modules.relatorios.dto.RelatorioPorCategoria;
 import com.finance.finance.modules.relatorios.dto.RelatorioSituacaoDTO;
+import com.finance.finance.modules.relatorios.dto.dashboard.DashboardAlertDTO;
+import com.finance.finance.modules.relatorios.dto.dashboard.DashboardDTO;
 import com.finance.finance.modules.relatorios.repository.RelatoriosRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -50,12 +54,14 @@ public class RelatorioService {
     }
 
     public DashboardDTO gerarDashboard() {
+        var r = repository.resumo();
         return DashboardDTO.builder()
-                .totalReceitasMes(repository.totalReceitasMes())
-                .totalDespesasMes(repository.totalDespesasMes())
-                .saldoAtual(repository.saldoAtual())
-                .contasAPagar(repository.contasAPagar())
-                .contasAReceber(repository.contasAReceber())
+                .totalReceitasMes(r.getTotalReceitasMes())
+                .totalDespesasMes(r.getTotalDespesasMes())
+                .saldoAtual(r.getSaldoAtual())
+                .resultadoMes(r.getResultadoMes())
+                .contasAPagar(r.getContasAPagar())
+                .contasAReceber(r.getContasAReceber())
                 .build();
     }
 
@@ -80,4 +86,19 @@ public class RelatorioService {
                 repository.searchGlobal(termo, pageable));
     }
 
+    @Transactional(readOnly = true)
+    public DashboardAlertDTO obterAlertas() {
+        var alertas = repository.obterAlertas();
+        return DashboardAlertDTO.builder()
+                .receitasVencidas(alertas.getReceitasVencidas())
+                .despesasVencidas(alertas.getDespesasVencidas())
+                .qtdLancamentosVencemHoje(alertas.getQtdLancamentosVencemHoje())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BasicLabelValueDTO<BigDecimal>> obterEstatisticasPorContas() {
+        List<BasicLabelValueDTO<BigDecimal>> lancamento = repository.obterEstatisticasPorContas();
+        return lancamento;
+    }
 }
