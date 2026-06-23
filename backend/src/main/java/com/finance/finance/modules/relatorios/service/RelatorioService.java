@@ -13,12 +13,15 @@ import com.finance.finance.modules.fornecedor.repository.FornecedorRepository;
 import com.finance.finance.modules.relatorios.dto.search.GlobalSearchResultDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualProjecaoDTO;
+import com.finance.finance.modules.relatorios.dto.RelatorioCategoriaDto;
 import com.finance.finance.modules.relatorios.dto.RelatorioMensalDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioPercentual;
 import com.finance.finance.modules.relatorios.dto.RelatorioPorCategoria;
 import com.finance.finance.modules.relatorios.dto.RelatorioSituacaoDTO;
 import com.finance.finance.modules.relatorios.dto.dashboard.DashboardAlertDTO;
 import com.finance.finance.modules.relatorios.dto.dashboard.DashboardDTO;
+import com.finance.finance.modules.relatorios.dto.dashboard.DashboardReceitaDispesas;
+import com.finance.finance.modules.relatorios.dto.dashboard.DashboardReceitaDispesasProjection;
 import com.finance.finance.modules.relatorios.repository.RelatoriosRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -100,5 +103,24 @@ public class RelatorioService {
     public List<BasicLabelValueDTO<BigDecimal>> obterEstatisticasPorContas() {
         List<BasicLabelValueDTO<BigDecimal>> lancamento = repository.obterEstatisticasPorContas();
         return lancamento;
+    }
+
+    @Transactional(readOnly = true)
+    public List<DashboardReceitaDispesas> obterReceitaVsDespesas() {
+        List<DashboardReceitaDispesasProjection> projections = repository.obterReceitaVsDespesas();
+        return projections.stream()
+                .map(p -> DashboardReceitaDispesas.builder()
+                        .mes(p.getMes())
+                        .receitas(p.getReceitas())
+                        .despesas(p.getDespesas())
+                        .build())
+                .toList();
+    }
+
+    public List<RelatorioCategoriaDto> obterRelatorioCategoria() {
+        return repository
+                .buscarTop3()
+                .stream()
+                .toList();
     }
 }

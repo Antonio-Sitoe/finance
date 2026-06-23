@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import com.finance.finance.modules.relatorios.dto.search.GlobalSearchResultDTO;
 import com.finance.finance.modules.common.dto.BasicLabelValueDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualDTO;
+import com.finance.finance.modules.relatorios.dto.RelatorioCategoriaDto;
 import com.finance.finance.modules.relatorios.dto.RelatorioPercentual;
 import com.finance.finance.modules.relatorios.dto.RelatorioPorCategoria;
 import com.finance.finance.modules.relatorios.dto.dashboard.DashboardAlertDTO;
 import com.finance.finance.modules.relatorios.dto.dashboard.DashboardDTO;
+import com.finance.finance.modules.relatorios.dto.dashboard.DashboardReceitaDispesas;
 import com.finance.finance.modules.relatorios.service.RelatorioService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -105,9 +107,35 @@ public class RelatorioController {
                                 service.obterAlertas());
         }
 
+        @Operation(summary = "Estatísticas por conta", description = "Retorna as estatísticas de lançamentos agrupados por conta, incluindo as três principais contas com maior movimentação.")
+        @ApiResponses({
+                @ApiResponse(responseCode = "200", description = "Estatísticas retornadas com sucesso"),
+                @ApiResponse(responseCode = "500", description = "Erro interno ao gerar as estatísticas")
+        })
         @GetMapping("/por-conta")
         public ResponseEntity<List<BasicLabelValueDTO<BigDecimal>>> obterEstatisticasPorContas() {
                 return ResponseEntity.ok(
                                 service.obterEstatisticasPorContas());
+        }
+
+        @Operation(summary = "Receita vs Despesas", description = "Retorna a comparação mensal entre receitas e despesas dos últimos 6 meses, permitindo analisar a evolução financeira ao longo do tempo.")
+        @ApiResponses({
+                @ApiResponse(responseCode = "200", description = "Comparativo retornado com sucesso"),
+                @ApiResponse(responseCode = "500", description = "Erro interno ao gerar o comparativo")
+        })
+        @GetMapping("/receita-vs-despesas")
+        public ResponseEntity<List<DashboardReceitaDispesas>> obterReceitaVsDespesas() {
+                return ResponseEntity.ok(
+                                service.obterReceitaVsDespesas());
+        }
+
+        @Operation(summary = "Top categorias (débito)", description = "Retorna as três principais categorias com maior valor total em lançamentos de débito, ordenadas por valor decrescente.")
+        @ApiResponses({
+                @ApiResponse(responseCode = "200", description = "Top categorias retornadas com sucesso"),
+                @ApiResponse(responseCode = "500", description = "Erro interno ao gerar o relatório")
+        })
+        @GetMapping("/top-categoria")
+        public ResponseEntity<List<RelatorioCategoriaDto>> relatorioCategoria() {
+                return ResponseEntity.ok(service.obterRelatorioCategoria());
         }
 }

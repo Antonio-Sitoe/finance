@@ -13,11 +13,13 @@ import com.finance.finance.modules.Lancamento.model.Lancamento;
 import com.finance.finance.modules.common.dto.BasicLabelValueDTO;
 import com.finance.finance.modules.relatorios.dto.search.LancamentoSearchItemDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioAnualProjecaoDTO;
+import com.finance.finance.modules.relatorios.dto.RelatorioCategoriaDto;
 import com.finance.finance.modules.relatorios.dto.RelatorioMensalDTO;
 import com.finance.finance.modules.relatorios.dto.RelatorioPorCategoria;
 import com.finance.finance.modules.relatorios.dto.RelatorioSituacaoDTO;
 import com.finance.finance.modules.relatorios.dto.dashboard.DashboardAlertProjection;
 import com.finance.finance.modules.relatorios.dto.dashboard.DashboardDTOProjection;
+import com.finance.finance.modules.relatorios.dto.dashboard.DashboardReceitaDispesasProjection;
 
 public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, JpaSpecificationExecutor<Lancamento> {
 
@@ -189,6 +191,42 @@ public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, J
   DashboardDTOProjection resumo();
 
   @Query(value = """
+      WITH meses AS (
+         SELECT generate_series(
+           DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months',
+           DATE_TRUNC('month', CURRENT_DATE),
+           INTERVAL '1 month'
+         ) AS mes
+       )
+       SELECT
+         TO_CHAR(m.mes, 'YYYY-MM') AS mes,
+         COALESCE(
+           SUM(
+             CASE
+               WHEN c.credito = true THEN l.valor
+             END
+           ),
+           0
+         ) AS receitas,
+         COALESCE(
+           SUM(
+             CASE
+               WHEN c.debito = true THEN l.valor
+             END
+           ),
+           0
+         ) AS despesas
+       FROM meses m
+       LEFT JOIN lancamentos l
+       ON DATE_TRUNC('month', l.data_vencimento) = m.mes
+       LEFT JOIN categoria c
+       ON c.id = l.id_categoria
+       GROUP BY m.mes
+       ORDER BY m.mes;
+       """, nativeQuery = true)
+  List<DashboardReceitaDispesasProjection> obterReceitaVsDespesas();
+
+  @Query(value = """
           SELECT
 
             COALESCE(
@@ -221,7 +259,6 @@ public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, J
   @Query(value = """
       SELECT c.
           nome as label,
-
           COALESCE(sum(l.valor),0) as Value FROM lancamentos l
       LEFT JOIN contas c ON c.id = l.id_conta
       GROUP BY c.nome
@@ -229,4 +266,18 @@ public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, J
       LIMIT 3
       """, nativeQuery = true)
   List<BasicLabelValueDTO<BigDecimal>> obterEstatisticasPorContas();
+
+  @Query("""
+      SELECT new com.finance.finance.modules.relatorios.dto.RelatorioCategoriaDto(
+          c.id,
+          c.nome,
+          SUM(l.valor)
+      )
+      FROM Lancamento l
+      JOIN l.categoria c
+      WHERE c.debito = true
+      GROUP BY c.id, c.nome
+      ORDER BY SUM(l.valor) DESC
+      """)
+  List<RelatorioCategoriaDto> buscarTop3();
 }
