@@ -19,6 +19,7 @@ import { CategoriesComponent } from "./pages/categories/categories.component";
 import { TransactionsComponent } from "./pages/transactions/transactions.component";
 import { TransactionsImportComponent } from "./pages/transactions/import/transactions-import.component";
 import { GlobalSearchComponent } from "./pages/global-search/global-search.component";
+import { DashboardComponent } from "./pages/dashboard/dashboard/dashboard.component";
 
 export const routes: Routes = [
   {
@@ -27,9 +28,14 @@ export const routes: Routes = [
     children: [
       {
         path: "",
-        component: EcommerceComponent,
+        component: DashboardComponent,
         pathMatch: "full",
         title: "Angular Ecommerce Dashboard | FinanceApp Administrative Panel",
+      },
+      {
+        path: "commerce",
+        component: EcommerceComponent,
+        title: "Finance commerce | FinanceApp Administrative Panel",
       },
       {
         path: "users",
