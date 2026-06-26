@@ -10,11 +10,12 @@
       >
         Últimos Lançamentos
       </h3>
-      <button
+      <a
+        routerLink="/transactions"
         class="text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
       >
         Ver todos
-      </button>
+      </a>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full text-left">
@@ -30,12 +31,12 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-          @for (t of transactions; track $index) {
+          @for (t of transactions(); track $index) {
             <tr
               class="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]"
             >
               <td class="px-6 py-4">
-                @if (t.tipo === "receita") {
+                @if (t.type === "receita") {
                   <svg
                     width="20"
                     height="20"
@@ -62,17 +63,18 @@
                 }
               </td>
               <td class="px-6 py-4 text-sm font-semibold text-gray-800 dark:text-white/90">
-                {{ t.descricao }}
+                {{ t.description }}
               </td>
               <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                {{ t.data }}
+                {{ t.date }}
               </td>
               <td class="px-6 py-4 text-sm font-bold text-gray-800 dark:text-white/90">
-                {{ t.valor }}
+                {{ t.amount }}
               </td>
               <td class="px-6 py-4">
                 <span
-                  class="inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase {{ t.statusClass }}"
+                  class="inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase"
+                  [ngClass]="t.statusClass"
                 >
                   {{ t.status }}
                 </span>

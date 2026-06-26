@@ -13,10 +13,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Saldo Actual</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          MT 142.500
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.formatAmount(facade.dashboard()?.saldoAtual) }}
         </h4>
       </div>
       <app-badge color="success">
@@ -38,10 +36,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Contas a Receber</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          MT 28.450
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.formatAmount(facade.dashboard()?.contasAReceber) }}
         </h4>
       </div>
       <app-badge color="success">
@@ -63,10 +59,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Contas a Pagar</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          MT 15.920
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.formatAmount(facade.dashboard()?.contasAPagar) }}
         </h4>
       </div>
       <app-badge color="error">
@@ -88,10 +82,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Receitas do Mês</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          MT 84.100
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.formatAmount(facade.dashboard()?.totalReceitasMes) }}
         </h4>
       </div>
       <app-badge color="success">
@@ -113,10 +105,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Despesas do Mês</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          MT 52.340
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.formatAmount(facade.dashboard()?.totalDespesasMes) }}
         </h4>
       </div>
       <app-badge color="error">
@@ -138,10 +128,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Resultado Líquido</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          MT 31.760
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.formatAmount(facade.dashboard()?.resultadoMes) }}
         </h4>
       </div>
       <app-badge color="success">
@@ -165,10 +153,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Receitas Vencidas</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          MT {{ receitasVencidas | number:'1.2-2' }}
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.formatAmount(facade.alerts()?.receitasVencidas) }}
         </h4>
       </div>
       <app-badge color="error">
@@ -190,10 +176,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Despesas Vencidas</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          MT {{ despesasVencidas | number:'1.2-2' }}
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.formatAmount(facade.alerts()?.despesasVencidas) }}
         </h4>
       </div>
       <app-badge color="error">
@@ -215,10 +199,8 @@
         <span class="text-sm text-gray-500 dark:text-gray-400"
           >Vencem Hoje</span
         >
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          {{ qtdLancamentosVencemHoje }}
+        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
+          {{ facade.alerts()?.qtdLancamentosVencemHoje ?? 0 }}
         </h4>
       </div>
       <app-badge color="error">

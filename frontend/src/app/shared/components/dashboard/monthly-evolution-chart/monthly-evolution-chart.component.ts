@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, effect, inject } from "@angular/core";
 import {
   NgApexchartsModule,
   ApexAxisChartSeries,
@@ -13,6 +13,8 @@ import {
   ApexFill,
   ApexTooltip,
 } from "ng-apexcharts";
+import { DashboardFacadeService } from "@/shared/services/dashboard/dashboard.facade.service";
+import { IRevenueVsExpense } from "@/shared/interfaces/dashboard.dto";
 
 @Component({
   selector: "app-monthly-evolution-chart",
@@ -21,12 +23,9 @@ import {
   templateUrl: "./monthly-evolution-chart.component.html",
 })
 export class MonthlyEvolutionChartComponent {
-  public series: ApexAxisChartSeries = [
-    {
-      name: "Sales",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
-    },
-  ];
+  private readonly facade = inject(DashboardFacadeService);
+
+  public series: ApexAxisChartSeries = [];
   public chart: ApexChart = {
     fontFamily: "Outfit, sans-serif",
     type: "bar",
@@ -34,20 +33,7 @@ export class MonthlyEvolutionChartComponent {
     toolbar: { show: false },
   };
   public xaxis: ApexXAxis = {
-    categories: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
+    categories: [],
     axisBorder: { show: false },
     axisTicks: { show: false },
   };
@@ -73,7 +59,51 @@ export class MonthlyEvolutionChartComponent {
   public fill: ApexFill = { opacity: 1 };
   public tooltip: ApexTooltip = {
     x: { show: false },
-    y: { formatter: (val: number) => `${val}` },
+    y: {
+      formatter: (value: number) =>
+        `MT ${new Intl.NumberFormat("pt-MZ", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(value)}`,
+    },
   };
-  public colors: string[] = ["#465fff"];
+  public colors: string[] = ["#10b981", "#ef4444"];
+
+  constructor() {
+    effect(() => {
+      this.updateChart(this.facade.revenueVsExpenses());
+    });
+  }
+
+  private updateChart(months: IRevenueVsExpense[]): void {
+    if (!months.length) {
+      this.series = [];
+      this.xaxis = { ...this.xaxis, categories: [] };
+      return;
+    }
+
+    this.series = [
+      {
+        name: "Receitas",
+        data: months.map((month) => Number(month.receitas)),
+      },
+      {
+        name: "Despesas",
+        data: months.map((month) => Number(month.despesas)),
+      },
+    ];
+    this.xaxis = {
+      ...this.xaxis,
+      categories: months.map((month) => this.formatMonthLabel(month.mes)),
+    };
+  }
+
+  private formatMonthLabel(yearMonth: string): string {
+    const [, month] = yearMonth.split("-");
+    const labels = [
+      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+      "Jul", "Ago", "Set", "Out", "Nov", "Dez",
+    ];
+    return labels[Number(month) - 1] ?? yearMonth;
+  }
 }

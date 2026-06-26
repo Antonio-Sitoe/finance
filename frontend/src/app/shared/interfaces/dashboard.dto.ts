@@ -33,3 +33,27 @@ export interface IAccountBalance {
   label: string;
   value: number;
 }
+
+export interface IRevenueVsExpense {
+  mes: string;
+  receitas: number;
+  despesas: number;
+}
+
+export interface ITopCategoryExpense {
+  id: number;
+  nome: string;
+  total: number;
+}
+
+export interface IMonthlyChartPoint {
+  label: string;
+  revenue: number;
+  expense: number;
+}
+
+export interface ICategoryExpenseSummary {
+  categoryName: string;
+  amount: number;
+  percent: number;
+}

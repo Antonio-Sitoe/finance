@@ -7,6 +7,8 @@ import {
   IDashboardAlert,
   IAnnualReport,
   IAccountBalance,
+  IRevenueVsExpense,
+  ITopCategoryExpense,
 } from "@/shared/interfaces/dashboard.dto";
 
 @Injectable({ providedIn: "root" })
@@ -17,15 +19,27 @@ export class DashboardApiService {
     return this.http.get<IDashboard>(DASHBOARD_ENDPOINTS.DASHBOARD);
   }
 
-  getAlertas(): Observable<IDashboardAlert> {
-    return this.http.get<IDashboardAlert>(DASHBOARD_ENDPOINTS.ALERTAS);
+  getAlerts(): Observable<IDashboardAlert> {
+    return this.http.get<IDashboardAlert>(DASHBOARD_ENDPOINTS.ALERTS);
   }
 
-  getRelatorioAnual(): Observable<IAnnualReport> {
-    return this.http.get<IAnnualReport>(DASHBOARD_ENDPOINTS.RELATORIO_ANUAL);
+  getAnnualReport(): Observable<IAnnualReport> {
+    return this.http.get<IAnnualReport>(DASHBOARD_ENDPOINTS.ANNUAL_REPORT);
   }
 
-  getPorConta(): Observable<IAccountBalance[]> {
-    return this.http.get<IAccountBalance[]>(DASHBOARD_ENDPOINTS.POR_CONTA);
+  getByAccount(): Observable<IAccountBalance[]> {
+    return this.http.get<IAccountBalance[]>(DASHBOARD_ENDPOINTS.BY_ACCOUNT);
+  }
+
+  getRevenueVsExpenses(): Observable<IRevenueVsExpense[]> {
+    return this.http.get<IRevenueVsExpense[]>(
+      DASHBOARD_ENDPOINTS.REVENUE_VS_EXPENSES
+    );
+  }
+
+  getTopCategories(): Observable<ITopCategoryExpense[]> {
+    return this.http.get<ITopCategoryExpense[]>(
+      DASHBOARD_ENDPOINTS.TOP_CATEGORIES
+    );
   }
 }

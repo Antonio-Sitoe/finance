@@ -9,21 +9,21 @@
       Saldo por Conta
     </h3>
     <div class="space-y-4">
-      @for (conta of facade.porConta(); track conta.label) {
+      @for (account of facade.accountBalances(); track account.label) {
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-3">
             <div
               class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold text-xs uppercase"
             >
-              {{ conta.label.substring(0, 3) }}
+              {{ account.label.substring(0, 3) }}
             </div>
             <span
               class="text-sm font-semibold text-gray-800 dark:text-white/90"
-              >{{ conta.label }}</span
+              >{{ account.label }}</span
             >
           </div>
           <span class="text-sm font-bold text-gray-800 dark:text-white/90">{{
-            facade.formatCurrency(conta.value)
+            facade.formatAmount(account.value)
           }}</span>
         </div>
       } @empty {
@@ -46,15 +46,15 @@
       Despesas do Mês
     </h3>
     <div class="space-y-4">
-      @for (item of topDespesas; track item.categoria) {
+      @for (item of facade.categoryExpenseSummaries(); track item.categoryName) {
         <div class="space-y-1">
           <div class="flex justify-between text-theme-xs mb-1">
             <span
               class="font-semibold px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300"
-              >{{ item.categoria }}</span
+              >{{ item.categoryName }}</span
             >
             <span class="font-bold text-gray-800 dark:text-white/90">{{
-              facade.formatCurrency(item.valor)
+              facade.formatAmount(item.amount)
             }}</span>
           </div>
           <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full">

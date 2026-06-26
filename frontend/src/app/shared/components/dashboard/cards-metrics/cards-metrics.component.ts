@@ -1,17 +1,15 @@
-import { Component, Input } from "@angular/core";
-import { DecimalPipe } from "@angular/common";
+import { Component, inject } from "@angular/core";
 import { BadgeComponent } from "../../ui/badge/badge.component";
 import { SafeHtmlPipe } from "../../../pipe/safe-html.pipe";
+import { DashboardFacadeService } from "@/shared/services/dashboard/dashboard.facade.service";
 
 @Component({
   selector: "app-cards-metrics",
-  imports: [BadgeComponent, SafeHtmlPipe, DecimalPipe],
+  imports: [BadgeComponent, SafeHtmlPipe],
   templateUrl: "./cards-metrics.component.html",
 })
 export class MetricsCardsComponent {
-  @Input() receitasVencidas = 0;
-  @Input() despesasVencidas = 0;
-  @Input() qtdLancamentosVencemHoje = 0;
+  readonly facade = inject(DashboardFacadeService);
 
   public icons = {
     walletIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><rect x="2" y="5" width="20" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="8" height="4" rx="1" fill="currentColor" opacity="0.4"/><circle cx="18" cy="12" r="1" fill="currentColor"/></svg>`,
