@@ -1,72 +1,27 @@
-<div class="grid grid-cols-1 gap-4 sm:grid-cols-6 md:gap-6">
-  <!-- Metric Item Start -->
+<div
+  class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 md:gap-6"
+>
   <div
     class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
   >
     <div
       class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.groupIcon | safeHtml"
+      [innerHTML]="icons.walletIcon | safeHtml"
     ></div>
     <div class="flex items-end justify-between mt-5">
       <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Customers</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Saldo Actual</span
+        >
         <h4
           class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
         >
-          3,782
+          € 142.500
         </h4>
       </div>
       <app-badge color="success">
         <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        CEO%
-      </app-badge>
-    </div>
-  </div>
-  <!-- Metric Item End -->
-
-  <!-- Metric Item Start -->
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          5,359
-        </h4>
-      </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
-      </app-badge>
-    </div>
-  </div>
-  <!-- Metric Item End -->
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
-        <h4
-          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
-        >
-          5,359
-        </h4>
-      </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
+        +12.5%
       </app-badge>
     </div>
   </div>
@@ -76,20 +31,22 @@
   >
     <div
       class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
+      [innerHTML]="icons.receiveIcon | safeHtml"
     ></div>
     <div class="flex items-end justify-between mt-5">
       <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Contas a Receber</span
+        >
         <h4
           class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
         >
-          5,359
+          € 28.450
         </h4>
       </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
+      <app-badge color="success">
+        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
+        +8.3%
       </app-badge>
     </div>
   </div>
@@ -99,20 +56,22 @@
   >
     <div
       class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
+      [innerHTML]="icons.payIcon | safeHtml"
     ></div>
     <div class="flex items-end justify-between mt-5">
       <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Contas a Pagar</span
+        >
         <h4
           class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
         >
-          5,359
+          € 15.920
         </h4>
       </div>
       <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
+        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
+        +3.2%
       </app-badge>
     </div>
   </div>
@@ -122,20 +81,72 @@
   >
     <div
       class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
+      [innerHTML]="icons.revenueIcon | safeHtml"
     ></div>
     <div class="flex items-end justify-between mt-5">
       <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Receitas do Mês</span
+        >
         <h4
           class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
         >
-          5,359
+          € 84.100
+        </h4>
+      </div>
+      <app-badge color="success">
+        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
+        +15.7%
+      </app-badge>
+    </div>
+  </div>
+
+  <div
+    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+  >
+    <div
+      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
+      [innerHTML]="icons.expenseIcon | safeHtml"
+    ></div>
+    <div class="flex items-end justify-between mt-5">
+      <div>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Despesas do Mês</span
+        >
+        <h4
+          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
+        >
+          € 52.340
         </h4>
       </div>
       <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
+        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
+        +6.1%
+      </app-badge>
+    </div>
+  </div>
+
+  <div
+    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+  >
+    <div
+      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
+      [innerHTML]="icons.resultIcon | safeHtml"
+    ></div>
+    <div class="flex items-end justify-between mt-5">
+      <div>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Resultado Líquido</span
+        >
+        <h4
+          class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
+        >
+          € 31.760
+        </h4>
+      </div>
+      <app-badge color="success">
+        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
+        +12%
       </app-badge>
     </div>
   </div>
@@ -146,21 +157,23 @@
     class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
   >
     <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.groupIcon | safeHtml"
+      class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-xl dark:bg-gray-800"
+      [innerHTML]="icons.warningIcon | safeHtml"
     ></div>
     <div class="flex items-end justify-between mt-5">
       <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Customers</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Receitas Vencidas</span
+        >
         <h4
           class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
         >
-          3,782
+          € {{ receitasVencidas | number:'1.2-2' }}
         </h4>
       </div>
-      <app-badge color="success">
+      <app-badge color="error">
         <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        CEO%
+        Vencido
       </app-badge>
     </div>
   </div>
@@ -169,21 +182,23 @@
     class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
   >
     <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
+      class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-xl dark:bg-gray-800"
+      [innerHTML]="icons.alertIcon | safeHtml"
     ></div>
     <div class="flex items-end justify-between mt-5">
       <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Despesas Vencidas</span
+        >
         <h4
           class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
         >
-          5,359
+          € {{ despesasVencidas | number:'1.2-2' }}
         </h4>
       </div>
       <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
+        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
+        Vencido
       </app-badge>
     </div>
   </div>
@@ -192,21 +207,23 @@
     class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
   >
     <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.boxIconLine | safeHtml"
+      class="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-xl dark:bg-gray-800"
+      [innerHTML]="icons.calendarIcon | safeHtml"
     ></div>
     <div class="flex items-end justify-between mt-5">
       <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400">Orders</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >Vencem Hoje</span
+        >
         <h4
           class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90"
         >
-          5,359
+          {{ qtdLancamentosVencemHoje }}
         </h4>
       </div>
       <app-badge color="error">
-        <span [innerHTML]="icons.arrowDownIcon | safeHtml"></span>
-        9.05%
+        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
+        Pendente
       </app-badge>
     </div>
   </div>
