@@ -1,5 +1,4 @@
 import { Routes } from "@angular/router";
-import { EcommerceComponent } from "./pages/dashboard/ecommerce/ecommerce.component";
 import { ProfileComponent } from "./pages/profile/profile.component";
 
 import { NotFoundComponent } from "./pages/not-found/not-found.component";
@@ -20,6 +19,7 @@ import { TransactionsComponent } from "./pages/transactions/transactions.compone
 import { TransactionsImportComponent } from "./pages/transactions/import/transactions-import.component";
 import { GlobalSearchComponent } from "./pages/global-search/global-search.component";
 import { DashboardComponent } from "./pages/dashboard/dashboard/dashboard.component";
+import { FinanceDashboardComponent } from "./pages/dashboard/finance-dashboard/finance-dashboard.component";
 
 export const routes: Routes = [
   {
@@ -33,9 +33,9 @@ export const routes: Routes = [
         title: "Angular Ecommerce Dashboard | FinanceApp Administrative Panel",
       },
       {
-        path: "commerce",
-        component: EcommerceComponent,
-        title: "Finance commerce | FinanceApp Administrative Panel",
+        path: "finance",
+        component: FinanceDashboardComponent,
+        title: "Dashboard Financeiro | FinanceApp Administrative Panel",
       },
       {
         path: "users",
