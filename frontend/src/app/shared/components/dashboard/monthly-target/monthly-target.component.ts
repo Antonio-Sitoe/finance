@@ -1,15 +1,21 @@
-import { Component, inject } from "@angular/core";
-import { DatePipe, SlicePipe } from "@angular/common";
-import { DashboardFacadeService } from "@/shared/services/dashboard/dashboard.facade.service";
-import { TransactionsFacadeService } from "@/shared/services/transactions/transactions.facade.service";
-import { RouterModule } from "@angular/router";
+import { DashboardFacadeService } from '@/shared/services/dashboard/dashboard.facade.service';
+import { Component, inject } from '@angular/core';
+import {
+
+  NgApexchartsModule,
+} from 'ng-apexcharts';
+import { TransactionsFacadeService } from '@/shared/services/transactions/transactions.facade.service';
+
 
 @Component({
-  selector: "app-finance-dashboard",
-  imports: [DatePipe, SlicePipe, RouterModule],
-  templateUrl: "./finance-dashboard.component.html",
+  selector: 'app-monthly-target',
+  imports: [
+    NgApexchartsModule,
+
+  ],
+  templateUrl: './monthly-target.component.html',
 })
-export class FinanceDashboardComponent {
+export class MonthlyTargetComponent {
   readonly facade = inject(DashboardFacadeService);
   readonly transactionsFacade = inject(TransactionsFacadeService);
 

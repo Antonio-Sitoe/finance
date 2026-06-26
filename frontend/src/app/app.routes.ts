@@ -19,7 +19,6 @@ import { TransactionsComponent } from "./pages/transactions/transactions.compone
 import { TransactionsImportComponent } from "./pages/transactions/import/transactions-import.component";
 import { GlobalSearchComponent } from "./pages/global-search/global-search.component";
 import { DashboardComponent } from "./pages/dashboard/dashboard/dashboard.component";
-import { FinanceDashboardComponent } from "./pages/dashboard/finance-dashboard/finance-dashboard.component";
 
 export const routes: Routes = [
   {
@@ -31,11 +30,6 @@ export const routes: Routes = [
         component: DashboardComponent,
         pathMatch: "full",
         title: "Angular Ecommerce Dashboard | FinanceApp Administrative Panel",
-      },
-      {
-        path: "finance",
-        component: FinanceDashboardComponent,
-        title: "Dashboard Financeiro | FinanceApp Administrative Panel",
       },
       {
         path: "users",
