@@ -12,6 +12,7 @@ import {
 } from "@/shared/interfaces/transactions.dto";
 import { ListStore } from "@/shared/config/listing/list.store";
 import { TransactionApiService } from "./transaction.api.service";
+import { map, Observable, tap } from "rxjs";
 import {
   TRANSACTION_SITUACAO_OPTIONS,
   TRANSACTION_TIPO_OPTIONS,
@@ -74,6 +75,17 @@ export class TransactionsFacadeService {
 
   refresh(): void {
     this.list.reload();
+  }
+
+  refreshOnce(): Observable<void> {
+    return this.api.getAll(this.list.query()).pipe(
+      tap((result) => {
+        this.list.items.set(result.content);
+        this.list.total.set(result.totalElements);
+        this.list.totalPages.set(result.totalPages);
+      }),
+      map(() => void 0)
+    );
   }
 
   exportCsv(): void {

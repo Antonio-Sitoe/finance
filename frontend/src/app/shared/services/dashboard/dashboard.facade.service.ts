@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
+import { forkJoin, map, Observable, tap } from "rxjs";
 import { DashboardApiService } from "./dashboard.api.service";
 import {
   IDashboard,
@@ -38,24 +39,37 @@ export class DashboardFacadeService {
   });
 
   constructor() {
-    this.loadAll();
+    this.loadAll().subscribe();
   }
 
-  loadAll(): void {
-    this.api.getDashboard().subscribe((data) => this.dashboard.set(data));
-    this.api.getAlerts().subscribe((data) => this.alerts.set(data));
-    this.api
-      .getAnnualReport()
-      .subscribe((data) => this.annualReport.set(data));
-    this.api
-      .getByAccount()
-      .subscribe((data) => this.accountBalances.set(data));
-    this.api
-      .getRevenueVsExpenses()
-      .subscribe((data) => this.revenueVsExpenses.set(data));
-    this.api
-      .getTopCategories()
-      .subscribe((data) => this.topCategories.set(data));
+  loadAll(): Observable<void> {
+    return forkJoin({
+      dashboard: this.api.getDashboard(),
+      alerts: this.api.getAlerts(),
+      annualReport: this.api.getAnnualReport(),
+      accountBalances: this.api.getByAccount(),
+      revenueVsExpenses: this.api.getRevenueVsExpenses(),
+      topCategories: this.api.getTopCategories(),
+    }).pipe(
+      tap(
+        ({
+          dashboard,
+          alerts,
+          annualReport,
+          accountBalances,
+          revenueVsExpenses,
+          topCategories,
+        }) => {
+          this.dashboard.set(dashboard);
+          this.alerts.set(alerts);
+          this.annualReport.set(annualReport);
+          this.accountBalances.set(accountBalances);
+          this.revenueVsExpenses.set(revenueVsExpenses);
+          this.topCategories.set(topCategories);
+        }
+      ),
+      map(() => void 0)
+    );
   }
 
   get monthlyReports(): IMonthlyReport[] {
@@ -86,7 +100,7 @@ export class DashboardFacadeService {
     }));
   }
 
-  refresh(): void {
-    this.loadAll();
+  refresh(): Observable<void> {
+    return this.loadAll();
   }
 }

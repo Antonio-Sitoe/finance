@@ -43,8 +43,12 @@ export class DashboardComponent {
   onRefresh(): void {
     if (this.refreshing) return;
     this.refreshing = true;
-    this.facade.refresh();
-    this.transactionsFacade.refresh();
-    setTimeout(() => this.refreshing = false, 1000);
+
+    forkJoin({
+      dashboard: this.facade.refresh(),
+      transactions: this.transactionsFacade.refreshOnce(),
+    })
+      .pipe(finalize(() => (this.refreshing = false)))
+      .subscribe();
   }
 }
