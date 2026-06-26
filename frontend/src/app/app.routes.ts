@@ -29,7 +29,7 @@ export const routes: Routes = [
         path: "",
         component: DashboardComponent,
         pathMatch: "full",
-        title: "Angular Ecommerce Dashboard | FinanceApp Administrative Panel",
+        title: "Finance Dashboard | FinanceApp Administrative Panel",
       },
       {
         path: "users",

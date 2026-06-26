@@ -5,6 +5,7 @@ import { ITransaction } from "@/shared/interfaces/transactions.dto";
 import { TransactionsFacadeService } from "@/shared/services/transactions/transactions.facade.service";
 
 interface RecentTransactionRow {
+  id: number;
   type: "receita" | "despesa";
   description: string;
   date: string;
@@ -32,6 +33,7 @@ export class DashboardFooterActionsComponent {
 
   private mapTransaction(transaction: ITransaction): RecentTransactionRow {
     return {
+      id: transaction.id,
       type: transaction.tipo === "RECEITA" ? "receita" : "despesa",
       description: transaction.descricao,
       date: this.transactionsFacade.formatDate(transaction.dataVencimento),

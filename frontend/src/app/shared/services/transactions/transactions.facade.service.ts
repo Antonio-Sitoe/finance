@@ -47,6 +47,7 @@ export class TransactionsFacadeService {
 
   constructor() {
     this.list.connect((query) => this.api.getAll(query));
+    this.list.reload();
     this.computeAnalytics();
   }
 

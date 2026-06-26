@@ -22,6 +22,8 @@ export class DashboardComponent {
 
   readonly today = new Date();
 
+  refreshing = false;
+
   get weekdayName(): string {
     return this.today.toLocaleDateString("pt-PT", { weekday: "long" });
   }
@@ -39,7 +41,10 @@ export class DashboardComponent {
   }
 
   onRefresh(): void {
+    if (this.refreshing) return;
+    this.refreshing = true;
     this.facade.refresh();
     this.transactionsFacade.refresh();
+    setTimeout(() => this.refreshing = false, 1000);
   }
 }

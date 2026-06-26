@@ -1,4 +1,4 @@
-import { Component, effect, inject } from "@angular/core";
+import { Component, computed, effect, inject, signal } from "@angular/core";
 import {
   NgApexchartsModule,
   ApexAxisChartSeries,
@@ -14,7 +14,6 @@ import {
   ApexTooltip,
 } from "ng-apexcharts";
 import { DashboardFacadeService } from "@/shared/services/dashboard/dashboard.facade.service";
-import { IRevenueVsExpense } from "@/shared/interfaces/dashboard.dto";
 
 @Component({
   selector: "app-monthly-evolution-chart",
@@ -25,39 +24,40 @@ import { IRevenueVsExpense } from "@/shared/interfaces/dashboard.dto";
 export class MonthlyEvolutionChartComponent {
   private readonly facade = inject(DashboardFacadeService);
 
-  public series: ApexAxisChartSeries = [];
-  public chart: ApexChart = {
+  readonly hasChartData = computed(
+    () => this.facade.revenueVsExpenses().length > 0
+  );
+
+  readonly series = signal<ApexAxisChartSeries>([]);
+  readonly xaxis = signal<ApexXAxis>({
+    categories: [],
+    axisBorder: { show: false },
+    axisTicks: { show: false },
+  });
+
+  readonly chart: ApexChart = {
     fontFamily: "Outfit, sans-serif",
     type: "bar",
     height: 256,
     toolbar: { show: false },
   };
-  public xaxis: ApexXAxis = {
-    categories: [],
-    axisBorder: { show: false },
-    axisTicks: { show: false },
-  };
-  public plotOptions: ApexPlotOptions = {
+  readonly plotOptions: ApexPlotOptions = {
     bar: {
       horizontal: false,
-      columnWidth: "39%",
-      borderRadius: 5,
+      columnWidth: "40%",
+      borderRadius: 4,
       borderRadiusApplication: "end",
     },
   };
-  public dataLabels: ApexDataLabels = { enabled: false };
-  public stroke: ApexStroke = {
-    show: true,
-    width: 4,
-    colors: ["transparent"],
-  };
-  public legend: ApexLegend = {
+  readonly dataLabels: ApexDataLabels = { enabled: false };
+  readonly stroke: ApexStroke = { show: false };
+  readonly legend: ApexLegend = {
     show: false,
   };
-  public yaxis: ApexYAxis = { title: { text: undefined } };
-  public grid: ApexGrid = { yaxis: { lines: { show: true } } };
-  public fill: ApexFill = { opacity: 1 };
-  public tooltip: ApexTooltip = {
+  readonly yaxis: ApexYAxis = { title: { text: undefined } };
+  readonly grid: ApexGrid = { yaxis: { lines: { show: true } } };
+  readonly fill: ApexFill = { opacity: 1 };
+  readonly tooltip: ApexTooltip = {
     x: { show: false },
     y: {
       formatter: (value: number) =>
@@ -67,35 +67,38 @@ export class MonthlyEvolutionChartComponent {
         }).format(value)}`,
     },
   };
-  public colors: string[] = ["#10b981", "#ef4444"];
+  readonly colors: string[] = ["#10b981", "#ef4444"];
 
   constructor() {
     effect(() => {
-      this.updateChart(this.facade.revenueVsExpenses());
+      const months = this.facade.revenueVsExpenses();
+
+      if (!months.length) {
+        this.series.set([]);
+        this.xaxis.set({
+          categories: [],
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        });
+        return;
+      }
+
+      this.series.set([
+        {
+          name: "Receitas",
+          data: months.map((month) => Number(month.receitas)),
+        },
+        {
+          name: "Despesas",
+          data: months.map((month) => Number(month.despesas)),
+        },
+      ]);
+      this.xaxis.set({
+        categories: months.map((month) => this.formatMonthLabel(month.mes)),
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+      });
     });
-  }
-
-  private updateChart(months: IRevenueVsExpense[]): void {
-    if (!months.length) {
-      this.series = [];
-      this.xaxis = { ...this.xaxis, categories: [] };
-      return;
-    }
-
-    this.series = [
-      {
-        name: "Receitas",
-        data: months.map((month) => Number(month.receitas)),
-      },
-      {
-        name: "Despesas",
-        data: months.map((month) => Number(month.despesas)),
-      },
-    ];
-    this.xaxis = {
-      ...this.xaxis,
-      categories: months.map((month) => this.formatMonthLabel(month.mes)),
-    };
   }
 
   private formatMonthLabel(yearMonth: string): string {

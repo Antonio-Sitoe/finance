@@ -31,7 +31,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-          @for (t of transactions(); track $index) {
+          @for (t of transactions(); track t.id) {
             <tr
               class="transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]"
             >
@@ -80,6 +80,15 @@
                 </span>
               </td>
             </tr>
+          } @empty {
+            <tr>
+              <td
+                colspan="5"
+                class="px-6 py-8 text-center text-theme-sm text-gray-400 dark:text-gray-500"
+              >
+                Nenhum lançamento encontrado
+              </td>
+            </tr>
           }
         </tbody>
       </table>
@@ -96,6 +105,7 @@
     </h3>
     <div class="grid flex-grow grid-cols-2 gap-4">
       <button
+        routerLink="/transactions"
         class="flex flex-col items-center justify-center gap-3 rounded-xl bg-indigo-50 p-4 text-indigo-700 transition-all hover:opacity-90 active:scale-95 dark:bg-indigo-900/30 dark:text-indigo-300"
       >
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -104,6 +114,7 @@
         <span class="text-center text-xs font-bold">Novo Lançamento</span>
       </button>
       <button
+        routerLink="/transactions"
         class="flex flex-col items-center justify-center gap-3 rounded-xl bg-red-50 p-4 text-red-600 transition-all hover:opacity-90 active:scale-95 dark:bg-red-900/30 dark:text-red-300"
       >
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -112,6 +123,7 @@
         <span class="text-center text-xs font-bold">Nova Despesa</span>
       </button>
       <button
+        routerLink="/transactions/import"
         class="flex flex-col items-center justify-center gap-3 rounded-xl bg-gray-100 p-4 text-gray-700 transition-all hover:bg-gray-200 active:scale-95 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -122,6 +134,7 @@
         <span class="text-center text-xs font-bold">Importar CSV</span>
       </button>
       <button
+        routerLink="/bar-chart"
         class="flex flex-col items-center justify-center gap-3 rounded-xl bg-gray-100 p-4 text-gray-700 transition-all hover:bg-gray-200 active:scale-95 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

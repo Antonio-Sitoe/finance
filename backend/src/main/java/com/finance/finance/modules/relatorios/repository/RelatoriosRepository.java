@@ -203,7 +203,7 @@ public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, J
          COALESCE(
            SUM(
              CASE
-               WHEN c.credito = true THEN l.valor
+               WHEN l.tipo = 'RECEITA' THEN l.valor
              END
            ),
            0
@@ -211,16 +211,14 @@ public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, J
          COALESCE(
            SUM(
              CASE
-               WHEN c.debito = true THEN l.valor
+               WHEN l.tipo = 'DESPESA' THEN l.valor
              END
            ),
            0
          ) AS despesas
        FROM meses m
        LEFT JOIN lancamentos l
-       ON DATE_TRUNC('month', l.data_vencimento) = m.mes
-       LEFT JOIN categoria c
-       ON c.id = l.id_categoria
+       ON DATE_TRUNC('month', l.data_lancamento) = m.mes
        GROUP BY m.mes
        ORDER BY m.mes;
        """, nativeQuery = true)

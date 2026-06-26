@@ -24,21 +24,29 @@
   </div>
 
   <div class="max-w-full overflow-x-auto custom-scrollbar">
-    <div class="-ml-5 min-w-[650px] pl-2 xl:min-w-full">
-      <apx-chart
-        [series]="series"
-        [chart]="chart"
-        [xaxis]="xaxis"
-        [plotOptions]="plotOptions"
-        [dataLabels]="dataLabels"
-        [stroke]="stroke"
-        [legend]="legend"
-        [yaxis]="yaxis"
-        [grid]="grid"
-        [fill]="fill"
-        [tooltip]="tooltip"
-        [colors]="colors"
-      ></apx-chart>
-    </div>
+    @if (hasChartData()) {
+      <div class="-ml-5 min-w-[650px] pl-2 xl:min-w-full">
+        <apx-chart
+          [series]="series()"
+          [chart]="chart"
+          [xaxis]="xaxis()"
+          [plotOptions]="plotOptions"
+          [dataLabels]="dataLabels"
+          [stroke]="stroke"
+          [legend]="legend"
+          [yaxis]="yaxis"
+          [grid]="grid"
+          [fill]="fill"
+          [tooltip]="tooltip"
+          [colors]="colors"
+        ></apx-chart>
+      </div>
+    } @else {
+      <div
+        class="flex h-64 items-center justify-center text-theme-sm text-gray-400 dark:text-gray-500"
+      >
+        Nenhum dado disponível
+      </div>
+    }
   </div>
 </div>
