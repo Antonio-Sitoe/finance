@@ -6,4 +6,8 @@ import { Component } from "@angular/core";
   imports: [MetricsCardsComponent],
   templateUrl: "./dashboard.component.html",
 })
-export class DashboardComponent {}
+export class DashboardComponent {
+  receitasVencidas = 0;
+  despesasVencidas = 0;
+  qtdLancamentosVencemHoje = 0;
+}
