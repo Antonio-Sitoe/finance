@@ -20,6 +20,7 @@ import { DashboardFacadeService } from "@/shared/services/dashboard/dashboard.fa
   standalone: true,
   imports: [NgApexchartsModule],
   templateUrl: "./monthly-evolution-chart.component.html",
+  host: { class: "block h-full w-full" },
 })
 export class MonthlyEvolutionChartComponent {
   private readonly facade = inject(DashboardFacadeService);
@@ -38,13 +39,15 @@ export class MonthlyEvolutionChartComponent {
   readonly chart: ApexChart = {
     fontFamily: "Outfit, sans-serif",
     type: "bar",
-    height: 256,
+    height: 320,
+    width: "100%",
     toolbar: { show: false },
+    redrawOnParentResize: true,
   };
   readonly plotOptions: ApexPlotOptions = {
     bar: {
       horizontal: false,
-      columnWidth: "40%",
+      columnWidth: "72%",
       borderRadius: 4,
       borderRadiusApplication: "end",
     },
@@ -54,8 +57,20 @@ export class MonthlyEvolutionChartComponent {
   readonly legend: ApexLegend = {
     show: false,
   };
-  readonly yaxis: ApexYAxis = { title: { text: undefined } };
-  readonly grid: ApexGrid = { yaxis: { lines: { show: true } } };
+  readonly yaxis: ApexYAxis = {
+    title: { text: undefined },
+    min: 0,
+    labels: {
+      formatter: (value: number) =>
+        value >= 1000
+          ? `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`
+          : value.toFixed(0),
+    },
+  };
+  readonly grid: ApexGrid = {
+    padding: { left: 8, right: 8 },
+    yaxis: { lines: { show: true } },
+  };
   readonly fill: ApexFill = { opacity: 1 };
   readonly tooltip: ApexTooltip = {
     x: { show: false },
