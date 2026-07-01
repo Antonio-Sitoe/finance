@@ -110,6 +110,7 @@ export class MetricsCardsComponent {
         badgeText: "Vencido",
         badgeColor: "error",
         value: () => this.facade.formatAmount(alerts?.despesasVencidas),
+      },
       {
         label: "Vencem Hoje",
         iconHtml: this.icons.calendarIcon,
