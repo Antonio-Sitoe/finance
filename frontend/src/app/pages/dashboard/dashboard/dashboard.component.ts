@@ -5,6 +5,7 @@ import { MonthlyEvolutionChartComponent } from "@/shared/components/dashboard/mo
 import { MonthlyTargetComponent } from "@/shared/components/dashboard/monthly-target/monthly-target.component";
 import { DashboardFacadeService } from "@/shared/services/dashboard/dashboard.facade.service";
 import { TransactionsFacadeService } from "@/shared/services/transactions/transactions.facade.service";
+import { forkJoin, finalize } from "rxjs";
 
 @Component({
   selector: "app-dashboard",

@@ -19,6 +19,7 @@ import { TransactionsComponent } from "./pages/transactions/transactions.compone
 import { TransactionsImportComponent } from "./pages/transactions/import/transactions-import.component";
 import { GlobalSearchComponent } from "./pages/global-search/global-search.component";
 import { DashboardComponent } from "./pages/dashboard/dashboard/dashboard.component";
+import { FluxoDeCaixaComponent } from "./pages/fluxo-de-caixa/fluxo-de-caixa.component";
 
 export const routes: Routes = [
   {
@@ -75,6 +76,11 @@ export const routes: Routes = [
         path: "transactions/import",
         component: TransactionsImportComponent,
         title: "Importar Lançamentos | FinanceApp Administrative Panel",
+      },
+      {
+        path: "fluxo-de-caixa",
+        component: FluxoDeCaixaComponent,
+        title: "Fluxo de Caixa | FinanceApp Administrative Panel",
       },
       {
         path: "global-search",

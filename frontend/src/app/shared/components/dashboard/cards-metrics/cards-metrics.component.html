@@ -1,212 +1,62 @@
 <div
-  class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 md:gap-6"
+  class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 md:gap-5"
 >
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
+  @for (card of metricCards(); track card.label) {
     <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.walletIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Saldo Actual</span
+      class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs transition-shadow hover:shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <p
+          class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 leading-snug"
         >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.formatAmount(facade.dashboard()?.saldoAtual) }}
-        </h4>
-      </div>
-      <app-badge color="success">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        +12.5%
-      </app-badge>
-    </div>
-  </div>
-
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.receiveIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Contas a Receber</span
+          {{ card.label }}
+        </p>
+        <div
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform group-hover:scale-105"
+          [class]="accentIconClasses[card.accent]"
         >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.formatAmount(facade.dashboard()?.contasAReceber) }}
-        </h4>
+          <ng-container [solarIcon]="card.icon" [size]="22" />
+        </div>
       </div>
-      <app-badge color="success">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        +8.3%
-      </app-badge>
+      <p
+        class="mt-4 text-lg font-bold tabular-nums leading-tight text-gray-800 dark:text-white/90 sm:text-xl"
+      >
+        {{ card.value() }}
+      </p>
     </div>
-  </div>
-
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.payIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Contas a Pagar</span
-        >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.formatAmount(facade.dashboard()?.contasAPagar) }}
-        </h4>
-      </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        +3.2%
-      </app-badge>
-    </div>
-  </div>
-
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.revenueIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Receitas do Mês</span
-        >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.formatAmount(facade.dashboard()?.totalReceitasMes) }}
-        </h4>
-      </div>
-      <app-badge color="success">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        +15.7%
-      </app-badge>
-    </div>
-  </div>
-
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.expenseIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Despesas do Mês</span
-        >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.formatAmount(facade.dashboard()?.totalDespesasMes) }}
-        </h4>
-      </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        +6.1%
-      </app-badge>
-    </div>
-  </div>
-
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.resultIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Resultado Líquido</span
-        >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.formatAmount(facade.dashboard()?.resultadoMes) }}
-        </h4>
-      </div>
-      <app-badge color="success">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        +12%
-      </app-badge>
-    </div>
-  </div>
+  }
 </div>
 
-<div class="grid grid-cols-1 mt-4 md:gap-6 gap-4 sm:grid-cols-3">
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
+<div class="grid grid-cols-1 mt-4 gap-4 sm:grid-cols-3 md:gap-5">
+  @for (card of alertCards(); track card.label) {
     <div
-      class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.warningIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Receitas Vencidas</span
-        >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.formatAmount(facade.alerts()?.receitasVencidas) }}
-        </h4>
+      class="group relative overflow-hidden rounded-2xl border border-gray-200 border-l-4 bg-white p-5 shadow-theme-xs transition-shadow hover:shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]"
+      [class]="accentBorderClasses[card.accent]"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0 flex-1">
+          <p
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+          >
+            {{ card.label }}
+          </p>
+          <p
+            class="mt-3 text-lg font-bold tabular-nums leading-tight text-gray-800 dark:text-white/90 sm:text-xl"
+          >
+            {{ card.value() }}
+          </p>
+        </div>
+        <div class="flex flex-col items-end gap-2">
+          <div
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform group-hover:scale-105 [&_svg]:size-[22px]"
+            [class]="accentIconClasses[card.accent]"
+            [innerHTML]="card.iconHtml | safeHtml"
+          ></div>
+          <app-badge [color]="card.badgeColor" size="sm">
+            {{ card.badgeText }}
+          </app-badge>
+        </div>
       </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        Vencido
-      </app-badge>
     </div>
-  </div>
-
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.alertIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Despesas Vencidas</span
-        >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.formatAmount(facade.alerts()?.despesasVencidas) }}
-        </h4>
-      </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        Vencido
-      </app-badge>
-    </div>
-  </div>
-
-  <div
-    class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-  >
-    <div
-      class="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-xl dark:bg-gray-800"
-      [innerHTML]="icons.calendarIcon | safeHtml"
-    ></div>
-    <div class="flex items-end justify-between mt-5">
-      <div>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
-          >Vencem Hoje</span
-        >
-        <h4 class="mt-2 font-bold text-gray-800 text-base dark:text-white/90">
-          {{ facade.alerts()?.qtdLancamentosVencemHoje ?? 0 }}
-        </h4>
-      </div>
-      <app-badge color="error">
-        <span [innerHTML]="icons.arrowUpIcon | safeHtml"></span>
-        Pendente
-      </app-badge>
-    </div>
-  </div>
+  }
 </div>

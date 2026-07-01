@@ -46,6 +46,11 @@ export class AppSidebarComponent {
       path: "/transactions",
     },
     {
+      icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 20l6-8 4 4 8-10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 6h5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+      name: "Fluxo de Caixa",
+      path: "/fluxo-de-caixa",
+    },
+    {
       icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6Zm3-1a1 1 0 0 0-1 1v12h14V6a1 1 0 0 0-1-1H6Zm1 3a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm4 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm4 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM7 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm4 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm4 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM8 17v-2h2v2H8Zm4-2v2h2v-2h-2Z" fill="currentColor"/></svg>`,
       name: "Fornecedores",
       path: "/suppliers",

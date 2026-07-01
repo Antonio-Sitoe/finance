@@ -1,0 +1,107 @@
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { CashFlowPeriodPreset } from "@/shared/interfaces/cash-flow.dto";
+import { SolarDynamicIcon } from "@solar-icons/angular";
+
+@Component({
+  selector: "app-cash-flow-period-filter",
+  imports: [SolarDynamicIcon],
+  template: `
+    <div
+      class="inline-flex flex-wrap items-center gap-1 rounded-xl border border-gray-200 bg-gray-50 p-1 dark:border-gray-800 dark:bg-white/[0.03]"
+    >
+      @for (option of options; track option.key) {
+        <button
+          type="button"
+          (click)="onSelect(option.key)"
+          class="rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+          [class.bg-white]="active === option.key"
+          [class.text-brand-600]="active === option.key"
+          [class.shadow-theme-xs]="active === option.key"
+          [class.font-semibold]="active === option.key"
+          [class.dark:bg-gray-900]="active === option.key"
+          [class.dark:text-brand-400]="active === option.key"
+          [class.text-gray-500]="active !== option.key"
+          [class.hover:text-gray-700]="active !== option.key"
+          [class.dark:text-gray-400]="active !== option.key"
+        >
+          @if (option.key === "custom") {
+            <span class="inline-flex items-center gap-1">
+              <ng-container [solarIcon]="'FilterBold'" [size]="14" />
+              {{ option.label }}
+            </span>
+          } @else {
+            {{ option.label }}
+          }
+        </button>
+      }
+    </div>
+
+    @if (showCustom) {
+      <div
+        class="mt-3 flex flex-wrap items-end gap-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/[0.03]"
+      >
+        <div>
+          <label
+            class="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >De</label
+          >
+          <input
+            type="date"
+            [value]="customDe"
+            (change)="onCustomDeChange($event)"
+            class="h-10 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90"
+          />
+        </div>
+        <div>
+          <label
+            class="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Até</label
+          >
+          <input
+            type="date"
+            [value]="customAte"
+            (change)="onCustomAteChange($event)"
+            class="h-10 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90"
+          />
+        </div>
+        <button
+          type="button"
+          (click)="applyCustom.emit()"
+          class="inline-flex h-10 items-center rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
+        >
+          Aplicar
+        </button>
+      </div>
+    }
+  `,
+})
+export class CashFlowPeriodFilterComponent {
+  @Input() active: CashFlowPeriodPreset = "month";
+  @Input() customDe = "";
+  @Input() customAte = "";
+  @Input() showCustom = false;
+  @Output() presetChange = new EventEmitter<CashFlowPeriodPreset>();
+  @Output() customDeChange = new EventEmitter<string>();
+  @Output() customAteChange = new EventEmitter<string>();
+  @Output() applyCustom = new EventEmitter<void>();
+
+  readonly options: { key: CashFlowPeriodPreset; label: string }[] = [
+    { key: "week", label: "Esta semana" },
+    { key: "month", label: "Este mês" },
+    { key: "quarter", label: "Este trimestre" },
+    { key: "year", label: "Este ano" },
+    { key: "custom", label: "Personalizado" },
+  ];
+
+  onSelect(key: CashFlowPeriodPreset) {
+    this.presetChange.emit(key);
+  }
+
+  onCustomDeChange(event: Event) {
+    this.customDeChange.emit((event.target as HTMLInputElement).value);
+  }
+
+  onCustomAteChange(event: Event) {
+    this.customAteChange.emit((event.target as HTMLInputElement).value);
+  }
+}

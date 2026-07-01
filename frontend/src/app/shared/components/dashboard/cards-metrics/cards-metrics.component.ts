@@ -1,27 +1,129 @@
-import { Component, inject } from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import { BadgeComponent } from "../../ui/badge/badge.component";
 import { SafeHtmlPipe } from "../../../pipe/safe-html.pipe";
 import { DashboardFacadeService } from "@/shared/services/dashboard/dashboard.facade.service";
+import { SolarDynamicIcon, SolarIconName } from "@solar-icons/angular";
+
+type IconAccent = "brand" | "success" | "error" | "warning";
+
+interface MetricCard {
+  label: string;
+  icon: SolarIconName;
+  accent: IconAccent;
+  value: () => string;
+}
+
+interface AlertCard {
+  label: string;
+  iconHtml: string;
+  accent: IconAccent;
+  badgeText: string;
+  badgeColor: "error" | "warning";
+  value: () => string;
+}
 
 @Component({
   selector: "app-cards-metrics",
-  imports: [BadgeComponent, SafeHtmlPipe],
+  imports: [BadgeComponent, SafeHtmlPipe, SolarDynamicIcon],
   templateUrl: "./cards-metrics.component.html",
 })
 export class MetricsCardsComponent {
   readonly facade = inject(DashboardFacadeService);
 
-  public icons = {
-    walletIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><rect x="2" y="5" width="20" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="8" height="4" rx="1" fill="currentColor" opacity="0.4"/><circle cx="18" cy="12" r="1" fill="currentColor"/></svg>`,
-    receiveIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><path d="M12 4v14M7 13l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    payIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><path d="M12 20V6M7 11l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    revenueIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><path d="M2 20l6-8 4 4 8-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 6h5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    expenseIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><path d="M2 4l6 8 4-4 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 18h5v-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    resultIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><rect x="4" y="13" width="4" height="7" rx="1" fill="currentColor" opacity="0.5"/><rect x="10" y="9" width="4" height="11" rx="1" fill="currentColor" opacity="0.7"/><rect x="16" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>`,
-    warningIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><path d="M12 3 2 21h20L12 3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>`,
-    alertIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 7v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="16.5" r=".75" fill="currentColor"/></svg>`,
-    calendarIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h18M7 3v3M17 3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="15" r="2" fill="currentColor" opacity="0.4"/></svg>`,
-    arrowUpIcon: `<svg class="fill-current" width="1em" height="1em" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.06462 1.62393C6.20193 1.47072 6.40135 1.37432 6.62329 1.37432C6.6236 1.37432 6.62391 1.37432 6.62422 1.37432C6.81631 1.37415 7.00845 1.44731 7.15505 1.5938L10.1551 4.5918C10.4481 4.88459 10.4483 5.35946 10.1555 5.65246C9.86273 5.94546 9.38785 5.94562 9.09486 5.65283L7.37329 3.93247L7.37329 10.125C7.37329 10.5392 7.03751 10.875 6.62329 10.875C6.20908 10.875 5.87329 10.5392 5.87329 10.125L5.87329 3.93578L4.15516 5.65281C3.86218 5.94561 3.3873 5.94546 3.0945 5.65248C2.8017 5.35949 2.80185 4.88462 3.09484 4.59182L6.06462 1.62393Z" fill=""></path></svg>`,
-    arrowDownIcon: `<svg class="fill-current" width="1em" height="1em" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.31462 10.3761C5.45194 10.5293 5.65136 10.6257 5.87329 10.6257C5.8736 10.6257 5.8739 10.6257 5.87421 10.6257C6.0663 10.6259 6.25845 10.5527 6.40505 10.4062L9.40514 7.4082C9.69814 7.11541 9.69831 6.64054 9.40552 6.34754C9.11273 6.05454 8.63785 6.05438 8.34486 6.34717L6.62329 8.06753L6.62329 1.875C6.62329 1.46079 6.28751 1.125 5.87329 1.125C5.45908 1.125 5.12329 1.46079 5.12329 1.875L5.12329 8.06422L3.40516 6.34719C3.11218 6.05439 2.6373 6.05454 2.3445 6.34752C2.0517 6.64051 2.05185 7.11538 2.34484 7.40818L5.31462 10.3761Z" fill=""></path></svg>`,
+  readonly accentIconClasses: Record<IconAccent, string> = {
+    brand:
+      "bg-brand-50 text-brand-500 dark:bg-brand-500/10 dark:text-brand-400",
+    success:
+      "bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-400",
+    error: "bg-error-50 text-error-600 dark:bg-error-500/10 dark:text-error-400",
+    warning:
+      "bg-warning-50 text-warning-600 dark:bg-warning-500/10 dark:text-warning-400",
+  };
+
+  readonly accentBorderClasses: Record<IconAccent, string> = {
+    brand: "border-l-brand-500",
+    success: "border-l-success-500",
+    error: "border-l-error-500",
+    warning: "border-l-warning-500",
+  };
+
+  readonly metricCards = computed<MetricCard[]>(() => {
+    const dashboard = this.facade.dashboard();
+    const resultado = dashboard?.resultadoMes ?? 0;
+
+    return [
+      {
+        label: "Saldo Actual",
+        icon: "WalletMoneyBold",
+        accent: "brand",
+        value: () => this.facade.formatAmount(dashboard?.saldoAtual),
+      },
+      {
+        label: "Contas a Receber",
+        icon: "DownloadMinimalisticBold",
+        accent: "success",
+        value: () => this.facade.formatAmount(dashboard?.contasAReceber),
+      },
+      {
+        label: "Contas a Pagar",
+        icon: "UploadMinimalisticBold",
+        accent: "error",
+        value: () => this.facade.formatAmount(dashboard?.contasAPagar),
+      },
+      {
+        label: "Receitas do Mês",
+        icon: "GraphNewUpBold",
+        accent: "success",
+        value: () => this.facade.formatAmount(dashboard?.totalReceitasMes),
+      },
+      {
+        label: "Despesas do Mês",
+        icon: "GraphDownNewBold",
+        accent: "error",
+        value: () => this.facade.formatAmount(dashboard?.totalDespesasMes),
+      },
+      {
+        label: "Resultado Líquido",
+        icon: "WalletBold",
+        accent: resultado >= 0 ? "success" : "error",
+        value: () => this.facade.formatAmount(dashboard?.resultadoMes),
+      },
+    ];
+  });
+
+  readonly alertCards = computed<AlertCard[]>(() => {
+    const alerts = this.facade.alerts();
+
+    return [
+      {
+        label: "Receitas Vencidas",
+        iconHtml: this.icons.warningIcon,
+        accent: "error",
+        badgeText: "Vencido",
+        badgeColor: "error",
+        value: () => this.facade.formatAmount(alerts?.receitasVencidas),
+      },
+      {
+        label: "Despesas Vencidas",
+        iconHtml: this.icons.alertIcon,
+        accent: "error",
+        badgeText: "Vencido",
+        badgeColor: "error",
+        value: () => this.facade.formatAmount(alerts?.despesasVencidas),
+      {
+        label: "Vencem Hoje",
+        iconHtml: this.icons.calendarIcon,
+        accent: "warning",
+        badgeText: "Pendente",
+        badgeColor: "warning",
+        value: () => String(alerts?.qtdLancamentosVencemHoje ?? 0),
+      },
+    ];
+  });
+
+  private readonly icons = {
+    warningIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3 2 21h20L12 3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>`,
+    alertIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 7v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="16.5" r=".75" fill="currentColor"/></svg>`,
+    calendarIcon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h18M7 3v3M17 3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="15" r="2" fill="currentColor" opacity="0.4"/></svg>`,
   };
 }
