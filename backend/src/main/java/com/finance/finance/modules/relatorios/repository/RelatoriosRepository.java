@@ -280,14 +280,4 @@ public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, J
       """)
   List<RelatorioCategoriaDto> buscarTop3();
 
-  @Query(value = """
-      SELECT COALESCE(SUM(
-        CASE WHEN l.tipo = 'RECEITA' THEN l.valor ELSE -l.valor END
-      ), 0)
-      FROM lancamentos l
-      WHERE l.situacao = 'PAGO'
-        AND l.data_lancamento < CAST(:de AS timestamp)
-      """, nativeQuery = true)
-  BigDecimal obterSaldoInicialFluxo(@Param("de") LocalDate de);
-
 }

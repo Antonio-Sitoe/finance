@@ -22,12 +22,11 @@ export class CashFlowTabsComponent {
   readonly tabs: TabDef[] = [
     { key: "fluxo-diario", label: "Fluxo Diário" },
     { key: "dre", label: "Mini DRE" },
-    { key: "capital-giro", label: "Capital de Giro", disabled: true },
+    { key: "capital-giro", label: "Capital de Giro" },
     {
       key: "recebimentos-pagamentos",
       label: "Recebimentos vs Pagamentos",
-      disabled: true,
     },
-    { key: "projecao", label: "Projeção de Caixa", disabled: true },
+    { key: "projecao", label: "Projeção de Caixa" },
   ];
 }

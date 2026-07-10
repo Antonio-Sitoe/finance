@@ -53,4 +53,22 @@
       <app-cash-flow-dre />
     </div>
   }
+
+  @if (facade.activeTab() === "capital-giro") {
+    <div class="cash-flow-tab-panel">
+      <app-cash-flow-capital-giro />
+    </div>
+  }
+
+  @if (facade.activeTab() === "recebimentos-pagamentos") {
+    <div class="cash-flow-tab-panel">
+      <app-cash-flow-recebimentos-pagamentos />
+    </div>
+  }
+
+  @if (facade.activeTab() === "projecao") {
+    <div class="cash-flow-tab-panel">
+      <app-cash-flow-projecao />
+    </div>
+  }
 </div>

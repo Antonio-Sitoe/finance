@@ -1,0 +1,186 @@
+<div class="space-y-6">
+  <p class="text-theme-sm text-gray-500 dark:text-gray-400">
+    Período:
+    <span class="font-medium text-gray-700 dark:text-gray-300">
+      {{ formatDate(data.de) }} — {{ formatDate(data.ate) }}
+    </span>
+  </p>
+
+  <!-- Efficiency cards -->
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <div
+      class="flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+    >
+      <div class="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <span
+            class="inline-flex items-center gap-1 text-theme-xs font-semibold uppercase tracking-wide text-success-600 dark:text-success-400"
+          >
+            <ng-container
+              [solarIcon]="'GraphNewUpBold'"
+              [size]="14"
+              class="text-success-500"
+            />
+            Eficiência de Recebimento
+          </span>
+          <p
+            class="mt-2 text-2xl font-bold tabular-nums text-gray-800 dark:text-white/90 sm:text-3xl"
+          >
+            {{ formatAmount(data.recebimentos.realizado) }}
+          </p>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Previsto: {{ formatAmount(data.recebimentos.previsto) }}
+          </p>
+        </div>
+        <div class="text-right">
+          <p
+            class="text-2xl font-bold tabular-nums text-success-600 dark:text-success-400"
+          >
+            {{ formatPercent(data.recebimentos.taxaPercentual) }}
+          </p>
+          <p class="text-xs text-gray-400">Taxa de recebimento</p>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <div
+          class="h-2.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"
+        >
+          <div
+            class="h-full rounded-full bg-success-500 transition-all"
+            [style.width.%]="data.recebimentos.taxaPercentual"
+          ></div>
+        </div>
+        <div
+          class="flex justify-between text-[10px] font-semibold uppercase tracking-wide text-gray-400"
+        >
+          <span>Previsto</span>
+          <span>Realizado</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        routerLink="/transactions"
+        [queryParams]="{ situacao: 'PENDENTE', tipo: 'RECEITA' }"
+        class="mt-5 inline-flex w-fit items-center gap-1 rounded-lg border border-error-200 bg-error-50 px-3 py-2 text-xs font-semibold text-error-700 transition-colors hover:bg-error-100 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-400"
+      >
+        Em atraso: {{ formatAmount(data.recebimentos.emAtraso) }}
+        <ng-container [solarIcon]="'AltArrowDownBold'" [size]="14" />
+      </button>
+    </div>
+
+    <div
+      class="flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+    >
+      <div class="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <span
+            class="inline-flex items-center gap-1 text-theme-xs font-semibold uppercase tracking-wide text-error-600 dark:text-error-400"
+          >
+            <ng-container
+              [solarIcon]="'GraphDownNewBold'"
+              [size]="14"
+              class="text-error-500"
+            />
+            Eficiência de Pagamento
+          </span>
+          <p
+            class="mt-2 text-2xl font-bold tabular-nums text-gray-800 dark:text-white/90 sm:text-3xl"
+          >
+            {{ formatAmount(data.pagamentos.realizado) }}
+          </p>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Previsto: {{ formatAmount(data.pagamentos.previsto) }}
+          </p>
+        </div>
+        <div class="text-right">
+          <p
+            class="text-2xl font-bold tabular-nums text-blue-light-600 dark:text-blue-light-400"
+          >
+            {{ formatPercent(data.pagamentos.taxaPercentual) }}
+          </p>
+          <p class="text-xs text-gray-400">Taxa de pagamento</p>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <div
+          class="h-2.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"
+        >
+          <div
+            class="h-full rounded-full bg-blue-light-500 transition-all"
+            [style.width.%]="data.pagamentos.taxaPercentual"
+          ></div>
+        </div>
+        <div
+          class="flex justify-between text-[10px] font-semibold uppercase tracking-wide text-gray-400"
+        >
+          <span>Previsto</span>
+          <span>Pago</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        routerLink="/transactions"
+        [queryParams]="{ situacao: 'PENDENTE', tipo: 'DESPESA' }"
+        class="mt-5 inline-flex w-fit items-center gap-1 rounded-lg border border-error-200 bg-error-50 px-3 py-2 text-xs font-semibold text-error-700 transition-colors hover:bg-error-100 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-400"
+      >
+        Em atraso: {{ formatAmount(data.pagamentos.emAtraso) }}
+        <ng-container [solarIcon]="'AltArrowDownBold'" [size]="14" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div
+    class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+  >
+    <div
+      class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div>
+        <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
+          Evolução Mensal — Previsto vs Realizado
+        </h3>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Comparativo relativo no período seleccionado
+        </p>
+      </div>
+      <div class="flex gap-4">
+        <div class="flex items-center gap-2">
+          <span class="h-3 w-3 rounded-sm bg-gray-300 dark:bg-gray-600"></span>
+          <span class="text-xs text-gray-500">Previsto</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="h-3 w-3 rounded-sm bg-brand-500"></span>
+          <span class="text-xs text-gray-500">Realizado</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="grid h-48 grid-cols-6 items-end gap-4 px-2 sm:gap-8 sm:px-8"
+    >
+      @for (mes of data.evolucaoMensal; track trackMes($index, mes)) {
+        <div class="flex h-full flex-col items-center justify-end gap-3">
+          <div class="flex h-full w-10 items-end gap-1 sm:w-12">
+            <div
+              class="w-full rounded-t-sm bg-gray-200 dark:bg-gray-700"
+              [style.height.%]="barHeight(mes.previsto)"
+            ></div>
+            <div
+              class="w-full rounded-t-sm bg-brand-500"
+              [style.height.%]="barHeight(mes.realizado)"
+            ></div>
+          </div>
+          <span
+            class="text-[10px] font-bold uppercase tracking-wide text-gray-400"
+            >{{ mes.mes }}</span
+          >
+        </div>
+      }
+    </div>
+  </div>
+</div>

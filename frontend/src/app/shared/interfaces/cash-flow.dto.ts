@@ -76,3 +76,83 @@ export interface IDre {
   receitas: IDreCategoria[];
   despesas: IDreCategoria[];
 }
+
+/** Capital de Giro */
+export interface ICapitalGiroTitulo {
+  id: number;
+  nome: string;
+  vencimento: string;
+  valor: number;
+}
+
+export interface ICapitalGiro {
+  activoCirculante: number;
+  passivoCirculante: number;
+  capitalGiro: number;
+  liquidezCorrente: number | null;
+  aReceber: ICapitalGiroTitulo[];
+  aPagar: ICapitalGiroTitulo[];
+}
+
+/** Recebimentos vs Pagamentos */
+export interface IRecebimentosPagamentosBloco {
+  previsto: number;
+  realizado: number;
+  taxaPercentual: number;
+  emAtraso: number;
+}
+
+export interface IRecebimentosPagamentosMes {
+  mes: string;
+  previsto: number;
+  realizado: number;
+}
+
+export interface IRecebimentosPagamentos {
+  de: string;
+  ate: string;
+  recebimentos: IRecebimentosPagamentosBloco;
+  pagamentos: IRecebimentosPagamentosBloco;
+  evolucaoMensal: IRecebimentosPagamentosMes[];
+}
+
+/** Projecção de Caixa */
+export type ProjecaoHorizonte = 30 | 60 | 90;
+export type ProjecaoRiscoNivel = "BAIXO" | "MEDIO" | "ALTO";
+
+export interface IProjecaoHorizonte {
+  dias: ProjecaoHorizonte;
+  entradas: number;
+  saidas: number;
+  saldoProjetado: number;
+  risco: ProjecaoRiscoNivel;
+  riscoPercentual: number;
+}
+
+export interface IProjecaoDevedor {
+  id: number;
+  nome: string;
+  valor: number;
+  venceEmDias: number;
+  risco: ProjecaoRiscoNivel;
+}
+
+export interface IProjecaoInsight {
+  tipo: "oportunidade" | "alerta";
+  titulo: string;
+  descricao: string;
+}
+
+export interface IProjecaoCaixa {
+  horizonteActivo: ProjecaoHorizonte;
+  saldoAtual: number;
+  entradasPrevistas: number;
+  saidasPrevistas: number;
+  saldoProjetado: number;
+  variacaoPercentual: number;
+  riscoInadimplenciaPercentual: number;
+  impactoRisco: number;
+  horizontes: IProjecaoHorizonte[];
+  insights: IProjecaoInsight[];
+  principaisDevedores: IProjecaoDevedor[];
+}

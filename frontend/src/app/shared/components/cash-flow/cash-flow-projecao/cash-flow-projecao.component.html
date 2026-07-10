@@ -1,0 +1,301 @@
+<div class="space-y-6">
+  <div
+    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p class="text-theme-sm text-gray-500 dark:text-gray-400">
+      Análise preditiva com base em lançamentos
+      <span class="font-medium text-gray-700 dark:text-gray-300">PENDENTE</span>
+      futuros.
+    </p>
+    <div
+      class="inline-flex self-start rounded-xl border border-gray-200 bg-gray-50 p-1 dark:border-gray-800 dark:bg-white/[0.03]"
+    >
+      @for (dias of horizontesDisponiveis; track dias) {
+        <button
+          type="button"
+          (click)="setHorizonte(dias)"
+          class="rounded-lg px-3 py-2 text-sm font-semibold transition-colors"
+          [class.bg-brand-500]="horizonte() === dias"
+          [class.text-white]="horizonte() === dias"
+          [class.shadow-theme-xs]="horizonte() === dias"
+          [class.text-gray-500]="horizonte() !== dias"
+          [class.hover:text-gray-700]="horizonte() !== dias"
+        >
+          {{ dias }} dias
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- KPI strip -->
+  <div class="grid grid-cols-1 gap-4 xl:grid-cols-4">
+    <div
+      class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03] xl:col-span-3"
+    >
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <p
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+          >
+            Saldo Actual
+          </p>
+          <p
+            class="mt-2 text-lg font-bold tabular-nums text-gray-800 dark:text-white/90"
+          >
+            {{ formatAmount(data.saldoAtual) }}
+          </p>
+        </div>
+        <div class="sm:border-l sm:border-gray-100 sm:pl-5 dark:sm:border-gray-800">
+          <p
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+          >
+            Entradas Previstas
+          </p>
+          <p
+            class="mt-2 text-lg font-bold tabular-nums text-success-600 dark:text-success-400"
+          >
+            + {{ formatAmount(horizonteActivo().entradas) }}
+          </p>
+          <p class="text-xs text-gray-400">Próximos {{ horizonte() }} dias</p>
+        </div>
+        <div class="sm:border-l sm:border-gray-100 sm:pl-5 dark:sm:border-gray-800">
+          <p
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+          >
+            Saídas Previstas
+          </p>
+          <p
+            class="mt-2 text-lg font-bold tabular-nums text-error-600 dark:text-error-400"
+          >
+            − {{ formatAmount(horizonteActivo().saidas) }}
+          </p>
+          <p class="text-xs text-gray-400">Próximos {{ horizonte() }} dias</p>
+        </div>
+        <div class="sm:border-l sm:border-gray-100 sm:pl-5 dark:sm:border-gray-800">
+          <p
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+          >
+            Saldo Projectado
+          </p>
+          <p
+            class="mt-2 text-lg font-bold tabular-nums"
+            [class.text-brand-700]="horizonteActivo().saldoProjetado >= 0"
+            [class.dark:text-brand-400]="horizonteActivo().saldoProjetado >= 0"
+            [class.text-error-600]="horizonteActivo().saldoProjetado < 0"
+          >
+            {{ formatAmount(horizonteActivo().saldoProjetado) }}
+          </p>
+          <p
+            class="text-xs font-semibold"
+            [class.text-success-600]="data.variacaoPercentual >= 0"
+            [class.text-error-600]="data.variacaoPercentual < 0"
+          >
+            {{ data.variacaoPercentual >= 0 ? "+" : ""
+            }}{{ formatPercent(data.variacaoPercentual) }} vs actual
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+    >
+      <div class="relative z-10">
+        <div class="mb-1 flex items-center gap-2 text-gray-500">
+          <ng-container
+            [solarIcon]="'ForbiddenCircleBold'"
+            [size]="18"
+            class="text-warning-500"
+          />
+          <span
+            class="text-theme-xs font-semibold uppercase tracking-wide"
+            >Risco de inadimplência</span
+          >
+        </div>
+        <p
+          class="text-2xl font-bold tabular-nums text-gray-800 dark:text-white/90"
+        >
+          {{ formatPercent(data.riscoInadimplenciaPercentual) }}
+        </p>
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          Impacto projectado de
+          {{ formatAmount(data.impactoRisco) }} no saldo final.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-5 xl:grid-cols-3">
+    <!-- Horizons table -->
+    <div
+      class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03] xl:col-span-2"
+    >
+      <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-800">
+        <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
+          Projecção por horizonte
+        </h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-left">
+          <thead>
+            <tr
+              class="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-800 dark:bg-white/[0.02] dark:text-gray-400"
+            >
+              <th class="px-5 py-3">Período</th>
+              <th class="px-5 py-3">Entradas</th>
+              <th class="px-5 py-3">Saídas</th>
+              <th class="px-5 py-3">Saldo Projectado</th>
+              <th class="px-5 py-3">Risco</th>
+              <th class="px-5 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+            @for (h of data.horizontes; track trackHorizonte($index, h)) {
+              <tr
+                class="text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]"
+                [class.bg-brand-25]="horizonte() === h.dias"
+                [class.dark:bg-brand-500/5]="horizonte() === h.dias"
+              >
+                <td
+                  class="px-5 py-4 font-semibold text-gray-800 dark:text-white/90"
+                >
+                  {{ h.dias }} dias
+                </td>
+                <td
+                  class="px-5 py-4 tabular-nums text-success-600 dark:text-success-400"
+                >
+                  + {{ formatAmount(h.entradas) }}
+                </td>
+                <td
+                  class="px-5 py-4 tabular-nums text-error-600 dark:text-error-400"
+                >
+                  − {{ formatAmount(h.saidas) }}
+                </td>
+                <td
+                  class="px-5 py-4 font-semibold tabular-nums"
+                  [class.text-error-600]="h.saldoProjetado < 0"
+                  [class.text-gray-800]="h.saldoProjetado >= 0"
+                  [class.dark:text-white/90]="h.saldoProjetado >= 0"
+                >
+                  {{ formatAmount(h.saldoProjetado) }}
+                </td>
+                <td class="px-5 py-4">
+                  <div
+                    class="h-1.5 w-24 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"
+                  >
+                    <div
+                      class="h-full rounded-full"
+                      [class.bg-success-500]="h.risco === 'BAIXO'"
+                      [class.bg-warning-500]="h.risco === 'MEDIO'"
+                      [class.bg-error-500]="h.risco === 'ALTO'"
+                      [style.width.%]="h.riscoPercentual"
+                    ></div>
+                  </div>
+                </td>
+                <td class="px-5 py-4">
+                  <span
+                    class="rounded-full px-2.5 py-1 text-xs font-bold"
+                    [class.bg-success-50]="h.risco === 'BAIXO'"
+                    [class.text-success-700]="h.risco === 'BAIXO'"
+                    [class.bg-warning-50]="h.risco === 'MEDIO'"
+                    [class.text-warning-700]="h.risco === 'MEDIO'"
+                    [class.bg-error-50]="h.risco === 'ALTO'"
+                    [class.text-error-700]="h.risco === 'ALTO'"
+                  >
+                    {{ riscoLabel(h.risco) }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Insights + debtors -->
+    <div class="flex flex-col gap-5">
+      <div
+        class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+      >
+        <h3
+          class="mb-4 text-base font-semibold text-gray-800 dark:text-white/90"
+        >
+          Insights de caixa
+        </h3>
+        <div class="space-y-3">
+          @for (insight of data.insights; track insight.titulo) {
+            <div
+              class="flex gap-3 rounded-xl border-l-4 bg-gray-50 p-3 dark:bg-white/[0.02]"
+              [class.border-l-brand-500]="insight.tipo === 'oportunidade'"
+              [class.border-l-error-500]="insight.tipo === 'alerta'"
+            >
+              <ng-container
+                [solarIcon]="
+                  insight.tipo === 'oportunidade'
+                    ? 'StarsBoldDuotone'
+                    : 'ForbiddenCircleBold'
+                "
+                [size]="18"
+                class="shrink-0 text-brand-500"
+              />
+              <div>
+                <p class="text-sm font-semibold text-gray-800 dark:text-white/90">
+                  {{ insight.titulo }}
+                </p>
+                <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                  {{ insight.descricao }}
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div
+        class="flex-1 rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+      >
+        <h3
+          class="mb-4 text-base font-semibold text-gray-800 dark:text-white/90"
+        >
+          Principais devedores
+        </h3>
+        <div class="space-y-3">
+          @for (d of data.principaisDevedores; track d.id) {
+            <div
+              class="flex items-center justify-between gap-3 border-b border-gray-100 pb-3 last:border-0 last:pb-0 dark:border-gray-800"
+            >
+              <div class="min-w-0">
+                <p
+                  class="truncate text-sm font-medium text-gray-800 dark:text-white/90"
+                >
+                  {{ d.nome }}
+                </p>
+                <p class="text-xs text-gray-400">
+                  Vence em {{ d.venceEmDias }} dias
+                </p>
+              </div>
+              <div class="shrink-0 text-right">
+                <p
+                  class="text-sm font-bold tabular-nums text-gray-800 dark:text-white/90"
+                >
+                  {{ formatAmount(d.valor) }}
+                </p>
+                <span
+                  class="mt-1 inline-block rounded px-2 py-0.5 text-[10px] font-bold uppercase"
+                  [class.bg-error-50]="d.risco === 'ALTO'"
+                  [class.text-error-700]="d.risco === 'ALTO'"
+                  [class.bg-warning-50]="d.risco === 'MEDIO'"
+                  [class.text-warning-700]="d.risco === 'MEDIO'"
+                  [class.bg-success-50]="d.risco === 'BAIXO'"
+                  [class.text-success-700]="d.risco === 'BAIXO'"
+                >
+                  {{ riscoLabel(d.risco) }} risco
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
