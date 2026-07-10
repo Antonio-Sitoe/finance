@@ -1,13 +1,11 @@
-<div class="space-y-6">
-  <div
-    class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between"
-  >
+<div class="space-y-6 flex flex-col gap-4">
+  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
     <div>
       <h1 class="text-title-sm font-bold text-gray-800 dark:text-white/90">
         Fluxo de Caixa
       </h1>
       <p class="mt-1 text-theme-sm text-gray-500 dark:text-gray-400">
-        Análise detalhada da movimentação financeira diária.
+        Análise detalhada da movimentação financeira.
       </p>
     </div>
 
@@ -23,26 +21,36 @@
     />
   </div>
 
-  @if (facade.loading()) {
-    <div
-      class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-16 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400"
-    >
-      A carregar fluxo de caixa...
+  <app-cash-flow-tabs
+    [active]="facade.activeTab()"
+    [exportDisabled]="
+      facade.activeTab() === 'fluxo-diario' ? !facade.report() : false
+    "
+    (tabChange)="onTabChange($event)"
+    (exportCsv)="onExport()"
+  />
+
+  @if (facade.activeTab() === "fluxo-diario") {
+    <div class="cash-flow-tab-panel">
+      @if (facade.loading()) {
+        <div
+          class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-16 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400"
+        >
+          A carregar fluxo de caixa...
+        </div>
+      } @else {
+        <div class="flex flex-col gap-4 space-y-6">
+          <app-cash-flow-kpis />
+          <app-cash-flow-daily-chart />
+          <app-cash-flow-daily-table />
+        </div>
+      }
     </div>
-  } @else {
-    <app-cash-flow-kpis />
+  }
 
-    <app-cash-flow-tabs
-      [active]="facade.activeTab()"
-      [exportDisabled]="!facade.report()"
-      (exportCsv)="facade.exportCsv()"
-    />
-
-    @if (facade.activeTab() === "fluxo-diario") {
-      <div class="space-y-6">
-        <app-cash-flow-daily-chart />
-        <app-cash-flow-daily-table />
-      </div>
-    }
+  @if (facade.activeTab() === "dre") {
+    <div class="cash-flow-tab-panel">
+      <app-cash-flow-dre />
+    </div>
   }
 </div>

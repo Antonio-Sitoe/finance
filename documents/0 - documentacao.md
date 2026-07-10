@@ -199,3 +199,43 @@ para a lista de lançamentos com o filtro correspondente pré-aplicado.
 ---
 
 
+Tela para visualizar movimentações.
+
+### Funcionalidades
+
+* [x] Listar lançamentos por período
+* [x] Calcular saldo
+* [x] Mostrar receitas
+* [x] Mostrar despesas
+
+### Relatório de Fluxo de Caixa Diário
+Gerar um relatório que mostre o fluxo de caixa diário com excell:
+
+- Data
+- Entradas (total de créditos do dia)
+- Saídas (total de débitos do dia)
+- Saldo do dia
+- Saldo acumulado
+
+Por exemplo:
+| Data       | Entradas | Saídas  | Saldo Dia | Saldo Acumulado |
+|------------|----------|---------|-----------|-----------------|
+| 2025-12-01 | 5000.00  | 2000.00 | 3000.00   | 3000.00         |
+
+Objetivo: Mostrar dia a dia o que entrou e saiu, e como o saldo evoluiu.
+
+Layout desta aba:
+
+Faixa de KPIs no topo (4 cartões): Saldo Inicial do Período | Total de Entradas | Total de Saídas | Saldo Final
+Entradas em verde, Saídas em vermelho, Saldo com cor condicional (verde se positivo, vermelho se negativo)
+Tabela principal abaixo, uma linha por dia do período seleccionado:
+Data	Entradas	Saídas	Saldo do Dia	Saldo Acumulado
+01/05/2025	5.000,00	2.000,00	+3.000,00	3.000,00
+Linhas com Saldo do Dia negativo destacadas em vermelho suave
+Dias sem movimento mostrados com traço (—) e saldo acumulado continuado
+Linha de totais fixada no rodapé da tabela
+Interações:
+
+Clicar numa linha expande um painel inline listando os lançamentos individuais daquele dia (descrição, conta, categoria, valor, situação)
+Botão "Exportar Excel" gera o ficheiro com a tabela completa
+

@@ -1,0 +1,59 @@
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 md:gap-5">
+  <div
+    class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <p
+      class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+    >
+      Saldo Inicial
+    </p>
+    <p
+      class="mt-3 text-xl font-bold tabular-nums text-gray-800 dark:text-white/90"
+    >
+      {{ facade.formatAmount(facade.resumo()?.saldoInicial) }}
+    </p>
+  </div>
+
+  <div
+    class="rounded-2xl border border-gray-200 border-l-4 border-l-success-500 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <p
+      class="text-theme-xs font-semibold uppercase tracking-wide text-success-600 dark:text-success-400"
+    >
+      Entradas
+    </p>
+    <p
+      class="mt-3 text-xl font-bold tabular-nums text-success-600 dark:text-success-400"
+    >
+      + {{ facade.formatAmount(facade.resumo()?.totalEntradas) }}
+    </p>
+  </div>
+
+  <div
+    class="rounded-2xl border border-gray-200 border-l-4 border-l-error-500 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <p
+      class="text-theme-xs font-semibold uppercase tracking-wide text-error-600 dark:text-error-400"
+    >
+      Saídas
+    </p>
+    <p
+      class="mt-3 text-xl font-bold tabular-nums text-error-600 dark:text-error-400"
+    >
+      − {{ facade.formatAmount(facade.resumo()?.totalSaidas) }}
+    </p>
+  </div>
+
+  <div
+    class="rounded-2xl border border-brand-500 bg-brand-500 p-5 shadow-theme-xs"
+  >
+    <p
+      class="text-theme-xs font-semibold uppercase tracking-wide text-white/90"
+    >
+      Saldo Final
+    </p>
+    <p class="mt-3 text-xl font-bold tabular-nums text-white">
+      {{ facade.formatAmount(facade.resumo()?.saldoFinal) }}
+    </p>
+  </div>
+</div>

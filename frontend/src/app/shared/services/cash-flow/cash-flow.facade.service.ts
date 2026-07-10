@@ -84,6 +84,10 @@ export class CashFlowFacadeService {
     );
   }
 
+  setActiveTab(tab: CashFlowTab) {
+    this.activeTab.set(tab);
+  }
+
   setPeriodPreset(preset: CashFlowPeriodPreset) {
     this.periodPreset.set(preset);
     if (preset !== "custom") {

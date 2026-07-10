@@ -1,0 +1,268 @@
+<div class="space-y-4">
+  <p class="text-theme-sm text-gray-500 dark:text-gray-400">
+    Período de apuração:
+    <span class="font-medium text-gray-700 dark:text-gray-300">
+      {{ formatFullDate(data.de) }} — {{ formatFullDate(data.ate) }}
+    </span>
+    <span class="ml-2 text-xs text-gray-400">(apenas lançamentos PAGO)</span>
+  </p>
+
+  <div
+    class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <div
+      class="grid grid-cols-12 gap-2 border-b border-gray-200 bg-gray-50 px-5 py-4 text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-800 dark:bg-white/[0.02] dark:text-gray-400"
+    >
+      <div class="col-span-6 sm:col-span-7">Estrutura</div>
+      <div class="col-span-3 text-right sm:col-span-3">Valor (MT)</div>
+      <div class="col-span-3 text-right sm:col-span-2">% Receitas</div>
+    </div>
+
+    <!-- RECEITAS -->
+    <section class="border-b border-gray-200 dark:border-gray-800">
+      <button
+        type="button"
+        class="grid w-full grid-cols-12 gap-2 px-5 py-5 text-left transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]"
+        (click)="toggleSection('receitas')"
+      >
+        <div class="col-span-6 flex items-center gap-3 sm:col-span-7">
+          <ng-container
+            [solarIcon]="
+              isSectionOpen('receitas') ? 'AltArrowUpBold' : 'AltArrowDownBold'
+            "
+            [size]="18"
+            class="shrink-0 text-brand-500"
+          />
+          <span
+            class="text-base font-bold tracking-tight text-brand-700 dark:text-brand-400"
+          >
+            1. Receitas Totais
+          </span>
+        </div>
+        <div
+          class="col-span-3 self-center text-right text-base font-bold tabular-nums text-success-600 dark:text-success-400 sm:col-span-3"
+        >
+          {{ formatAmount(data.resumo.totalReceitas) }}
+        </div>
+        <div
+          class="col-span-3 self-center text-right text-sm font-medium tabular-nums text-gray-500 dark:text-gray-400 sm:col-span-2"
+        >
+          100,0%
+        </div>
+      </button>
+
+      @if (isSectionOpen("receitas")) {
+        <div
+          class="relative border-t border-gray-100 bg-gray-50/50 dark:border-gray-800 dark:bg-white/[0.01]"
+        >
+          <div
+            class="pointer-events-none absolute bottom-0 left-9 top-0 w-px bg-gray-200 dark:bg-gray-700"
+          ></div>
+          @for (cat of data.receitas; track cat.categoriaId ?? cat.nome) {
+            <div
+              class="border-b border-gray-100 last:border-0 dark:border-gray-800/60"
+            >
+              <button
+                type="button"
+                class="grid w-full grid-cols-12 gap-2 py-3 pl-14 pr-5 text-left text-sm transition-colors hover:bg-gray-100/80 dark:hover:bg-white/[0.03]"
+                (click)="toggleCategoria('receitas', cat)"
+              >
+                <div class="col-span-6 flex items-center gap-2 sm:col-span-7">
+                  <ng-container
+                    [solarIcon]="
+                      isCategoriaOpen('receitas', cat)
+                        ? 'AltArrowUpBold'
+                        : 'AltArrowDownBold'
+                    "
+                    [size]="14"
+                    class="shrink-0 text-gray-400"
+                  />
+                  <span class="italic text-gray-700 dark:text-gray-300">
+                    {{ cat.nome }}
+                  </span>
+                </div>
+                <div
+                  class="col-span-3 self-center text-right font-medium tabular-nums text-gray-800 dark:text-white/90 sm:col-span-3"
+                >
+                  {{ formatAmount(cat.total) }}
+                </div>
+                <div
+                  class="col-span-3 self-center text-right tabular-nums text-gray-500 dark:text-gray-400 sm:col-span-2"
+                >
+                  {{ formatPercent(cat.percentual) }}
+                </div>
+              </button>
+
+              @if (isCategoriaOpen("receitas", cat)) {
+                <div class="space-y-1 pb-3 pl-20 pr-5">
+                  @for (item of cat.lancamentos; track item.id) {
+                    <div
+                      class="flex flex-wrap items-center justify-between gap-2 rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-400"
+                    >
+                      <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-800 dark:text-white/90">
+                          {{ item.descricao }}
+                        </p>
+                        <p class="mt-0.5 text-gray-400">
+                          {{ item.conta }} · {{ formatFullDate(item.data) }}
+                        </p>
+                      </div>
+                      <span
+                        class="shrink-0 font-semibold tabular-nums text-success-600 dark:text-success-400"
+                      >
+                        {{ formatAmount(item.valor) }}
+                      </span>
+                    </div>
+                  } @empty {
+                    <p class="px-3 py-2 text-xs text-gray-400">
+                      Sem lançamentos
+                    </p>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- DESPESAS -->
+    <section class="border-b border-gray-200 dark:border-gray-800">
+      <button
+        type="button"
+        class="grid w-full grid-cols-12 gap-2 px-5 py-5 text-left transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.02]"
+        (click)="toggleSection('despesas')"
+      >
+        <div class="col-span-6 flex items-center gap-3 sm:col-span-7">
+          <ng-container
+            [solarIcon]="
+              isSectionOpen('despesas') ? 'AltArrowUpBold' : 'AltArrowDownBold'
+            "
+            [size]="18"
+            class="shrink-0 text-gray-400"
+          />
+          <span
+            class="text-base font-bold tracking-tight text-gray-800 dark:text-white/90"
+          >
+            2. (−) Despesas Totais
+          </span>
+        </div>
+        <div
+          class="col-span-3 self-center text-right text-base font-bold tabular-nums text-error-600 dark:text-error-400 sm:col-span-3"
+        >
+          ({{ formatAmount(data.resumo.totalDespesas) }})
+        </div>
+        <div
+          class="col-span-3 self-center text-right text-sm font-medium tabular-nums text-gray-500 dark:text-gray-400 sm:col-span-2"
+        >
+          {{ formatPercent(despesasSobreReceitas()) }}
+        </div>
+      </button>
+
+      @if (isSectionOpen("despesas")) {
+        <div
+          class="relative border-t border-gray-100 bg-gray-50/50 dark:border-gray-800 dark:bg-white/[0.01]"
+        >
+          <div
+            class="pointer-events-none absolute bottom-0 left-9 top-0 w-px bg-gray-200 dark:bg-gray-700"
+          ></div>
+          @for (cat of data.despesas; track cat.categoriaId ?? cat.nome) {
+            <div
+              class="border-b border-gray-100 last:border-0 dark:border-gray-800/60"
+            >
+              <button
+                type="button"
+                class="grid w-full grid-cols-12 gap-2 py-3 pl-14 pr-5 text-left text-sm transition-colors hover:bg-gray-100/80 dark:hover:bg-white/[0.03]"
+                (click)="toggleCategoria('despesas', cat)"
+              >
+                <div class="col-span-6 flex items-center gap-2 sm:col-span-7">
+                  <ng-container
+                    [solarIcon]="
+                      isCategoriaOpen('despesas', cat)
+                        ? 'AltArrowUpBold'
+                        : 'AltArrowDownBold'
+                    "
+                    [size]="14"
+                    class="shrink-0 text-gray-400"
+                  />
+                  <span class="italic text-gray-700 dark:text-gray-300">
+                    {{ cat.nome }}
+                  </span>
+                </div>
+                <div
+                  class="col-span-3 self-center text-right font-medium tabular-nums text-gray-800 dark:text-white/90 sm:col-span-3"
+                >
+                  ({{ formatAmount(cat.total) }})
+                </div>
+                <div
+                  class="col-span-3 self-center text-right tabular-nums text-gray-500 dark:text-gray-400 sm:col-span-2"
+                >
+                  {{ formatPercent(cat.percentual) }}
+                </div>
+              </button>
+
+              @if (isCategoriaOpen("despesas", cat)) {
+                <div class="space-y-1 pb-3 pl-20 pr-5">
+                  @for (item of cat.lancamentos; track item.id) {
+                    <div
+                      class="flex flex-wrap items-center justify-between gap-2 rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-400"
+                    >
+                      <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-800 dark:text-white/90">
+                          {{ item.descricao }}
+                        </p>
+                        <p class="mt-0.5 text-gray-400">
+                          {{ item.conta }} · {{ formatFullDate(item.data) }}
+                        </p>
+                      </div>
+                      <span
+                        class="shrink-0 font-semibold tabular-nums text-error-600 dark:text-error-400"
+                      >
+                        ({{ formatAmount(item.valor) }})
+                      </span>
+                    </div>
+                  } @empty {
+                    <p class="px-3 py-2 text-xs text-gray-400">
+                      Sem lançamentos
+                    </p>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- RESULTADO LÍQUIDO -->
+    <div
+      class="relative grid grid-cols-12 gap-2 px-5 py-8 text-white"
+      [class.bg-error-600]="data.resumo.resultado < 0"
+      [class.bg-brand-500]="data.resumo.resultado >= 0"
+    >
+      <div
+        class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-white/0 via-white/40 to-white/0"
+      ></div>
+      <div class="col-span-6 sm:col-span-7">
+        <p class="text-lg font-bold uppercase tracking-tight sm:text-xl">
+          (=) Resultado Líquido
+        </p>
+        <p
+          class="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/70"
+        >
+          Receitas − Despesas
+        </p>
+      </div>
+      <div
+        class="col-span-3 self-center text-right text-2xl font-extrabold tabular-nums sm:col-span-3 sm:text-3xl"
+      >
+        {{ formatResultado(data.resumo.resultado) }}
+      </div>
+      <div
+        class="col-span-3 self-center text-right text-base font-bold tabular-nums text-white/80 sm:col-span-2 sm:text-xl"
+      >
+        {{ formatPercent(data.resumo.margemPercentual) }}
+      </div>
+    </div>
+  </div>
+</div>

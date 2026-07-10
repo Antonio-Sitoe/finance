@@ -44,3 +44,35 @@ export type CashFlowTab =
   | "capital-giro"
   | "recebimentos-pagamentos"
   | "projecao";
+
+/** Mini DRE — contratos prontos para integração futura */
+export interface IDreLancamento {
+  id: number;
+  descricao: string;
+  conta: string;
+  valor: number;
+  data: string;
+}
+
+export interface IDreCategoria {
+  categoriaId: number | null;
+  nome: string;
+  total: number;
+  percentual: number;
+  lancamentos: IDreLancamento[];
+}
+
+export interface IDreResumo {
+  totalReceitas: number;
+  totalDespesas: number;
+  resultado: number;
+  margemPercentual: number;
+}
+
+export interface IDre {
+  de: string;
+  ate: string;
+  resumo: IDreResumo;
+  receitas: IDreCategoria[];
+  despesas: IDreCategoria[];
+}

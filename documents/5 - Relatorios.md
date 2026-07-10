@@ -12,11 +12,13 @@ Dois destinos de UI:
 
 | Aba | O que mostra | Estado |
 |-----|-------------|--------|
-| Fluxo Diário | Entradas, saídas e saldo acumulado dia a dia | [ ] |
-| DRE | Receitas e despesas por categoria até ao resultado líquido | [ ] |
-| Capital de Giro | Activo circulante vs passivo circulante, índice de liquidez | [ ] |
-| Recebimentos vs Pagamentos | Previsto vs realizado, taxas de cobrança e pagamento | [ ] |
-| Projeção de Caixa | Saldo projectado para 30, 60 e 90 dias | [ ] |
+| Fluxo Diário | Entradas, saídas e saldo acumulado dia a dia (PAGO) | [x] |
+| Mini DRE | Receitas e despesas por categoria → resultado líquido (PAGO) | [ ] |
+| Capital de Giro | Activo/passivo circulante (PENDENTE não vencido) + liquidez | [ ] |
+| Recebimentos vs Pagamentos | Previsto vs realizado; atraso = PENDENTE vencido | [ ] |
+| Projecção de Caixa | Saldo projectado 30 / 60 / 90 dias | [ ] |
+
+> Spec detalhada e alinhada ao domínio: `4 - Fluxo de caixa.md`.
 
 ---
 

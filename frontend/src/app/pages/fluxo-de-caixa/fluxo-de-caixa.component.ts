@@ -4,8 +4,12 @@ import { CashFlowTabsComponent } from "@/shared/components/cash-flow/cash-flow-t
 import { CashFlowKpisComponent } from "@/shared/components/cash-flow/cash-flow-kpis/cash-flow-kpis.component";
 import { CashFlowDailyChartComponent } from "@/shared/components/cash-flow/cash-flow-daily-chart/cash-flow-daily-chart.component";
 import { CashFlowDailyTableComponent } from "@/shared/components/cash-flow/cash-flow-daily-table/cash-flow-daily-table.component";
+import { CashFlowDreComponent } from "@/shared/components/cash-flow/cash-flow-dre/cash-flow-dre.component";
 import { CashFlowFacadeService } from "@/shared/services/cash-flow/cash-flow.facade.service";
-import { CashFlowPeriodPreset } from "@/shared/interfaces/cash-flow.dto";
+import {
+  CashFlowPeriodPreset,
+  CashFlowTab,
+} from "@/shared/interfaces/cash-flow.dto";
 
 @Component({
   selector: "app-fluxo-de-caixa",
@@ -15,6 +19,7 @@ import { CashFlowPeriodPreset } from "@/shared/interfaces/cash-flow.dto";
     CashFlowKpisComponent,
     CashFlowDailyChartComponent,
     CashFlowDailyTableComponent,
+    CashFlowDreComponent,
   ],
   templateUrl: "./fluxo-de-caixa.component.html",
 })
@@ -27,6 +32,10 @@ export class FluxoDeCaixaComponent implements OnInit {
 
   ngOnInit() {
     this.reload();
+  }
+
+  onTabChange(tab: CashFlowTab) {
+    this.facade.setActiveTab(tab);
   }
 
   onPresetChange(preset: CashFlowPeriodPreset) {
@@ -53,7 +62,16 @@ export class FluxoDeCaixaComponent implements OnInit {
     this.reload();
   }
 
+  onExport() {
+    if (this.facade.activeTab() === "fluxo-diario") {
+      this.facade.exportCsv();
+    }
+    // Mini DRE: export fica para a integração
+  }
+
   reload() {
-    this.facade.loadFluxoDiario().subscribe();
+    if (this.facade.activeTab() === "fluxo-diario") {
+      this.facade.loadFluxoDiario().subscribe();
+    }
   }
 }
