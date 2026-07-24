@@ -21,8 +21,6 @@ import com.finance.finance.modules.relatorios.dto.dashboard.DashboardAlertProjec
 import com.finance.finance.modules.relatorios.dto.dashboard.DashboardDTOProjection;
 import com.finance.finance.modules.relatorios.dto.dashboard.DashboardReceitaDispesasProjection;
 
-import java.time.LocalDate;
-
 public interface RelatoriosRepository extends JpaRepository<Lancamento, Long>, JpaSpecificationExecutor<Lancamento> {
   @Query(value = """
           SELECT

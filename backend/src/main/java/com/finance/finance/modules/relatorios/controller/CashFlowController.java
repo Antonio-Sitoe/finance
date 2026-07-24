@@ -2,6 +2,7 @@ package com.finance.finance.modules.relatorios.controller;
 
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
+import com.finance.finance.modules.relatorios.dto.dre.DreDTO;
 import com.finance.finance.modules.relatorios.dto.fluxo.FluxoDiarioDTO;
 
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,24 @@ public class CashFlowController {
                         @Parameter(description = "Data final (inclusiva)", example = "2025-05-31") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ate,
                         @Parameter(description = "Incluir lançamentos individuais por dia") @RequestParam(required = false, defaultValue = "true") boolean incluirDetalhes) {
                 return ResponseEntity.ok(service.obterFluxoDiario(de, ate, incluirDetalhes));
+        }
+
+        @Operation(summary = "Mini DRE", description = """
+                        Retorna a Demonstração de Resultado (receitas x despesas) do período indicado.
+
+                        Inclui o resumo (totais de receitas, despesas, resultado líquido e margem)
+                        e o detalhamento por categoria, com os lançamentos de cada categoria.
+                        Apenas lançamentos com situação PAGO e data de lançamento no período são considerados.
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "DRE obtido com sucesso"),
+                        @ApiResponse(responseCode = "400", description = "Período inválido")
+        })
+        @GetMapping("/dre")
+        public ResponseEntity<DreDTO> obterDre(
+                        @Parameter(description = "Data inicial (inclusiva)", example = "2025-05-01") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate de,
+                        @Parameter(description = "Data final (inclusiva)", example = "2025-05-31") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ate) {
+                return ResponseEntity.ok(service.obterDre(de, ate));
         }
 
 }
