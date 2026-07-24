@@ -64,6 +64,7 @@ export class FluxoDeCaixaComponent implements OnInit {
 
   onTabChange(tab: CashFlowTab) {
     this.facade.setActiveTab(tab);
+    this.reload();
   }
 
   onPresetChange(preset: CashFlowPeriodPreset) {
@@ -99,6 +100,10 @@ export class FluxoDeCaixaComponent implements OnInit {
   reload() {
     if (this.facade.activeTab() === "fluxo-diario") {
       this.facade.loadFluxoDiario().subscribe();
+    }
+
+    if (this.facade.activeTab() === "dre") {
+      this.facade.loadDre().subscribe();
     }
   }
 }

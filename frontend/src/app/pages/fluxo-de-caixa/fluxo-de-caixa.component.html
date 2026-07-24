@@ -50,7 +50,15 @@
 
   @if (facade.activeTab() === "dre") {
     <div class="cash-flow-tab-panel">
-      <app-cash-flow-dre />
+      @if (facade.dreLoading()) {
+        <div
+          class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-16 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400"
+        >
+          A carregar DRE...
+        </div>
+      } @else {
+        <app-cash-flow-dre [report]="facade.dreReport()" />
+      }
     </div>
   }
 

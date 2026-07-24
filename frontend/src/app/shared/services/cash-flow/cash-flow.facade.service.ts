@@ -3,6 +3,7 @@ import { finalize, tap } from "rxjs";
 import {
   CashFlowPeriodPreset,
   CashFlowTab,
+  IDre,
   IFluxoDiario,
   IFluxoDiarioDia,
 } from "@/shared/interfaces/cash-flow.dto";
@@ -14,6 +15,8 @@ export class CashFlowFacadeService {
 
   readonly loading = signal(false);
   readonly report = signal<IFluxoDiario | null>(null);
+  readonly dreLoading = signal(false);
+  readonly dreReport = signal<IDre | null>(null);
   readonly activeTab = signal<CashFlowTab>("fluxo-diario");
   readonly periodPreset = signal<CashFlowPeriodPreset>("month");
   readonly expandedDay = signal<string | null>(null);
@@ -81,6 +84,16 @@ export class CashFlowFacadeService {
     return this.api.getFluxoDiario(de, ate, true).pipe(
       tap((report) => this.report.set(report)),
       finalize(() => this.loading.set(false))
+    );
+  }
+
+  loadDre() {
+    const { de, ate } = this.periodRange();
+    this.dreLoading.set(true);
+
+    return this.api.getDre(de, ate).pipe(
+      tap((report) => this.dreReport.set(report)),
+      finalize(() => this.dreLoading.set(false))
     );
   }
 
