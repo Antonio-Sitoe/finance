@@ -239,3 +239,83 @@ Interações:
 Clicar numa linha expande um painel inline listando os lançamentos individuais daquele dia (descrição, conta, categoria, valor, situação)
 Botão "Exportar Excel" gera o ficheiro com a tabela completa
 
+
+Página: **`/fluxo-de-caixa`**
+
+Análise operacional do dinheiro: o que entrou, o que saiu, resultado por categoria, posição de curto prazo e projecção.
+
+---
+
+## Contexto do projecto (regras de domínio)
+
+Estas regras aplicam-se a **todas** as abas:
+
+| Conceito | No sistema |
+|----------|------------|
+| Tipos | `RECEITA` · `DESPESA` |
+| Situações persistidas | `PAGO` · `PENDENTE` |
+| “Vencido” | **Não é enum** — é `PENDENTE` + `data_vencimento < hoje` (já usado nos alertas do dashboard) |
+| Moeda | **MT** (Metical) |
+| Período | Filtro global no topo (semana / mês / trimestre / ano / personalizado) |
+| Export | CSV na 1.ª fase; Excel depois |
+| Prefixo API | `/api/analitics/...` |
+
+Categorias têm `credito` / `debito` e hierarquia pai/filho, mas **não** têm natureza contabilística (directa vs operacional). Por isso o DRE é um **mini DRE**.
+
+---
+
+## Abas
+
+| Aba | Estado | Endpoint |
+|-----|--------|----------|
+| Fluxo Diário | Feito | `GET /analitics/fluxo-diario` |
+| Mini DRE | Por fazer | `GET /analitics/dre` |
+| Capital de Giro | Por fazer | `GET /analitics/capital-giro` |
+| Recebimentos vs Pagamentos | Por fazer | `GET /analitics/recebimentos-pagamentos` |
+| Projecção de Caixa | Por fazer | `GET /analitics/projecao-caixa` |
+
+---
+
+## 2. Mini DRE — [ ]
+
+Resultado do período por categoria (só `PAGO`).
+
+### O que mostra
+- Receitas totais, agrupadas por categoria
+- Despesas totais, agrupadas por categoria
+- **Resultado líquido** = Receitas − Despesas
+
+> Sem lucro bruto / operacional — o modelo não distingue despesas directas de operacionais.
+
+### Regras
+- Mesmo período global da página
+- Só `PAGO`
+- Sem categoria → `"Sem categoria"`
+
+### Layout
+
+```
+RECEITAS TOTAIS                          MT 45.000,00
+  ├─ Vendas                              MT 30.000,00
+  ├─ Serviços                            MT 12.000,00
+  └─ Outras                               MT 3.000,00
+
+DESPESAS TOTAIS                         (MT 28.000,00)
+  ├─ Fornecedores                       (MT 10.000,00)
+  ├─ Salários                            (MT 8.000,00)
+  └─ Administrativas                     (MT 5.000,00)
+
+─────────────────────────────────────────────────────
+RESULTADO LÍQUIDO                        MT 17.000,00
+```
+
+### UI
+- Positivos a verde; negativos a vermelho com parênteses
+- Resultado em destaque
+- Clicar categoria → lançamentos (descrição, conta, valor, data)
+- Export CSV
+
+### API
+`GET /api/analitics/dre?de=&ate=&incluirDetalhes=true`
+
+---
