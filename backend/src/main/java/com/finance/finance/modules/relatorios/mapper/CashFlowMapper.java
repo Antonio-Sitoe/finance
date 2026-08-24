@@ -8,6 +8,9 @@ import java.util.Map;
 
 import com.finance.finance.modules.common.enums.PagamentoEnum;
 import com.finance.finance.modules.common.enums.TipoLancamento;
+import com.finance.finance.modules.relatorios.dto.capitalgiro.CapitalGiroDTO;
+import com.finance.finance.modules.relatorios.dto.capitalgiro.CapitalGiroTituloDTO;
+import com.finance.finance.modules.relatorios.dto.capitalgiro.CapitalGiroTituloProjection;
 import com.finance.finance.modules.relatorios.dto.dre.DreCategoriaDTO;
 import com.finance.finance.modules.relatorios.dto.dre.DreCategoriaProjection;
 import com.finance.finance.modules.relatorios.dto.dre.DreDTO;
@@ -107,6 +110,27 @@ public class CashFlowMapper {
                                 .resumo(resumo)
                                 .receitas(receitas)
                                 .despesas(despesas)
+                                .build();
+        }
+
+        public static CapitalGiroTituloDTO toCapitalGiroTituloDTO(CapitalGiroTituloProjection projection) {
+                return CapitalGiroTituloDTO.builder()
+                                .id(projection.getId())
+                                .nome(projection.getNome())
+                                .vencimento(projection.getVencimento())
+                                .valor(projection.getValor())
+                                .build();
+        }
+
+        public static CapitalGiroDTO toCapitalGiroDTO(BigDecimal activo, BigDecimal passivo, BigDecimal capitalGiro,
+                        BigDecimal liquidez, List<CapitalGiroTituloDTO> aReceber, List<CapitalGiroTituloDTO> aPagar) {
+                return CapitalGiroDTO.builder()
+                                .activoCirculante(activo)
+                                .passivoCirculante(passivo)
+                                .capitalGiro(capitalGiro)
+                                .liquidezCorrente(liquidez)
+                                .aReceber(aReceber)
+                                .aPagar(aPagar)
                                 .build();
         }
 

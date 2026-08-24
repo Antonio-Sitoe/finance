@@ -1,5 +1,6 @@
 package com.finance.finance.modules.conta.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.finance.finance.modules.common.enums.Situacao;
@@ -24,4 +25,5 @@ public class ContaResponseDTO {
     private String observacao;
     private LocalDateTime dataInclusao;
     private Situacao situacao;
+    private BigDecimal saldo;
 }

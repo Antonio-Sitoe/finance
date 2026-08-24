@@ -2,6 +2,7 @@ package com.finance.finance.modules.relatorios.service;
 
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 import com.finance.finance.modules.common.enums.TipoLancamento;
 
+import com.finance.finance.modules.relatorios.dto.capitalgiro.CapitalGiroDTO;
+import com.finance.finance.modules.relatorios.dto.capitalgiro.CapitalGiroTituloDTO;
 import com.finance.finance.modules.relatorios.dto.dre.DreCategoriaDTO;
 import com.finance.finance.modules.relatorios.dto.dre.DreCategoriaProjection;
 import com.finance.finance.modules.relatorios.dto.dre.DreDTO;
@@ -68,6 +71,26 @@ public class CashFlowService {
 
                 return CashFlowMapper.toFluxoDiarioDTO(de, ate, saldoInicial, totalEntradas, totalSaidas, saldoFinal,
                                 dias);
+        }
+
+        @Transactional(readOnly = true)
+        public CapitalGiroDTO obterCapitalGiro() {
+                BigDecimal activo = repository.obterActivoCirculante();
+                BigDecimal passivo = repository.obterPassivoCirculante();
+                BigDecimal capitalGiro = activo.subtract(passivo);
+
+                BigDecimal liquidez = passivo.signum() == 0 ? null
+                                : activo.divide(passivo, 2, RoundingMode.HALF_UP);
+
+                List<CapitalGiroTituloDTO> aReceber = repository.obterTitulosAReceber().stream()
+                                .map(CashFlowMapper::toCapitalGiroTituloDTO)
+                                .toList();
+
+                List<CapitalGiroTituloDTO> aPagar = repository.obterTitulosAPagar().stream()
+                                .map(CashFlowMapper::toCapitalGiroTituloDTO)
+                                .toList();
+
+                return CashFlowMapper.toCapitalGiroDTO(activo, passivo, capitalGiro, liquidez, aReceber, aPagar);
         }
 
         @Transactional(readOnly = true)

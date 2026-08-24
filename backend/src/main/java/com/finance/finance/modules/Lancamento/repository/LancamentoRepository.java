@@ -30,4 +30,11 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long>, J
 
         @Query("SELECT COALESCE(SUM(l.valor), 0) FROM Lancamento l WHERE l.tipo = :tipo")
         BigDecimal sumValorByTipo(@Param("tipo") TipoLancamento tipo);
+
+        @Query(value = """
+                SELECT COALESCE(SUM(CASE WHEN tipo = 'RECEITA' THEN valor ELSE -valor END), 0)
+                FROM lancamentos
+                WHERE id_conta = :contaId AND situacao = 'PAGO'
+                """, nativeQuery = true)
+        BigDecimal calcularSaldoPorConta(@Param("contaId") Long contaId);
 }

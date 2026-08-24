@@ -42,6 +42,7 @@ public class ContaMapper {
                 .observacao(conta.getObservacao())
                 .dataInclusao(conta.getDataInclusao())
                 .situacao(conta.getSituacao())
+                .saldo(null)
                 .build();
     }
 

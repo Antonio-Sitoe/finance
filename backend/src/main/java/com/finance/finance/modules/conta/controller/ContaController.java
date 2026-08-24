@@ -44,8 +44,8 @@ public class ContaController {
     @Operation(summary = "Criar conta", description = "Cria uma nova conta bancária.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Conta criada com sucesso", content = @Content(schema = @Schema(implementation = ContaResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "422", description = "Número de conta corrente já cadastrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou número de conta corrente já cadastrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Conflito de integridade de dados (constraint única violada a nível de BD)", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     public ResponseEntity<ContaResponseDTO> criar(
             @RequestBody @Validated(ContaRequestDTO.Create.class) ContaRequestDTO dto) {
@@ -56,9 +56,9 @@ public class ContaController {
     @Operation(summary = "Atualizar conta", description = "Atualiza parcialmente uma conta. Apenas os campos enviados são alterados.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Conta atualizada com sucesso", content = @Content(schema = @Schema(implementation = ContaResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou número de conta corrente já cadastrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Conta não encontrada", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "422", description = "Número de conta corrente já cadastrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "409", description = "Conflito de integridade de dados (constraint única violada a nível de BD)", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     public ResponseEntity<ContaResponseDTO> atualizar(
             @Parameter(description = "ID da conta", example = "1") @PathVariable Long id,

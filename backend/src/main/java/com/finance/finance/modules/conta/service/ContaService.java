@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.exceptions.ResourceNotFoundException;
+import com.finance.finance.modules.Lancamento.repository.LancamentoRepository;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class ContaService {
 
     private final ContaRepository contaRepository;
+    private final LancamentoRepository lancamentoRepository;
 
     @Transactional
     public ContaResponseDTO criar(ContaRequestDTO data) {
@@ -31,7 +33,8 @@ public class ContaService {
             throw new BusinessException("Já existe uma conta com este número de conta corrente");
         }
         Conta conta = ContaMapper.toEntity(data);
-        return ContaMapper.toResponse(contaRepository.save(conta));
+        Conta saved = contaRepository.save(conta);
+        return withSaldo(saved);
     }
 
     @Transactional
@@ -45,7 +48,7 @@ public class ContaService {
         }
 
         ContaMapper.updateEntity(contaExistente, data);
-        return ContaMapper.toResponse(contaRepository.save(contaExistente));
+        return withSaldo(contaRepository.save(contaExistente));
     }
 
     @Transactional
@@ -79,13 +82,19 @@ public class ContaService {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("situacao"), situacao));
         }
 
-        return PageResponse.from(contaRepository.findAll(spec, pageable).map(ContaMapper::toResponse));
+        return PageResponse.from(contaRepository.findAll(spec, pageable).map(this::withSaldo));
     }
 
     @Transactional(readOnly = true)
     public ContaResponseDTO obterPorId(Long id) {
         Conta conta = contaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada com id: " + id));
-        return ContaMapper.toResponse(conta);
+        return withSaldo(conta);
+    }
+
+    private ContaResponseDTO withSaldo(Conta conta) {
+        ContaResponseDTO dto = ContaMapper.toResponse(conta);
+        dto.setSaldo(lancamentoRepository.calcularSaldoPorConta(conta.getId()));
+        return dto;
     }
 }

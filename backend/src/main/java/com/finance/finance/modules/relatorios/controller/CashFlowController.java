@@ -2,6 +2,7 @@ package com.finance.finance.modules.relatorios.controller;
 
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
+import com.finance.finance.modules.relatorios.dto.capitalgiro.CapitalGiroDTO;
 import com.finance.finance.modules.relatorios.dto.dre.DreDTO;
 import com.finance.finance.modules.relatorios.dto.fluxo.FluxoDiarioDTO;
 
@@ -60,6 +61,21 @@ public class CashFlowController {
                         @Parameter(description = "Data inicial (inclusiva)", example = "2025-05-01") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate de,
                         @Parameter(description = "Data final (inclusiva)", example = "2025-05-31") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ate) {
                 return ResponseEntity.ok(service.obterDre(de, ate));
+        }
+
+        @Operation(summary = "Capital de Giro", description = """
+                        Retorna a posição de curto prazo com base em títulos PENDENTE não vencidos.
+
+                        Activo circulante = RECEITA + PENDENTE + vencimento >= hoje.
+                        Passivo circulante = DESPESA + PENDENTE + vencimento >= hoje.
+                        Capital de giro = Activo − Passivo. Liquidez corrente = Activo ÷ Passivo.
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Capital de giro obtido com sucesso")
+        })
+        @GetMapping("/capital-giro")
+        public ResponseEntity<CapitalGiroDTO> obterCapitalGiro() {
+                return ResponseEntity.ok(service.obterCapitalGiro());
         }
 
 }

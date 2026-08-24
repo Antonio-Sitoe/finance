@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.finance.finance.modules.Lancamento.model.Lancamento;
+import com.finance.finance.modules.relatorios.dto.capitalgiro.CapitalGiroTituloProjection;
 import com.finance.finance.modules.relatorios.dto.dre.DreCategoriaProjection;
 import com.finance.finance.modules.relatorios.dto.dre.DreLancamentoProjection;
 import com.finance.finance.modules.relatorios.dto.fluxo.FluxoDiarioDiaProjection;
@@ -135,4 +136,54 @@ public interface CashFlowRepository extends JpaRepository<Lancamento, Long>, Jpa
     List<DreLancamentoProjection> obterDreLancamentos(
             @Param("de") LocalDate de,
             @Param("ate") LocalDate ate);
+
+    @Query(value = """
+            SELECT COALESCE(SUM(l.valor), 0)
+            FROM lancamentos l
+            WHERE l.situacao = 'PENDENTE'
+              AND l.tipo = 'RECEITA'
+              AND CAST(l.data_vencimento AS date) >= CURRENT_DATE
+            """, nativeQuery = true)
+    BigDecimal obterActivoCirculante();
+
+    @Query(value = """
+            SELECT COALESCE(SUM(l.valor), 0)
+            FROM lancamentos l
+            WHERE l.situacao = 'PENDENTE'
+              AND l.tipo = 'DESPESA'
+              AND CAST(l.data_vencimento AS date) >= CURRENT_DATE
+            """, nativeQuery = true)
+    BigDecimal obterPassivoCirculante();
+
+    @Query(value = """
+            SELECT
+              l.id AS id,
+              COALESCE(cl.nome_empresarial, l.descricao) AS nome,
+              CAST(l.data_vencimento AS date) AS vencimento,
+              l.valor AS valor
+            FROM lancamentos l
+            LEFT JOIN clientes cl ON cl.id = l.id_cliente
+            WHERE l.situacao = 'PENDENTE'
+              AND l.tipo = 'RECEITA'
+              AND CAST(l.data_vencimento AS date) >= CURRENT_DATE
+            ORDER BY l.data_vencimento ASC
+            LIMIT 10
+            """, nativeQuery = true)
+    List<CapitalGiroTituloProjection> obterTitulosAReceber();
+
+    @Query(value = """
+            SELECT
+              l.id AS id,
+              COALESCE(fo.nome_empresarial, l.descricao) AS nome,
+              CAST(l.data_vencimento AS date) AS vencimento,
+              l.valor AS valor
+            FROM lancamentos l
+            LEFT JOIN fornecedor fo ON fo.id = l.id_fornecedor
+            WHERE l.situacao = 'PENDENTE'
+              AND l.tipo = 'DESPESA'
+              AND CAST(l.data_vencimento AS date) >= CURRENT_DATE
+            ORDER BY l.data_vencimento ASC
+            LIMIT 10
+            """, nativeQuery = true)
+    List<CapitalGiroTituloProjection> obterTitulosAPagar();
 }
