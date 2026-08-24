@@ -40,7 +40,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/clientes")
 @RequiredArgsConstructor
 @Tag(name = "Clientes", description = "Endpoints para gestão de clientes")
-public class clienteController {
+public class ClienteController {
         private final ClienteService clienteService;
 
         @PostMapping
@@ -99,7 +99,10 @@ public class clienteController {
         }
 
         @GetMapping("/ranking")
-        @Operation(summary = "Obter resumo do ranking de clientes")
+        @Operation(summary = "Obter resumo do ranking de clientes", description = "Retorna a contagem de clientes agrupados por faixa de nota: normais, em crescimento e VIP.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Ranking retornado com sucesso", content = @Content(schema = @Schema(implementation = ClienteRankingResumoDTO.class)))
+        })
         public ResponseEntity<ClienteRankingResumoDTO> obterResumoRanking() {
                 return ResponseEntity.ok(clienteService.obterResumoRanking());
         }
