@@ -24,7 +24,9 @@
   <app-cash-flow-tabs
     [active]="facade.activeTab()"
     [exportDisabled]="
-      facade.activeTab() === 'fluxo-diario' ? !facade.report() : false
+      (facade.activeTab() === 'fluxo-diario' && !facade.report()) ||
+      (facade.activeTab() === 'dre' && !facade.dreReport()) ||
+      facade.activeTab() === 'capital-giro'
     "
     (tabChange)="onTabChange($event)"
     (exportCsv)="onExport()"
@@ -64,7 +66,15 @@
 
   @if (facade.activeTab() === "capital-giro") {
     <div class="cash-flow-tab-panel">
-      <app-cash-flow-capital-giro />
+      @if (facade.capitalGiroLoading()) {
+        <div
+          class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-16 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400"
+        >
+          A carregar capital de giro...
+        </div>
+      } @else {
+        <app-cash-flow-capital-giro [report]="facade.capitalGiroReport()" />
+      }
     </div>
   }
 

@@ -95,6 +95,9 @@ export class FluxoDeCaixaComponent implements OnInit {
     if (this.facade.activeTab() === "fluxo-diario") {
       this.facade.exportCsv();
     }
+    if (this.facade.activeTab() === "dre") {
+      this.facade.exportDreCsv();
+    }
   }
 
   reload() {
@@ -104,6 +107,10 @@ export class FluxoDeCaixaComponent implements OnInit {
 
     if (this.facade.activeTab() === "dre") {
       this.facade.loadDre().subscribe();
+    }
+
+    if (this.facade.activeTab() === "capital-giro") {
+      this.facade.loadCapitalGiro().subscribe();
     }
   }
 }

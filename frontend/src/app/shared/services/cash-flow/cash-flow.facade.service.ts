@@ -3,6 +3,7 @@ import { finalize, tap } from "rxjs";
 import {
   CashFlowPeriodPreset,
   CashFlowTab,
+  ICapitalGiro,
   IDre,
   IFluxoDiario,
   IFluxoDiarioDia,
@@ -17,6 +18,8 @@ export class CashFlowFacadeService {
   readonly report = signal<IFluxoDiario | null>(null);
   readonly dreLoading = signal(false);
   readonly dreReport = signal<IDre | null>(null);
+  readonly capitalGiroLoading = signal(false);
+  readonly capitalGiroReport = signal<ICapitalGiro | null>(null);
   readonly activeTab = signal<CashFlowTab>("fluxo-diario");
   readonly periodPreset = signal<CashFlowPeriodPreset>("month");
   readonly expandedDay = signal<string | null>(null);
@@ -94,6 +97,15 @@ export class CashFlowFacadeService {
     return this.api.getDre(de, ate).pipe(
       tap((report) => this.dreReport.set(report)),
       finalize(() => this.dreLoading.set(false))
+    );
+  }
+
+  loadCapitalGiro() {
+    this.capitalGiroLoading.set(true);
+
+    return this.api.getCapitalGiro().pipe(
+      tap((report) => this.capitalGiroReport.set(report)),
+      finalize(() => this.capitalGiroLoading.set(false))
     );
   }
 
@@ -196,6 +208,48 @@ export class CashFlowFacadeService {
     const anchor = document.createElement("a");
     anchor.href = url;
     anchor.download = `fluxo-caixa-${report.de}-${report.ate}.csv`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  exportDreCsv() {
+    const report = this.dreReport();
+    if (!report) return;
+
+    const header = ["Tipo", "Categoria", "Valor (MT)", "% do Total"];
+
+    const receitaRows = report.receitas.map((cat) => [
+      "RECEITA",
+      cat.nome,
+      String(cat.total),
+      String(cat.percentual) + "%",
+    ]);
+
+    const despesaRows = report.despesas.map((cat) => [
+      "DESPESA",
+      cat.nome,
+      String(cat.total),
+      String(cat.percentual) + "%",
+    ]);
+
+    const totalReceitas = ["", "Total Receitas", String(report.resumo.totalReceitas), "100%"];
+    const totalDespesas = ["", "Total Despesas", String(report.resumo.totalDespesas), "100%"];
+    const resultado = [
+      "",
+      "Resultado Líquido",
+      String(report.resumo.resultado),
+      String(report.resumo.margemPercentual) + "%",
+    ];
+
+    const csv = [header, ...receitaRows, totalReceitas, ...despesaRows, totalDespesas, resultado]
+      .map((row) => row.map((cell) => `"${cell}"`).join(";"))
+      .join("\n");
+
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `mini-dre-${report.de}-${report.ate}.csv`;
     anchor.click();
     URL.revokeObjectURL(url);
   }

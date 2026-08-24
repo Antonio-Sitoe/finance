@@ -2,119 +2,6 @@ import { Component, Input, signal } from "@angular/core";
 import { SolarDynamicIcon } from "@solar-icons/angular";
 import { IDre, IDreCategoria } from "@/shared/interfaces/cash-flow.dto";
 
-/** Dados de demonstração — substituir pela API na integração */
-export const MOCK_DRE: IDre = {
-  de: "2026-07-01",
-  ate: "2026-07-31",
-  resumo: {
-    totalReceitas: 45000,
-    totalDespesas: 28000,
-    resultado: 17000,
-    margemPercentual: 37.8,
-  },
-  receitas: [
-    {
-      categoriaId: 1,
-      nome: "Vendas",
-      total: 30000,
-      percentual: 66.7,
-      lancamentos: [
-        {
-          id: 101,
-          descricao: "Venda loja Maputo",
-          conta: "Caixa Principal",
-          valor: 18000,
-          data: "2026-07-05",
-        },
-        {
-          id: 102,
-          descricao: "Venda online",
-          conta: "Conta BCI",
-          valor: 12000,
-          data: "2026-07-18",
-        },
-      ],
-    },
-    {
-      categoriaId: 2,
-      nome: "Serviços",
-      total: 12000,
-      percentual: 26.7,
-      lancamentos: [
-        {
-          id: 103,
-          descricao: "Consultoria Julho",
-          conta: "Conta BCI",
-          valor: 12000,
-          data: "2026-07-12",
-        },
-      ],
-    },
-    {
-      categoriaId: 3,
-      nome: "Outras Receitas",
-      total: 3000,
-      percentual: 6.6,
-      lancamentos: [
-        {
-          id: 104,
-          descricao: "Juros / ajustes",
-          conta: "Caixa Principal",
-          valor: 3000,
-          data: "2026-07-22",
-        },
-      ],
-    },
-  ],
-  despesas: [
-    {
-      categoriaId: 4,
-      nome: "Fornecedores",
-      total: 10000,
-      percentual: 22.2,
-      lancamentos: [
-        {
-          id: 201,
-          descricao: "Stock mercadorias",
-          conta: "Conta BCI",
-          valor: 10000,
-          data: "2026-07-08",
-        },
-      ],
-    },
-    {
-      categoriaId: 5,
-      nome: "Salários",
-      total: 8000,
-      percentual: 17.8,
-      lancamentos: [
-        {
-          id: 202,
-          descricao: "Folha Julho",
-          conta: "Conta BCI",
-          valor: 8000,
-          data: "2026-07-28",
-        },
-      ],
-    },
-    {
-      categoriaId: 6,
-      nome: "Administrativas",
-      total: 5000,
-      percentual: 11.1,
-      lancamentos: [
-        {
-          id: 203,
-          descricao: "Renda + utilities",
-          conta: "Caixa Principal",
-          valor: 5000,
-          data: "2026-07-03",
-        },
-      ],
-    },
-  ],
-};
-
 type DreSectionKey = "receitas" | "despesas";
 
 @Component({
@@ -123,12 +10,11 @@ type DreSectionKey = "receitas" | "despesas";
   imports: [SolarDynamicIcon],
 })
 export class CashFlowDreComponent {
-  /** Quando a integração existir, passa o relatório aqui. Sem input → mock. */
   @Input() set report(value: IDre | null) {
-    this.data = value ?? MOCK_DRE;
+    this.data = value;
   }
 
-  data: IDre = MOCK_DRE;
+  data: IDre | null = null;
 
   private readonly openSections = signal<Set<DreSectionKey>>(
     new Set<DreSectionKey>(["receitas"])
@@ -163,9 +49,9 @@ export class CashFlowDreComponent {
   }
 
   despesasSobreReceitas(): number {
-    const receitas = this.data.resumo.totalReceitas;
+    const receitas = this.data?.resumo.totalReceitas;
     if (!receitas) return 0;
-    return (this.data.resumo.totalDespesas / receitas) * 100;
+    return ((this.data?.resumo.totalDespesas ?? 0) / receitas) * 100;
   }
 
   formatResultado(value: number): string {
