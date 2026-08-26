@@ -23,7 +23,7 @@ export class CashFlowTabsComponent {
     { key: "fluxo-diario", label: "Fluxo Diário" },
     { key: "dre", label: "Mini DRE" },
     { key: "capital-giro", label: "Capital de Giro" },
-    { key: "recebimentos-pagamentos", label: "Recebimentos vs Pagamentos", disabled: true },
-    { key: "projecao", label: "Projeção de Caixa", disabled: true },
+    { key: "recebimentos-pagamentos", label: "Recebimentos vs Pagamentos" },
+    { key: "projecao", label: "Projeção de Caixa" },
   ];
 }

@@ -6,31 +6,6 @@ import {
   IRecebimentosPagamentosMes,
 } from "@/shared/interfaces/cash-flow.dto";
 
-export const MOCK_RECEBIMENTOS_PAGAMENTOS: IRecebimentosPagamentos = {
-  de: "2026-07-01",
-  ate: "2026-07-31",
-  recebimentos: {
-    previsto: 480000,
-    realizado: 452930,
-    taxaPercentual: 94.3,
-    emAtraso: 25000,
-  },
-  pagamentos: {
-    previsto: 315000,
-    realizado: 312450,
-    taxaPercentual: 99.2,
-    emAtraso: 8000,
-  },
-  evolucaoMensal: [
-    { mes: "Jan", previsto: 60, realizado: 55 },
-    { mes: "Fev", previsto: 75, realizado: 70 },
-    { mes: "Mar", previsto: 85, realizado: 82 },
-    { mes: "Abr", previsto: 65, realizado: 60 },
-    { mes: "Mai", previsto: 90, realizado: 88 },
-    { mes: "Jun", previsto: 80, realizado: 75 },
-  ],
-};
-
 @Component({
   selector: "app-cash-flow-recebimentos-pagamentos",
   templateUrl: "./cash-flow-recebimentos-pagamentos.component.html",
@@ -38,15 +13,16 @@ export const MOCK_RECEBIMENTOS_PAGAMENTOS: IRecebimentosPagamentos = {
 })
 export class CashFlowRecebimentosPagamentosComponent {
   @Input() set report(value: IRecebimentosPagamentos | null) {
-    this.data = value ?? MOCK_RECEBIMENTOS_PAGAMENTOS;
+    this.data = value;
   }
 
-  data: IRecebimentosPagamentos = MOCK_RECEBIMENTOS_PAGAMENTOS;
+  data: IRecebimentosPagamentos | null = null;
 
   maxBar(): number {
+    if (!this.data) return 1;
     return Math.max(
       ...this.data.evolucaoMensal.flatMap((m) => [m.previsto, m.realizado]),
-      1
+      1,
     );
   }
 

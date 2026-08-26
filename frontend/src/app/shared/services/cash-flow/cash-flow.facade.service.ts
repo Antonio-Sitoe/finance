@@ -7,6 +7,8 @@ import {
   IDre,
   IFluxoDiario,
   IFluxoDiarioDia,
+  IProjecaoCaixa,
+  IRecebimentosPagamentos,
 } from "@/shared/interfaces/cash-flow.dto";
 import { CashFlowApiService } from "./cash-flow.api.service";
 
@@ -20,6 +22,10 @@ export class CashFlowFacadeService {
   readonly dreReport = signal<IDre | null>(null);
   readonly capitalGiroLoading = signal(false);
   readonly capitalGiroReport = signal<ICapitalGiro | null>(null);
+  readonly recebimentosLoading = signal(false);
+  readonly recebimentosReport = signal<IRecebimentosPagamentos | null>(null);
+  readonly projecaoLoading = signal(false);
+  readonly projecaoReport = signal<IProjecaoCaixa | null>(null);
   readonly activeTab = signal<CashFlowTab>("fluxo-diario");
   readonly periodPreset = signal<CashFlowPeriodPreset>("month");
   readonly expandedDay = signal<string | null>(null);
@@ -106,6 +112,25 @@ export class CashFlowFacadeService {
     return this.api.getCapitalGiro().pipe(
       tap((report) => this.capitalGiroReport.set(report)),
       finalize(() => this.capitalGiroLoading.set(false))
+    );
+  }
+
+  loadRecebimentosPagamentos() {
+    const { de, ate } = this.periodRange();
+    this.recebimentosLoading.set(true);
+
+    return this.api.getRecebimentosPagamentos(de, ate).pipe(
+      tap((report) => this.recebimentosReport.set(report)),
+      finalize(() => this.recebimentosLoading.set(false))
+    );
+  }
+
+  loadProjecaoCaixa() {
+    this.projecaoLoading.set(true);
+
+    return this.api.getProjecaoCaixa().pipe(
+      tap((report) => this.projecaoReport.set(report)),
+      finalize(() => this.projecaoLoading.set(false))
     );
   }
 

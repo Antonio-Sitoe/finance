@@ -112,5 +112,13 @@ export class FluxoDeCaixaComponent implements OnInit {
     if (this.facade.activeTab() === "capital-giro") {
       this.facade.loadCapitalGiro().subscribe();
     }
+
+    if (this.facade.activeTab() === "recebimentos-pagamentos") {
+      this.facade.loadRecebimentosPagamentos().subscribe();
+    }
+
+    if (this.facade.activeTab() === "projecao") {
+      this.facade.loadProjecaoCaixa().subscribe();
+    }
   }
 }

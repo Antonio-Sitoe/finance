@@ -26,7 +26,9 @@
     [exportDisabled]="
       (facade.activeTab() === 'fluxo-diario' && !facade.report()) ||
       (facade.activeTab() === 'dre' && !facade.dreReport()) ||
-      facade.activeTab() === 'capital-giro'
+      facade.activeTab() === 'capital-giro' ||
+      facade.activeTab() === 'recebimentos-pagamentos' ||
+      facade.activeTab() === 'projecao'
     "
     (tabChange)="onTabChange($event)"
     (exportCsv)="onExport()"
@@ -80,13 +82,29 @@
 
   @if (facade.activeTab() === "recebimentos-pagamentos") {
     <div class="cash-flow-tab-panel">
-      <app-cash-flow-recebimentos-pagamentos />
+      @if (facade.recebimentosLoading()) {
+        <div
+          class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-16 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400"
+        >
+          A carregar recebimentos vs pagamentos...
+        </div>
+      } @else {
+        <app-cash-flow-recebimentos-pagamentos [report]="facade.recebimentosReport()" />
+      }
     </div>
   }
 
   @if (facade.activeTab() === "projecao") {
     <div class="cash-flow-tab-panel">
-      <app-cash-flow-projecao />
+      @if (facade.projecaoLoading()) {
+        <div
+          class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-16 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400"
+        >
+          A carregar projeção de caixa...
+        </div>
+      } @else {
+        <app-cash-flow-projecao [report]="facade.projecaoReport()" />
+      }
     </div>
   }
 </div>
