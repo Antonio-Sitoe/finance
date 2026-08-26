@@ -5,6 +5,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.finance.finance.modules.relatorios.dto.capitalgiro.CapitalGiroDTO;
 import com.finance.finance.modules.relatorios.dto.dre.DreDTO;
 import com.finance.finance.modules.relatorios.dto.fluxo.FluxoDiarioDTO;
+import com.finance.finance.modules.relatorios.dto.projecao.ProjecaoCaixaDTO;
+import com.finance.finance.modules.relatorios.dto.recebimentospagamentos.InnerRecebimentosPagamentosDTO;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,6 +78,41 @@ public class CashFlowController {
         @GetMapping("/capital-giro")
         public ResponseEntity<CapitalGiroDTO> obterCapitalGiro() {
                 return ResponseEntity.ok(service.obterCapitalGiro());
+        }
+
+        @Operation(summary = "Recebimentos vs Pagamentos", description = """
+                        Eficiência do período: previsto vs realizado para receitas e despesas.
+
+                        Previsto = PENDENTE com vencimento no período.
+                        Realizado = PAGO com data de lançamento no período.
+                        Em atraso = PENDENTE com vencimento < hoje (posição actual).
+                        Evolução mensal mostra receitas previstas vs realizadas por mês.
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Relatório obtido com sucesso"),
+                        @ApiResponse(responseCode = "400", description = "Período inválido")
+        })
+        @GetMapping("/recebimentos-pagamentos")
+        public ResponseEntity<InnerRecebimentosPagamentosDTO> obterRecebimentosPagamentos(
+                        @Parameter(description = "Data inicial (inclusiva)", example = "2025-05-01") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate de,
+                        @Parameter(description = "Data final (inclusiva)", example = "2025-05-31") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ate) {
+                return ResponseEntity.ok(service.obterRecebimentosPagamentos(de, ate));
+        }
+
+        @Operation(summary = "Projeção de Caixa", description = """
+                        Projecta o saldo para os próximos 30, 60 e 90 dias com base em títulos PENDENTE.
+
+                        Saldo actual = soma de todos os lançamentos PAGO (RECEITA − DESPESA).
+                        Entradas/saídas previstas = PENDENTE com vencimento nos próximos N dias.
+                        Risco de inadimplência = títulos RECEITA + PENDENTE + vencidos / saldo actual.
+                        Inclui os principais devedores e insights automáticos.
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Projeção obtida com sucesso")
+        })
+        @GetMapping("/projecao-caixa")
+        public ResponseEntity<ProjecaoCaixaDTO> obterProjecaoCaixa() {
+                return ResponseEntity.ok(service.obterProjecaoCaixa());
         }
 
 }

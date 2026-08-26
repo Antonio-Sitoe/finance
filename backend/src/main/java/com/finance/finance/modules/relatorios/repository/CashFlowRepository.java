@@ -15,6 +15,10 @@ import com.finance.finance.modules.relatorios.dto.dre.DreCategoriaProjection;
 import com.finance.finance.modules.relatorios.dto.dre.DreLancamentoProjection;
 import com.finance.finance.modules.relatorios.dto.fluxo.FluxoDiarioDiaProjection;
 import com.finance.finance.modules.relatorios.dto.fluxo.FluxoDiarioLancamentoProjection;
+import com.finance.finance.modules.relatorios.dto.recebimentospagamentos.RecebimentosBlocoProjection;
+import com.finance.finance.modules.relatorios.dto.recebimentospagamentos.RecebimentosMesProjection;
+import com.finance.finance.modules.relatorios.dto.projecao.ProjecaoHorizonteProjection;
+import com.finance.finance.modules.relatorios.dto.projecao.ProjecaoDevedorProjection;
 
 public interface CashFlowRepository extends JpaRepository<Lancamento, Long>, JpaSpecificationExecutor<Lancamento> {
     @Query(value = """
@@ -186,4 +190,123 @@ public interface CashFlowRepository extends JpaRepository<Lancamento, Long>, Jpa
             LIMIT 10
             """, nativeQuery = true)
     List<CapitalGiroTituloProjection> obterTitulosAPagar();
+
+    @Query(value = """
+            SELECT
+              l.tipo AS tipo,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.situacao = 'PENDENTE'
+                AND CAST(l.data_vencimento AS date) >= CAST(:de AS date)
+                AND CAST(l.data_vencimento AS date) <= CAST(:ate AS date)), 0) AS previsto,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.situacao = 'PAGO'
+                AND CAST(l.data_lancamento AS date) >= CAST(:de AS date)
+                AND CAST(l.data_lancamento AS date) <= CAST(:ate AS date)), 0) AS realizado,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.situacao = 'PENDENTE'
+                AND CAST(l.data_vencimento AS date) < CURRENT_DATE), 0) AS emAtraso
+            FROM lancamentos l
+            WHERE l.tipo IN ('RECEITA', 'DESPESA')
+            GROUP BY l.tipo
+            """, nativeQuery = true)
+    List<RecebimentosBlocoProjection> obterBlocosRecebimentosPagamentos(
+            @Param("de") LocalDate de,
+            @Param("ate") LocalDate ate);
+
+    @Query(value = """
+            WITH meses AS (
+              SELECT generate_series(
+                DATE_TRUNC('month', CAST(:de AS date)),
+                DATE_TRUNC('month', CAST(:ate AS date)),
+                INTERVAL '1 month'
+              )::date AS mes
+            ),
+            previsto_por_mes AS (
+              SELECT
+                DATE_TRUNC('month', CAST(l.data_vencimento AS date))::date AS mes,
+                SUM(l.valor) AS valor
+              FROM lancamentos l
+              WHERE l.tipo = 'RECEITA' AND l.situacao = 'PENDENTE'
+                AND CAST(l.data_vencimento AS date) >= CAST(:de AS date)
+                AND CAST(l.data_vencimento AS date) <= CAST(:ate AS date)
+              GROUP BY DATE_TRUNC('month', CAST(l.data_vencimento AS date))
+            ),
+            realizado_por_mes AS (
+              SELECT
+                DATE_TRUNC('month', CAST(l.data_lancamento AS date))::date AS mes,
+                SUM(l.valor) AS valor
+              FROM lancamentos l
+              WHERE l.tipo = 'RECEITA' AND l.situacao = 'PAGO'
+                AND CAST(l.data_lancamento AS date) >= CAST(:de AS date)
+                AND CAST(l.data_lancamento AS date) <= CAST(:ate AS date)
+              GROUP BY DATE_TRUNC('month', CAST(l.data_lancamento AS date))
+            )
+            SELECT
+              TO_CHAR(m.mes, 'YYYY-MM') AS mes,
+              COALESCE(p.valor, 0) AS previsto,
+              COALESCE(r.valor, 0) AS realizado
+            FROM meses m
+            LEFT JOIN previsto_por_mes p ON p.mes = m.mes
+            LEFT JOIN realizado_por_mes r ON r.mes = m.mes
+            ORDER BY m.mes
+            """, nativeQuery = true)
+    List<RecebimentosMesProjection> obterEvolucaoMensalRecebimentos(
+            @Param("de") LocalDate de,
+            @Param("ate") LocalDate ate);
+
+    @Query(value = """
+            SELECT COALESCE(SUM(CASE WHEN l.tipo = 'RECEITA' THEN l.valor ELSE -l.valor END), 0)
+            FROM lancamentos l
+            WHERE l.situacao = 'PAGO'
+            """, nativeQuery = true)
+    BigDecimal obterSaldoAtual();
+
+    @Query(value = """
+            SELECT COALESCE(SUM(l.valor), 0)
+            FROM lancamentos l
+            WHERE l.situacao = 'PENDENTE'
+              AND l.tipo = 'RECEITA'
+              AND CAST(l.data_vencimento AS date) < CURRENT_DATE
+            """, nativeQuery = true)
+    BigDecimal obterVencidoTotal();
+
+    @Query(value = """
+            SELECT 30 AS dias,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.tipo = 'RECEITA'), 0) AS entradas,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.tipo = 'DESPESA'), 0) AS saidas
+            FROM lancamentos l
+            WHERE l.situacao = 'PENDENTE'
+              AND CAST(l.data_vencimento AS date) >= CURRENT_DATE
+              AND CAST(l.data_vencimento AS date) < CURRENT_DATE + INTERVAL '30 days'
+            UNION ALL
+            SELECT 60 AS dias,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.tipo = 'RECEITA'), 0) AS entradas,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.tipo = 'DESPESA'), 0) AS saidas
+            FROM lancamentos l
+            WHERE l.situacao = 'PENDENTE'
+              AND CAST(l.data_vencimento AS date) >= CURRENT_DATE
+              AND CAST(l.data_vencimento AS date) < CURRENT_DATE + INTERVAL '60 days'
+            UNION ALL
+            SELECT 90 AS dias,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.tipo = 'RECEITA'), 0) AS entradas,
+              COALESCE(SUM(l.valor) FILTER (WHERE l.tipo = 'DESPESA'), 0) AS saidas
+            FROM lancamentos l
+            WHERE l.situacao = 'PENDENTE'
+              AND CAST(l.data_vencimento AS date) >= CURRENT_DATE
+              AND CAST(l.data_vencimento AS date) < CURRENT_DATE + INTERVAL '90 days'
+            ORDER BY dias
+            """, nativeQuery = true)
+    List<ProjecaoHorizonteProjection> obterHorizontesProjecao();
+
+    @Query(value = """
+            SELECT
+              l.id AS id,
+              COALESCE(cl.nome_empresarial, l.descricao) AS nome,
+              l.valor AS valor,
+              CAST(l.data_vencimento AS date) AS vencimento
+            FROM lancamentos l
+            LEFT JOIN clientes cl ON cl.id = l.id_cliente
+            WHERE l.situacao = 'PENDENTE'
+              AND l.tipo = 'RECEITA'
+            ORDER BY l.valor DESC
+            LIMIT 5
+            """, nativeQuery = true)
+    List<ProjecaoDevedorProjection> obterPrincipaisDevedores();
 }

@@ -36,7 +36,7 @@
       <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p
-            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-400"
           >
             Saldo Actual
           </p>
@@ -48,7 +48,7 @@
         </div>
         <div class="sm:border-l sm:border-gray-100 sm:pl-5 dark:sm:border-gray-800">
           <p
-            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-400"
           >
             Entradas Previstas
           </p>
@@ -57,11 +57,11 @@
           >
             + {{ formatAmount(horizonteActivo().entradas) }}
           </p>
-          <p class="text-xs text-gray-400">Próximos {{ horizonte() }} dias</p>
+          <p class="text-xs text-gray-900 dark:text-gray-400">Próximos {{ horizonte() }} dias</p>
         </div>
         <div class="sm:border-l sm:border-gray-100 sm:pl-5 dark:sm:border-gray-800">
           <p
-            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-400"
           >
             Saídas Previstas
           </p>
@@ -70,11 +70,11 @@
           >
             − {{ formatAmount(horizonteActivo().saidas) }}
           </p>
-          <p class="text-xs text-gray-400">Próximos {{ horizonte() }} dias</p>
+          <p class="text-xs text-gray-900 dark:text-gray-400">Próximos {{ horizonte() }} dias</p>
         </div>
         <div class="sm:border-l sm:border-gray-100 sm:pl-5 dark:sm:border-gray-800">
           <p
-            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+            class="text-theme-xs font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-400"
           >
             Saldo Projectado
           </p>
@@ -89,7 +89,9 @@
           <p
             class="text-xs font-semibold"
             [class.text-success-600]="data.variacaoPercentual >= 0"
+            [class.dark:text-success-400]="data.variacaoPercentual >= 0"
             [class.text-error-600]="data.variacaoPercentual < 0"
+            [class.dark:text-error-400]="data.variacaoPercentual < 0"
           >
             {{ data.variacaoPercentual >= 0 ? "+" : ""
             }}{{ formatPercent(data.variacaoPercentual) }} vs actual
@@ -102,7 +104,7 @@
       class="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
     >
       <div class="relative z-10">
-        <div class="mb-1 flex items-center gap-2 text-gray-500">
+        <div class="mb-1 flex items-center gap-2 text-gray-900 dark:text-gray-400">
           <ng-container
             [solarIcon]="'ForbiddenCircleBold'"
             [size]="18"
@@ -271,7 +273,7 @@
                 >
                   {{ d.nome }}
                 </p>
-                <p class="text-xs text-gray-400">
+                <p class="text-xs text-gray-900 dark:text-gray-400">
                   Vence em {{ d.venceEmDias }} dias
                 </p>
               </div>
