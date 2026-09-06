@@ -1,0 +1,181 @@
+<div class="mb-6 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+  <div class="no-scrollbar flex max-w-full gap-1 overflow-x-auto rounded-xl bg-gray-100 p-1 dark:bg-gray-900">
+    @for (period of periods; track period.id) {
+      <button
+        type="button"
+        (click)="facade.setPeriodo(period.id)"
+        class="shrink-0 rounded-lg px-4 py-2 text-xs font-medium transition"
+        [class.bg-white]="facade.periodo() === period.id"
+        [class.text-brand-600]="facade.periodo() === period.id"
+        [class.shadow-theme-xs]="facade.periodo() === period.id"
+        [class.text-gray-500]="facade.periodo() !== period.id"
+        [class.dark:bg-gray-800]="facade.periodo() === period.id"
+      >
+        {{ period.label }}
+      </button>
+    }
+  </div>
+
+  @if (facade.periodo() === "custom") {
+    <div class="flex flex-wrap items-center gap-2">
+      <input
+        type="date"
+        [ngModel]="facade.customDe()"
+        (ngModelChange)="facade.customDe.set($event)"
+        class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+      />
+      <span class="text-sm text-gray-400">até</span>
+      <input
+        type="date"
+        [ngModel]="facade.customAte()"
+        (ngModelChange)="facade.customAte.set($event)"
+        class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+      />
+      <button
+        type="button"
+        (click)="facade.applyCustomPeriod()"
+        [disabled]="!facade.customDe() || !facade.customAte()"
+        class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
+      >
+        Aplicar
+      </button>
+    </div>
+  }
+</div>
+
+@if (facade.financialLoading()) {
+  <div class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400">
+    A carregar análise financeira...
+  </div>
+} @else if (facade.financialError()) {
+  <div class="rounded-2xl border border-error-200 bg-error-50 p-6 text-sm text-error-700 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-300">
+    <p class="font-semibold">Não foi possível carregar a análise financeira.</p>
+    <p class="mt-1">{{ facade.financialError() }}</p>
+    <button type="button" (click)="facade.loadFinancial().subscribe()" class="mt-4 rounded-lg bg-error-600 px-4 py-2 font-medium text-white">Tentar novamente</button>
+  </div>
+} @else {
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total faturado</p>
+      <p class="mt-3 text-xl font-bold tabular-nums text-gray-800 dark:text-white/90">{{ facade.formatAmount(facade.faturamentoResumo()?.totalFaturado) }}</p>
+      <p class="mt-4 text-xs text-gray-500">Receitas emitidas no período</p>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total recebido</p>
+      <p class="mt-3 text-xl font-bold tabular-nums text-success-600">{{ facade.formatAmount(facade.faturamentoResumo()?.totalRecebido) }}</p>
+      <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+        <div class="h-full rounded-full bg-success-500" [style.width.%]="facade.taxaRecebida()"></div>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-gray-200 border-l-4 border-l-warning-500 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total em aberto</p>
+      <p class="mt-3 text-xl font-bold tabular-nums text-warning-600">{{ facade.formatAmount(facade.faturamentoResumo()?.totalEmAberto) }}</p>
+      <p class="mt-4 text-xs text-gray-500">{{ facade.faturamentoResumo()?.quantidadeFaturasPendentes ?? 0 }} faturas pendentes</p>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Taxa recebida</p>
+      <p class="mt-3 text-xl font-bold tabular-nums text-brand-600">{{ facade.taxaRecebida().toFixed(1) }}%</p>
+      <p class="mt-4 text-xs text-gray-500">Efetividade de cobrança</p>
+    </div>
+  </div>
+
+  <section class="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex flex-col gap-4 border-b border-gray-100 p-5 sm:flex-row sm:items-center sm:justify-between dark:border-gray-800">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-white/90">Ranking: total faturado por cliente</h2>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Ordenado pelo volume total de receitas</p>
+      </div>
+      <label class="relative block w-full sm:w-72">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <input
+          type="search"
+          [ngModel]="facade.search()"
+          (ngModelChange)="facade.setSearch($event)"
+          placeholder="Pesquisar cliente..."
+          class="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+        />
+      </label>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-[1050px] w-full">
+        <thead class="border-b border-gray-100 bg-gray-50 text-left text-xs font-medium uppercase text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
+          <tr>
+            <th class="px-5 py-3">Pos.</th>
+            <th class="px-5 py-3">Cliente</th>
+            <th class="px-5 py-3 text-right">Faturado</th>
+            <th class="px-5 py-3 text-right">Recebido</th>
+            <th class="px-5 py-3 text-right">Em aberto</th>
+            <th class="px-5 py-3">% recebido</th>
+            <th class="px-5 py-3">Próximo prazo</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+          @for (item of facade.visibleFaturamento(); track item.idCliente) {
+            <tr (click)="toggleClient(item.idCliente)" class="cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.03]">
+              <td class="px-5 py-4 text-sm font-bold text-brand-600">#{{ rowPosition(item) }}</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <span class="flex size-9 items-center justify-center rounded-lg bg-brand-50 text-xs font-bold text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">{{ facade.initials(item.nomeEmpresarial) }}</span>
+                  <span class="max-w-56 truncate text-sm font-semibold text-gray-800 dark:text-white/90">{{ item.nomeEmpresarial }}</span>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-right text-sm font-semibold tabular-nums text-gray-800 dark:text-white/90">{{ facade.formatAmount(item.faturado) }}</td>
+              <td class="px-5 py-4 text-right text-sm tabular-nums text-success-600">{{ facade.formatAmount(item.recebido) }}</td>
+              <td class="px-5 py-4 text-right text-sm tabular-nums" [class.text-warning-600]="item.emAberto > 0" [class.text-gray-500]="item.emAberto === 0">{{ facade.formatAmount(item.emAberto) }}</td>
+              <td class="w-40 px-5 py-4">
+                <div class="flex items-center gap-2">
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                    <div class="h-full rounded-full bg-brand-500" [style.width.%]="item.percentagemRecebido"></div>
+                  </div>
+                  <span class="w-10 text-right text-xs font-semibold">{{ item.percentagemRecebido.toFixed(0) }}%</span>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold" [class]="prazoClasses(item.prazoQueFaltaDias)">{{ prazoLabel(item.prazoQueFaltaDias) }}</span></td>
+              <td class="px-5 py-4 text-right text-gray-400"><span class="inline-block transition" [class.rotate-180]="expandedClient() === item.idCliente">⌄</span></td>
+            </tr>
+            @if (expandedClient() === item.idCliente) {
+              <tr class="bg-gray-50/70 dark:bg-gray-900/50">
+                <td colspan="8" class="px-8 py-5">
+                  <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-600 dark:text-brand-400">Últimas receitas</p>
+                  @if (facade.receitasLoading()[item.idCliente]) {
+                    <p class="py-6 text-center text-sm text-gray-400">A carregar movimentos...</p>
+                  } @else {
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                      @for (receita of receitas(item.idCliente); track receita.id) {
+                        <div class="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
+                          <p class="truncate text-xs text-gray-500">{{ receita.descricao }}</p>
+                          <p class="mt-1 font-semibold tabular-nums text-gray-800 dark:text-white/90">{{ facade.formatAmount(receita.valor) }}</p>
+                          <div class="mt-2 flex items-center justify-between gap-2">
+                            <span class="rounded-full px-2 py-0.5 text-[10px] font-bold" [class.bg-success-50]="receita.situacao === 'PAGO'" [class.text-success-700]="receita.situacao === 'PAGO'" [class.bg-warning-50]="receita.situacao === 'PENDENTE'" [class.text-warning-700]="receita.situacao === 'PENDENTE'">{{ receita.situacao }}</span>
+                            <span class="text-[10px] text-gray-400">{{ receita.dataLancamento | date: "dd/MM/yyyy" }}</span>
+                          </div>
+                        </div>
+                      } @empty {
+                        <p class="col-span-full py-6 text-center text-sm text-gray-400">Sem receitas para este cliente.</p>
+                      }
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr><td colspan="8" class="px-5 py-16 text-center text-sm text-gray-400">Sem faturamento no período selecionado.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex flex-col gap-3 border-t border-gray-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-gray-800">
+      <p class="text-sm text-gray-500">
+        Mostrando {{ startItem() }}–{{ endItem() }} de {{ facade.filteredFaturamento().length }} clientes
+      </p>
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="facade.previousPage()" [disabled]="facade.page() === 1" class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">Anterior</button>
+        <span class="px-2 text-sm text-gray-500">{{ facade.page() }} / {{ facade.totalPages() }}</span>
+        <button type="button" (click)="facade.nextPage()" [disabled]="facade.page() === facade.totalPages()" class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">Próximo</button>
+      </div>
+    </div>
+  </section>
+}

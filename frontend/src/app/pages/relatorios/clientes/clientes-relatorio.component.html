@@ -1,0 +1,56 @@
+<div class="flex flex-col gap-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">
+        Relatórios
+      </p>
+      <h1 class="text-title-sm font-bold text-gray-800 dark:text-white/90">
+        Relatórios de Clientes
+      </h1>
+      <p class="mt-1 text-theme-sm text-gray-500 dark:text-gray-400">
+        Visão consolidada da carteira e do desempenho financeiro dos clientes.
+      </p>
+    </div>
+
+    @if (facade.activeTab() === "analise-financeira") {
+      <button
+        type="button"
+        (click)="facade.exportFinancialCsv()"
+        [disabled]="!facade.faturamento().length"
+        class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Exportar CSV
+      </button>
+    }
+  </div>
+
+  <div class="no-scrollbar flex gap-7 overflow-x-auto border-b border-gray-200 dark:border-gray-800">
+    @for (tab of tabs; track tab.id) {
+      <button
+        type="button"
+        (click)="facade.setTab(tab.id)"
+        class="shrink-0 border-b-2 px-0.5 pb-3 text-sm font-medium transition"
+        [class.border-brand-500]="facade.activeTab() === tab.id"
+        [class.text-brand-600]="facade.activeTab() === tab.id"
+        [class.dark:text-brand-400]="facade.activeTab() === tab.id"
+        [class.border-transparent]="facade.activeTab() !== tab.id"
+        [class.text-gray-500]="facade.activeTab() !== tab.id"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  @if (facade.activeTab() === "visao-geral") {
+    <div class="report-tab-panel">
+      <app-clientes-relatorio-visao-geral />
+    </div>
+  } @else {
+    <div class="report-tab-panel">
+      <app-clientes-relatorio-analise-financeira />
+    </div>
+  }
+</div>

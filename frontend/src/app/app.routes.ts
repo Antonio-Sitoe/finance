@@ -20,6 +20,7 @@ import { TransactionsImportComponent } from "./pages/transactions/import/transac
 import { GlobalSearchComponent } from "./pages/global-search/global-search.component";
 import { DashboardComponent } from "./pages/dashboard/dashboard/dashboard.component";
 import { FluxoDeCaixaComponent } from "./pages/fluxo-de-caixa/fluxo-de-caixa.component";
+import { ClientesRelatorioComponent } from "./pages/relatorios/clientes/clientes-relatorio.component";
 
 export const routes: Routes = [
   {
@@ -85,6 +86,11 @@ export const routes: Routes = [
         path: "fluxo-de-caixa",
         component: FluxoDeCaixaComponent,
         title: "Fluxo de Caixa | FinanceApp Administrative Panel",
+      },
+      {
+        path: "relatorios/clientes",
+        component: ClientesRelatorioComponent,
+        title: "Relatórios de Clientes | FinanceApp Administrative Panel",
       },
       {
         path: "global-search",

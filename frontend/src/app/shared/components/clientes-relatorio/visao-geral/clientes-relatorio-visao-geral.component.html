@@ -1,0 +1,184 @@
+@if (facade.overviewLoading()) {
+  <div class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400">
+    A carregar relatório de clientes...
+  </div>
+} @else if (facade.overviewError()) {
+  <div class="rounded-2xl border border-error-200 bg-error-50 p-6 text-sm text-error-700 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-300">
+    <p class="font-semibold">Não foi possível carregar a visão geral.</p>
+    <p class="mt-1">{{ facade.overviewError() }}</p>
+    <button type="button" (click)="facade.loadOverview().subscribe()" class="mt-4 rounded-lg bg-error-600 px-4 py-2 font-medium text-white hover:bg-error-700">
+      Tentar novamente
+    </button>
+  </div>
+} @else {
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="flex items-center gap-4">
+        <span class="flex size-12 items-center justify-center rounded-xl bg-blue-light-50 text-blue-light-600 dark:bg-blue-light-500/10">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 21v-14l8-4 8 4v14M8 9h1m3 0h1m3 0h1M8 13h1m3 0h1m3 0h1M9 21v-4h6v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Total de clientes</p>
+          <p class="mt-1 text-2xl font-bold tabular-nums text-gray-800 dark:text-white/90">{{ facade.status()?.total ?? 0 }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="flex items-center gap-4">
+        <span class="flex size-12 items-center justify-center rounded-xl bg-success-50 text-success-600 dark:bg-success-500/10">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="m7 12 3 3 7-7M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Clientes ativos</p>
+          <p class="mt-1 text-2xl font-bold tabular-nums text-success-600">{{ facade.status()?.activos ?? 0 }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="flex items-center gap-4">
+        <span class="flex size-12 items-center justify-center rounded-xl bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 8a4 4 0 1 1 8 0 4 4 0 0 1-8 0ZM4 21a8 8 0 0 1 16 0M3 3l18 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+        <div>
+          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Clientes inativos</p>
+          <p class="mt-1 text-2xl font-bold tabular-nums text-gray-700 dark:text-gray-200">{{ facade.status()?.inativos ?? 0 }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="flex items-center gap-4">
+        <span class="flex size-12 items-center justify-center rounded-xl bg-warning-50 text-warning-600 dark:bg-warning-500/10">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.8 2.2 18a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+        <div>
+          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Dados incompletos</p>
+          <p class="mt-1 text-2xl font-bold tabular-nums text-warning-600">{{ facade.status()?.semDadosContactos ?? 0 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white/90">Distribuição por situação</h2>
+      <div class="mt-7 flex flex-col items-center justify-around gap-8 sm:flex-row">
+        <div class="h-[210px] w-[230px]">
+          <apx-chart
+            [series]="statusSeries()"
+            [chart]="statusChart"
+            [labels]="statusLabels"
+            [colors]="statusColors"
+            [plotOptions]="statusPlotOptions"
+            [dataLabels]="statusDataLabels"
+            [legend]="statusLegend"
+            [stroke]="statusStroke"
+            [tooltip]="statusTooltip"
+          ></apx-chart>
+        </div>
+        <div class="min-w-48 space-y-4">
+          <div class="flex items-center justify-between gap-8 text-sm">
+            <span class="flex items-center gap-2 text-gray-600 dark:text-gray-300"><i class="size-2.5 rounded-full bg-brand-500"></i>Ativos</span>
+            <strong>{{ facade.status()?.activos ?? 0 }}</strong>
+          </div>
+          <div class="flex items-center justify-between gap-8 text-sm">
+            <span class="flex items-center gap-2 text-gray-600 dark:text-gray-300"><i class="size-2.5 rounded-full bg-gray-400"></i>Inativos</span>
+            <strong>{{ facade.status()?.inativos ?? 0 }}</strong>
+          </div>
+          <div class="border-t border-gray-100 pt-4 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
+            Base total: {{ facade.status()?.total ?? 0 }} clientes
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white/90">Classificação por nota</h2>
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Distribuição e recebíveis pendentes por grupo</p>
+      <div class="mt-7 space-y-6">
+        @for (item of facade.classificacao(); track item.classification) {
+          <div>
+            <div class="mb-2 flex items-center justify-between gap-4 text-sm">
+              <span class="font-medium text-gray-700 dark:text-gray-300">{{ classificationLabel(item.classification) }}</span>
+              <span class="tabular-nums text-gray-500">{{ item.quantidadeClientes }} clientes</span>
+            </div>
+            <div class="h-3 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+              <div class="h-full rounded-full transition-all" [class]="classificationTone(item.classification)" [style.width.%]="classificationWidth(item)"></div>
+            </div>
+            <p class="mt-1.5 text-right text-xs text-gray-500 dark:text-gray-400">
+              Em aberto: {{ facade.formatAmount(item.recebiveisPendentes) }}
+            </p>
+          </div>
+        } @empty {
+          <p class="py-12 text-center text-sm text-gray-400">Sem classificações para apresentar.</p>
+        }
+      </div>
+    </section>
+  </div>
+
+  <section class="mt-6">
+    <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">Qualidade da carteira</h2>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div class="rounded-2xl border border-gray-200 border-l-4 border-l-error-500 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Clientes sem email</p>
+        <p class="mt-5 text-2xl font-bold text-error-600">{{ facade.semDados()?.semContactos ?? 0 }}</p>
+      </div>
+      <div class="rounded-2xl border border-gray-200 border-l-4 border-l-warning-500 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Clientes sem telefone</p>
+        <p class="mt-5 text-2xl font-bold text-warning-600">{{ facade.semDados()?.semTelefone ?? 0 }}</p>
+      </div>
+      <div class="rounded-2xl border border-gray-200 border-l-4 border-l-brand-500 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Clientes com múltiplos contactos</p>
+        <p class="mt-5 text-2xl font-bold text-brand-600">{{ facade.multiplosContactos() }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-white/90">Clientes recentes</h2>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Últimos registos da carteira</p>
+      </div>
+      <a routerLink="/costumers" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400">Ver todos</a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full">
+        <thead class="bg-gray-50 text-left text-xs font-medium uppercase text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+          <tr>
+            <th class="px-5 py-3">Cliente</th>
+            <th class="px-5 py-3">Email</th>
+            <th class="px-5 py-3">Telefone</th>
+            <th class="px-5 py-3">Nota</th>
+            <th class="px-5 py-3">Situação</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+          @for (cliente of facade.clientesRecentes(); track cliente.id) {
+            <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.03]">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <span class="flex size-9 items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">{{ facade.initials(cliente.nomeEmpresarial) }}</span>
+                  <span class="whitespace-nowrap text-sm font-medium text-gray-800 dark:text-white/90">{{ cliente.nomeEmpresarial }}</span>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-600 dark:text-gray-300">{{ cliente.email || "Não informado" }}</td>
+              <td class="px-5 py-4 text-sm text-gray-600 dark:text-gray-300">{{ cliente.telefone || "Não informado" }}</td>
+              <td class="px-5 py-4 text-sm font-semibold text-warning-600">{{ cliente.nota ?? 0 }}/10</td>
+              <td class="px-5 py-4">
+                <span
+                  class="rounded-full px-2.5 py-1 text-xs font-semibold"
+                  [class.bg-success-50]="cliente.situacao === 'ATIVO'"
+                  [class.text-success-700]="cliente.situacao === 'ATIVO'"
+                  [class.bg-gray-100]="cliente.situacao !== 'ATIVO'"
+                  [class.text-gray-600]="cliente.situacao !== 'ATIVO'"
+                >{{ cliente.situacao }}</span>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="px-5 py-14 text-center text-sm text-gray-400">Sem clientes recentes.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+}
