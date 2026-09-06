@@ -29,7 +29,7 @@ public class Categoria extends BaseEntity {
   @Column(name = "credito")
   private Boolean credito;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_pai", referencedColumnName = "id")
   private Categoria categoriaPai;
 

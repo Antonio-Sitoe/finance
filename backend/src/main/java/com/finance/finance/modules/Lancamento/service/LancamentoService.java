@@ -29,6 +29,7 @@ import com.finance.finance.modules.Lancamento.dto.LancamentoStatusResponseDTO;
 import com.finance.finance.modules.Lancamento.mapper.LancamentoMapper;
 import com.finance.finance.modules.Lancamento.model.Lancamento;
 import com.finance.finance.modules.Lancamento.repository.LancamentoRepository;
+import com.finance.finance.modules.Lancamento.repository.LancamentoResumoProjection;
 import com.finance.finance.modules.Lancamento.utils.MapperText;
 import com.finance.finance.modules.categoria.model.Categoria;
 import com.finance.finance.modules.categoria.repository.CategoriaRepository;
@@ -250,7 +251,7 @@ public class LancamentoService {
 
     @Transactional
     public LancamentoResponseDTO atualizar(Long id, LancamentoRequestDto dto) {
-        Lancamento lancamento = lancamentoRepository.findById(id)
+        Lancamento lancamento = lancamentoRepository.findDetailedById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Lancamento nao encontrado com id: " + id));
 
         Conta conta = dto.getContaId() != null ? buscarContaAtiva(dto.getContaId()) : null;
@@ -365,16 +366,20 @@ public class LancamentoService {
 
     @Transactional(readOnly = true)
     public LancamentoResumoDTO resumo() {
-        long total = lancamentoRepository.count();
-        BigDecimal receita = lancamentoRepository.sumValorByTipo(TipoLancamento.RECEITA);
-        BigDecimal despesa = lancamentoRepository.sumValorByTipo(TipoLancamento.DESPESA);
+        LancamentoResumoProjection agg = lancamentoRepository.resumir();
+        if (agg == null || agg.getTotal() == null) {
+            return new LancamentoResumoDTO(0, 0, 0, 0);
+        }
+        BigDecimal receita = agg.getReceita() != null ? agg.getReceita() : BigDecimal.ZERO;
+        BigDecimal despesa = agg.getDespesa() != null ? agg.getDespesa() : BigDecimal.ZERO;
         BigDecimal saldo = receita.subtract(despesa);
-        return new LancamentoResumoDTO(total, receita.doubleValue(), despesa.doubleValue(), saldo.doubleValue());
+        return new LancamentoResumoDTO(agg.getTotal(), receita.doubleValue(), despesa.doubleValue(),
+                saldo.doubleValue());
     }
 
     @Transactional(readOnly = true)
     public LancamentoResponseDTO obterPorId(Long id) {
-        return lancamentoRepository.findById(id)
+        return lancamentoRepository.findDetailedById(id)
                 .map(LancamentoMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Lancamento nao encontrado com id: " + id));
     }

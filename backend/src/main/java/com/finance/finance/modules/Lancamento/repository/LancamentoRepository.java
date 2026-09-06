@@ -1,8 +1,13 @@
 package com.finance.finance.modules.Lancamento.repository;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -10,11 +15,18 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import com.finance.finance.modules.Lancamento.model.Lancamento;
-import com.finance.finance.modules.common.enums.TipoLancamento;
 
 import jakarta.persistence.QueryHint;
 
 public interface LancamentoRepository extends JpaRepository<Lancamento, Long>, JpaSpecificationExecutor<Lancamento> {
+
+        @Override
+        @EntityGraph(attributePaths = { "conta", "categoria", "cliente", "fornecedor" })
+        Page<Lancamento> findAll(Specification<Lancamento> spec, Pageable pageable);
+
+        @EntityGraph(attributePaths = { "conta", "categoria", "cliente", "fornecedor" })
+        @Query("SELECT l FROM Lancamento l WHERE l.id = :id")
+        Optional<Lancamento> findDetailedById(@Param("id") Long id);
 
         @QueryHints(value = {
                         @QueryHint(name = "org.hibernate.fetchSize", value = "500"),
@@ -28,8 +40,14 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long>, J
                         + "ORDER BY l.dataVencimento ASC")
         Stream<Lancamento> streamAll();
 
-        @Query("SELECT COALESCE(SUM(l.valor), 0) FROM Lancamento l WHERE l.tipo = :tipo")
-        BigDecimal sumValorByTipo(@Param("tipo") TipoLancamento tipo);
+        @Query(value = """
+                        SELECT
+                          COUNT(*) AS total,
+                          COALESCE(SUM(CASE WHEN tipo = 'RECEITA' THEN valor ELSE 0 END), 0) AS receita,
+                          COALESCE(SUM(CASE WHEN tipo = 'DESPESA' THEN valor ELSE 0 END), 0) AS despesa
+                        FROM lancamentos
+                        """, nativeQuery = true)
+        LancamentoResumoProjection resumir();
 
         @Query(value = """
                 SELECT COALESCE(SUM(CASE WHEN tipo = 'RECEITA' THEN valor ELSE -valor END), 0)

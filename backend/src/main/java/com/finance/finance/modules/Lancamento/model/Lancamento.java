@@ -52,19 +52,19 @@ public class Lancamento extends BaseEntity {
   @Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) DEFAULT 'DESPESA' NOT NULL")
   private TipoLancamento tipo;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_conta")
   private Conta conta;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_categoria")
   private Categoria categoria;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_cliente")
   private Cliente cliente;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_fornecedor")
   private Fornecedor fornecedor;
 }
