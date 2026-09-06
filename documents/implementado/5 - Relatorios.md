@@ -48,8 +48,7 @@ Página única com abas horizontais. Filtro de período global no topo (aplicado
 
 - [x] **Fornecedores com maior gasto** — nome e valor total gasto, ordenado decrescente
 - [x] **Ranking por valor a pagar (pendente)** — nome, soma pendente, número de lançamentos
-- [ ] **Análise de parcelamento** — média de parcelas por fornecedor e quantos optam por >3 parcelas
-- [ ] **Fornecedores sem website ou sem email** — lista com soma de pagamentos realizados e pendentes
-- [ ] **Evolução mensal de pagamentos** — últimos 12 meses, soma por mês, top 3 categorias associadas
+- [x] **Análise de parcelamento** — média de parcelas por fornecedor e quantos optam por >3 parcelas
+- [x] **Evolução mensal de pagamentos** — últimos 12 meses, soma por mês, top 3 categorias associadas
 
 ---

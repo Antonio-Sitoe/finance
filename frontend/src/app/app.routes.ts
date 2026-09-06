@@ -21,6 +21,7 @@ import { GlobalSearchComponent } from "./pages/global-search/global-search.compo
 import { DashboardComponent } from "./pages/dashboard/dashboard/dashboard.component";
 import { FluxoDeCaixaComponent } from "./pages/fluxo-de-caixa/fluxo-de-caixa.component";
 import { ClientesRelatorioComponent } from "./pages/relatorios/clientes/clientes-relatorio.component";
+import { CategoriasRelatorioComponent } from "./pages/relatorios/categorias/categorias-relatorio.component";
 
 export const routes: Routes = [
   {
@@ -91,6 +92,11 @@ export const routes: Routes = [
         path: "relatorios/clientes",
         component: ClientesRelatorioComponent,
         title: "Relatórios de Clientes | FinanceApp Administrative Panel",
+      },
+      {
+        path: "relatorios/categorias",
+        component: CategoriasRelatorioComponent,
+        title: "Relatórios de Categorias | FinanceApp Administrative Panel",
       },
       {
         path: "global-search",

@@ -1,3 +1,22 @@
+# Exercícios — Intermediário (11–20)
+
+Objetivo: validações dentro da transação, múltiplas tabelas e regras de negócio.
+
+## Índice
+
+- [ ] Ex. 11 — Atualização condicional de saldo (sem saldo negativo)
+- [ ] Ex. 12 — Inserção de cliente com múltiplos contactos
+- [ ] Ex. 13 — Registro de pagamento parcial
+- [ ] Ex. 14 — Cancelamento de lançamento com reversão
+- [ ] Ex. 15 — Transferência entre contas com limite
+- [ ] Ex. 16 — Atualização em massa de clientes inativos
+- [ ] Ex. 17 — Parcelamento de lançamento em múltiplas parcelas
+- [ ] Ex. 18 — Atualização de categoria com verificação débito/crédito
+- [ ] Ex. 19 — Registro de pagamentos de múltiplos clientes
+- [ ] Ex. 20 — Ajuste de saldo com backup de segurança
+
+---
+
 ### Exercício 11 — Atualização Condicional de Saldo
 
 Contexto: Atualizar saldo de uma conta apenas se o valor não gerar saldo negativo.

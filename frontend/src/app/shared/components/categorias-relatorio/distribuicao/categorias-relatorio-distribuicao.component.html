@@ -1,0 +1,187 @@
+@if (facade.distribuicaoLoading()) {
+  <div class="rounded-2xl border border-gray-200 bg-white p-10 text-center dark:border-gray-800 dark:bg-white/[0.03]">
+    <p class="text-sm text-gray-500 dark:text-gray-400">A carregar distribuição…</p>
+  </div>
+} @else if (facade.distribuicaoError()) {
+  <div class="rounded-2xl border border-error-200 bg-error-50 p-6 dark:border-error-500/30 dark:bg-error-500/10">
+    <p class="text-sm text-error-700 dark:text-error-400">{{ facade.distribuicaoError() }}</p>
+    <button
+      type="button"
+      class="mt-3 text-sm font-medium text-brand-600"
+      (click)="facade.loadDistribuicao().subscribe()"
+    >
+      Tentar novamente
+    </button>
+  </div>
+} @else {
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs font-medium uppercase tracking-wide text-gray-500">Categorias c/ receitas</p>
+      <p class="mt-2 text-2xl font-bold text-gray-800 dark:text-white/90">
+        {{ facade.categoriasComReceita() }}
+      </p>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs font-medium uppercase tracking-wide text-gray-500">Categorias c/ despesas</p>
+      <p class="mt-2 text-2xl font-bold text-gray-800 dark:text-white/90">
+        {{ facade.categoriasComDespesa() }}
+      </p>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs font-medium uppercase tracking-wide text-gray-500">Maior receita</p>
+      <p class="mt-2 truncate text-sm font-semibold text-gray-800 dark:text-white/90">
+        {{ facade.maiorReceita()?.nomeCategoria || "—" }}
+      </p>
+      <p class="mt-1 text-sm font-bold text-success-600">
+        {{ facade.formatAmount(facade.maiorReceita()?.totalCredito) }}
+      </p>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs font-medium uppercase tracking-wide text-gray-500">Maior despesa</p>
+      <p class="mt-2 truncate text-sm font-semibold text-gray-800 dark:text-white/90">
+        {{ facade.maiorDespesa()?.nomeCategoria || "—" }}
+      </p>
+      <p class="mt-1 text-sm font-bold text-error-600">
+        {{ facade.formatAmount(facade.maiorDespesa()?.valorTotal) }}
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">Receitas por categoria</h3>
+        <span class="text-sm text-gray-500">{{ facade.formatAmount(facade.totalReceita()) }}</span>
+      </div>
+      @if (receitaSeries().length) {
+        <apx-chart
+          [series]="receitaSeries()"
+          [chart]="chart"
+          [labels]="receitaLabels()"
+          [colors]="receitaColors"
+          [dataLabels]="dataLabels"
+          [legend]="legend"
+          [stroke]="stroke"
+          [plotOptions]="plotOptions"
+          [tooltip]="tooltip"
+        />
+      } @else {
+        <p class="py-10 text-center text-sm text-gray-500">Sem receitas classificadas.</p>
+      }
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">Despesas por categoria</h3>
+        <span class="text-sm text-gray-500">{{ facade.formatAmount(facade.totalDespesa()) }}</span>
+      </div>
+      @if (despesaSeries().length) {
+        <apx-chart
+          [series]="despesaSeries()"
+          [chart]="chart"
+          [labels]="despesaLabels()"
+          [colors]="despesaColors"
+          [dataLabels]="dataLabels"
+          [legend]="legend"
+          [stroke]="stroke"
+          [plotOptions]="plotOptions"
+          [tooltip]="tooltip"
+        />
+      } @else {
+        <p class="py-10 text-center text-sm text-gray-500">Sem despesas classificadas.</p>
+      }
+    </div>
+  </div>
+
+  <div class="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800">
+      <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
+        Tabela de distribuição detalhada
+      </h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[720px] text-left">
+        <thead class="bg-gray-50 dark:bg-white/[0.02]">
+          <tr class="text-xs uppercase tracking-wide text-gray-500">
+            <th class="px-6 py-3 font-medium">Categoria</th>
+            <th class="px-6 py-3 font-medium">Tipo</th>
+            <th class="px-6 py-3 font-medium">Nº lançamentos</th>
+            <th class="px-6 py-3 font-medium">Soma</th>
+            <th class="px-6 py-3 font-medium">Média</th>
+            <th class="px-6 py-3 font-medium">% do total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of facade.visibleDistribuicao(); track row.idCategoria + '-' + row.nomeCategoria) {
+            <tr class="border-t border-gray-100 dark:border-gray-800">
+              <td class="px-6 py-4 text-sm font-semibold text-gray-800 dark:text-white/90">
+                {{ row.nomeCategoria }}
+              </td>
+              <td class="px-6 py-4">
+                <span
+                  class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase"
+                  [class.bg-success-50]="row.tipo === 'RECEITA'"
+                  [class.text-success-700]="row.tipo === 'RECEITA'"
+                  [class.bg-error-50]="row.tipo === 'DESPESA'"
+                  [class.text-error-700]="row.tipo === 'DESPESA'"
+                  [class.bg-gray-100]="row.tipo === 'MISTO'"
+                  [class.text-gray-600]="row.tipo === 'MISTO'"
+                >
+                  {{ row.tipo }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ row.quantidade }}</td>
+              <td class="px-6 py-4 text-sm font-semibold text-gray-800 dark:text-white/90">
+                {{ facade.formatAmount(row.soma) }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                {{ facade.formatAmount(row.media) }}
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                    <div
+                      class="h-full rounded-full bg-brand-500"
+                      [style.width.%]="row.pctDoTotal"
+                    ></div>
+                  </div>
+                  <span class="w-12 text-right text-xs font-semibold text-gray-700 dark:text-gray-300">
+                    {{ row.pctDoTotal | number: "1.0-1" }}%
+                  </span>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-500">
+                Sem dados de distribuição.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="flex items-center justify-between border-t border-gray-200 px-6 py-3 dark:border-gray-800">
+      <span class="text-xs text-gray-500">
+        Página {{ facade.page() }} de {{ facade.totalPages() }}
+      </span>
+      <div class="flex gap-2">
+        <button
+          type="button"
+          class="rounded-lg border border-gray-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-gray-700"
+          [disabled]="facade.page() <= 1"
+          (click)="facade.previousPage()"
+        >
+          Anterior
+        </button>
+        <button
+          type="button"
+          class="rounded-lg border border-gray-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-gray-700"
+          [disabled]="facade.page() >= facade.totalPages()"
+          (click)="facade.nextPage()"
+        >
+          Seguinte
+        </button>
+      </div>
+    </div>
+  </div>
+}

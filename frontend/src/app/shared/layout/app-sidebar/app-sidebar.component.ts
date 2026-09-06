@@ -86,6 +86,7 @@ export class AppSidebarComponent {
       subItems: [
         { name: 'Fluxo Diário', path: '/fluxo-de-caixa' },
         { name: 'Clientes', path: '/relatorios/clientes' },
+        { name: 'Categorias', path: '/relatorios/categorias' },
       ],
     },
     {

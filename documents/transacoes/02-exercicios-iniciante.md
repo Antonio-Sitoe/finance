@@ -1,3 +1,22 @@
+# Exercícios — Iniciante (1–10)
+
+Objetivo: praticar `BEGIN`, `COMMIT` e `ROLLBACK` em operações simples (1–2 tabelas).
+
+## Índice
+
+- [ ] Ex. 1 — Inserção de cliente com commit
+- [ ] Ex. 2 — Inserção de cliente com rollback
+- [ ] Ex. 3 — Atualização de telefone de cliente
+- [ ] Ex. 4 — Exclusão de contacto com rollback
+- [ ] Ex. 5 — Alteração de nota de fornecedor
+- [ ] Ex. 6 — Transferência de saldo entre contas
+- [ ] Ex. 7 — Inserção de lançamento com atualização de conta
+- [ ] Ex. 8 — Inserção de múltiplos lançamentos com validação
+- [ ] Ex. 9 — Atualização de categoria com rollback condicional
+- [ ] Ex. 10 — Alteração de situação de cliente com validação
+
+---
+
 ## **Exercício 1 — Inserção de Cliente com Commit**
 
 **Contexto:** Você precisa adicionar um novo cliente à base de dados.

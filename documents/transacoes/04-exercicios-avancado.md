@@ -1,3 +1,23 @@
+# Exercícios — Avançado (21–30)
+
+Objetivo: concorrência, níveis de isolamento, locking e deadlocks.  
+Requer **duas sessões** `psql` abertas ao mesmo tempo.
+
+## Índice
+
+- [ ] Ex. 21 — Teste de LOST UPDATE (duas transações concorrentes)
+- [ ] Ex. 22 — Resolver LOST UPDATE com SELECT FOR UPDATE
+- [ ] Ex. 23 — Simular DIRTY READs com READ UNCOMMITTED
+- [ ] Ex. 24 — Evitar DIRTY READs com READ COMMITTED
+- [ ] Ex. 25 — Simular NON-REPEATABLE READ
+- [ ] Ex. 26 — Resolver NON-REPEATABLE READ com REPEATABLE READ
+- [ ] Ex. 27 — Testar PHANTOM READ (inserção fantasma)
+- [ ] Ex. 28 — Evitar PHANTOM READ usando SERIALIZABLE
+- [ ] Ex. 29 — Testar Deadlock com duas transações cruzadas
+- [ ] Ex. 30 — Resolver deadlock reorganizando operações
+
+---
+
 # ✅ **Mais 10 Exercícios Avançados de Transações (21–30)**
 
 ---
