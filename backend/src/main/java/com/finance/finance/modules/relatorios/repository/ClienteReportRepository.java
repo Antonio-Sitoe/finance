@@ -14,7 +14,7 @@ import com.finance.finance.modules.relatorios.dto.clientes.ClienteFaturamentoPro
 import com.finance.finance.modules.relatorios.dto.clientes.ClienteFaturamentoResumoProjection;
 
 public interface ClienteReportRepository extends JpaRepository<Cliente, Long> {
-  Long countBySituacao(Situacao situacao);
+  long countBySituacao(Situacao situacao);
 
   Long countByNota(Integer nota);
 
