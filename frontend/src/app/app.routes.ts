@@ -28,8 +28,12 @@ export const routes: Routes = [
     children: [
       {
         path: "",
-        component: DashboardComponent,
         pathMatch: "full",
+        redirectTo: "dashboard",
+      },
+      {
+        path: "dashboard",
+        component: DashboardComponent,
         title: "Finance Dashboard | FinanceApp Administrative Panel",
       },
       {

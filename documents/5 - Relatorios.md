@@ -14,13 +14,14 @@ Página única com abas horizontais. Filtro de período global no topo (aplicado
 
 > Cobranças, parcelas vencidas, devedores e recebíveis futuros.
 
-- [ ] **Títulos vencidos** — id cliente/fornecedor, número da parcela, data vencimento, soma total por cliente
-- [ ] **Contas a receber** — cliente, descrição, valor pendente, data vencimento, dias em atraso
-- [ ] **Contas a pagar** — fornecedor/descrição, valor a pagar, data vencimento, status de pagamento
-- [ ] **Títulos futuros para banco** — PENDENTE com vencimento > hoje; parcela, soma por cliente; para apresentar a banco em pedido de crédito/investimento
-- [ ] **Maiores devedores** — clientes com maior soma de valor pendente, ordenados decrescente
-- [ ] **Melhores pagadores** — clientes com maior soma de valor pago (situação = PAGO), parcelas liquidadas
-- [ ] **Aging de títulos** — pendentes agrupados por faixa: 0–30 dias / 31–60 dias / 61–90 dias / >90 dias
+- [x] **Títulos vencidos** — id cliente/fornecedor, número da parcela, data vencimento, soma total por cliente
+
+- [x] **Contas a receber** — cliente, descrição, valor pendente, data vencimento, dias em atraso
+- [x] **Contas a pagar** — fornecedor/descrição, valor a pagar, data vencimento, status de pagamento
+- [x] **Títulos futuros para banco** — PENDENTE com vencimento > hoje; parcela, soma por cliente; para apresentar a banco em pedido de crédito/investimento
+- [x] **Maiores devedores** — clientes com maior soma de valor pendente, ordenados decrescente
+- [x] **Melhores pagadores** — clientes com maior soma de valor pago (situação = PAGO), parcelas liquidadas
+
 - [ ] **Duplicatas vencidas por cliente** — clientes com >1 parcela vencida, soma total
 - [ ] **Taxa de recuperação** — clientes com parcelas vencidas que pagaram nos últimos 30 dias
 
