@@ -17,6 +17,8 @@ import com.finance.finance.modules.Lancamento.dto.LancamentoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoResponseDTO;
 import com.finance.finance.modules.Lancamento.dto.LancamentoResumoDTO;
 import com.finance.finance.modules.Lancamento.dto.LancamentoStatusResponseDTO;
+import com.finance.finance.modules.Lancamento.dto.LancamentoTransferenciaRequestDto;
+import com.finance.finance.modules.Lancamento.dto.LancamentoTransferenciaResponseDTO;
 import com.finance.finance.modules.Lancamento.service.LancamentoService;
 import com.finance.finance.modules.common.dto.BulkResponseDTO;
 import com.finance.finance.modules.common.enums.PagamentoEnum;
@@ -114,6 +116,21 @@ public class LancamentoController {
         public ResponseEntity<List<LancamentoResponseDTO>> criarParcelado(
                         @RequestBody @Valid LancamentoParceladoRequestDto dto) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(service.criarParcelado(dto));
+        }
+
+        @PostMapping("/transfer")
+        @Operation(
+                        summary = "Transferir entre contas",
+                        description = "Cria atomicamente uma DESPESA na conta de origem e uma RECEITA na conta de destino "
+                                        + "(mesmo valor e descrição). Se qualquer passo falhar, nenhuma linha é gravada.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Transferência criada com sucesso", content = @Content(schema = @Schema(implementation = LancamentoTransferenciaResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "Dados inválidos ou contas iguais", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+                        @ApiResponse(responseCode = "404", description = "Conta ou categoria não encontrada", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+        })
+        public ResponseEntity<LancamentoTransferenciaResponseDTO> transferir(
+                        @RequestBody @Valid LancamentoTransferenciaRequestDto dto) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(service.transferir(dto));
         }
 
         @PatchMapping("/{id}")

@@ -1,6 +1,6 @@
 # Exercícios essenciais de transações
 
-Só os casos que ensinam algo útil para o finance (e para o Spring `@Transactional`).  
+Só os casos que ensinam algo útil para o finance (e para o Spring `@Transactional`).
 Corre **statement a statement**, não o ficheiro inteiro de uma vez.
 
 No Spring: `BEGIN` ≈ entrar no `@Transactional` · `COMMIT` ≈ método ok · `ROLLBACK` ≈ excepção.
@@ -11,7 +11,7 @@ Scripts SQL: `backend/src/main/resources/db/transactios/`.
 
 - [x] Ex. 1 — COMMIT (ver que fica permanente)
 - [x] Ex. 2 — ROLLBACK (ver que some tudo)
-- [ ] Ex. 3 — Transferência entre contas (2 escritas atómicas) ← liga ao produto
+- [x] Ex. 3 — Transferência entre contas (2 escritas atómicas) ← liga ao produto
 - [ ] Ex. 4 — Cliente + 2 contactos (2 tabelas)
 - [ ] Ex. 5 — Parcelamento (N inserts, tudo ou nada)
 - [ ] Ex. 6 — Lost update + `SELECT FOR UPDATE` (concorrência)
@@ -34,7 +34,7 @@ No vosso modelo **não há coluna** `saldo` **em** `contas`: o saldo vem dos lan
 
 ### Transferência entre contas
 
-UI: já há prompt/tela.  
+UI: já há prompt/tela.
 Backend: ainda falta o endpoint atómico.
 
 - [ ] `POST /api/lancamentos/transfer` (ou `/transactions/transfer`)

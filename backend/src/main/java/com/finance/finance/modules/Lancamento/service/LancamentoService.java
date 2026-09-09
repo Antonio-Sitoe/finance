@@ -26,6 +26,8 @@ import com.finance.finance.modules.Lancamento.dto.LancamentoRequestDto;
 import com.finance.finance.modules.Lancamento.dto.LancamentoResponseDTO;
 import com.finance.finance.modules.Lancamento.dto.LancamentoResumoDTO;
 import com.finance.finance.modules.Lancamento.dto.LancamentoStatusResponseDTO;
+import com.finance.finance.modules.Lancamento.dto.LancamentoTransferenciaRequestDto;
+import com.finance.finance.modules.Lancamento.dto.LancamentoTransferenciaResponseDTO;
 import com.finance.finance.modules.Lancamento.mapper.LancamentoMapper;
 import com.finance.finance.modules.Lancamento.model.Lancamento;
 import com.finance.finance.modules.Lancamento.repository.LancamentoRepository;
@@ -247,6 +249,68 @@ public class LancamentoService {
         return lancamentoRepository.saveAll(parcelas).stream()
                 .map(LancamentoMapper::toDto)
                 .toList();
+    }
+
+    /**
+     * Transferência atómica entre contas: DESPESA na origem + RECEITA no destino.
+     * Se qualquer passo falhar, nenhuma das duas linhas fica gravada (@Transactional).
+     */
+    @Transactional
+    public LancamentoTransferenciaResponseDTO transferir(LancamentoTransferenciaRequestDto dto) {
+        if (dto.getContaOrigemId().equals(dto.getContaDestinoId())) {
+            throw new BusinessException("Conta de origem e destino devem ser diferentes.");
+        }
+
+        Conta origem = buscarContaAtiva(dto.getContaOrigemId());
+        Conta destino = buscarContaAtiva(dto.getContaDestinoId());
+        Categoria categoria = buscarCategoria(dto.getCategoriaId());
+
+        LocalDateTime dataLancamento = dto.getDataLancamento() != null ? dto.getDataLancamento() : LocalDateTime.now();
+        LocalDateTime dataVencimento = dto.getDataVencimento() != null ? dto.getDataVencimento() : dataLancamento;
+        validarDatas(dataLancamento, dataVencimento);
+
+        String descricaoBase = dto.getDescricao().trim();
+
+        Lancamento saida = Lancamento.builder()
+                .descricao(descricaoBase)
+                .parcela(1)
+                .totalParcela(1)
+                .valor(dto.getValor())
+                .dataLancamento(dataLancamento)
+                .dataVencimento(dataVencimento)
+                .situacao(PagamentoEnum.PAGO)
+                .tipo(TipoLancamento.DESPESA)
+                .conta(origem)
+                .categoria(categoria)
+                .build();
+
+        Lancamento entrada = Lancamento.builder()
+                .descricao(descricaoBase)
+                .parcela(1)
+                .totalParcela(1)
+                .valor(dto.getValor())
+                .dataLancamento(dataLancamento)
+                .dataVencimento(dataVencimento)
+                .situacao(PagamentoEnum.PAGO)
+                .tipo(TipoLancamento.RECEITA)
+                .conta(destino)
+                .categoria(categoria)
+                .build();
+
+        List<Lancamento> salvos = lancamentoRepository.saveAll(List.of(saida, entrada));
+        Lancamento despesa = salvos.stream()
+                .filter(l -> l.getTipo() == TipoLancamento.DESPESA)
+                .findFirst()
+                .orElse(salvos.get(0));
+        Lancamento receita = salvos.stream()
+                .filter(l -> l.getTipo() == TipoLancamento.RECEITA)
+                .findFirst()
+                .orElse(salvos.get(1));
+
+        return LancamentoTransferenciaResponseDTO.builder()
+                .saida(LancamentoMapper.toDto(despesa))
+                .entrada(LancamentoMapper.toDto(receita))
+                .build();
     }
 
     @Transactional
