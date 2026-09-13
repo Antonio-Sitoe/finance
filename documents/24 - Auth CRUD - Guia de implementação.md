@@ -1,50 +1,8 @@
-# Guia de implementação — Auth, JWT e roles dinâmicas
-
-Guia passo a passo do plano [23 - Auth CRUD.md](23%20-%20Auth%20CRUD.md).
-O plano diz **o quê** e **porquê**; este guia diz **como**, em que ordem, e como verificar cada passo antes de avançar.
-
-Factos do projecto: [Auth/0.begging.md](Auth/0.begging.md).
-
-> **Regra de ouro:** não avances para o passo seguinte sem o ✅ do anterior.
-> Cada sprint termina num estado que compila e corre.
-
----
-
-## Estado actual
-
-| Área | Estado | Onde |
-| ---- | ------ | ---- |
-| Backend auth (JWT, security) | ✅ | [Auth/1.1–1.6](Auth/1.5-1.6.md) |
-| Seed admin (`V4`) | ✅ | `admin@finance.com` / `Admin@123` |
-| Angular (login/sessão/ecrãs) | ✅ | [Auth/1.7-1.8.md](Auth/1.7-1.8.md) |
-| Forgot/reset (link no console) | ✅ | [Auth/1.9.md](Auth/1.9.md) |
-| Roles dinâmicas | ⬜ Próximo | Sprint 2 ↓ |
-
-**Login:** `admin@finance.com` / `Admin@123` — UI `/signin` ou:
-
-```bash
-curl -X POST http://localhost:8081/api/auth/login \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"admin@finance.com","senha":"Admin@123"}'
-```
-
-**Reset:** `POST /api/auth/forgot-password` → copiar URL do log do backend → `/reset-password?token=...`
-
----
-
-# Sprint 1 — Auth a funcionar ✅
-
-Objectivo cumprido: API protegida + login Angular + reset via log.
-
-Arquivo: [1.1-1.2](Auth/1.1-1.2.md) · [1.3-1.4](Auth/1.3-1.4.md) · [1.5-1.6](Auth/1.5-1.6.md) · [1.7-1.8](Auth/1.7-1.8.md) · [1.9](Auth/1.9.md)
-
----
-
 # Sprint 2 — Modelo de roles
 
 **Objectivo:** matriz de permissões na BD, filtro que a aplica, API para o admin.
 
-> Migrations: `V4` = seed admin (já feito). Roles = **`V5`**.
+> Migrations: `V4` = seed admin (já feito). Roles = `V5`.
 
 ## Passo 2.1 — Migration V5
 
@@ -142,7 +100,7 @@ public class PermissionCatalogSync implements ApplicationRunner {
 
 Notas:
 
-- Os paths aqui **já incluem `/api`** (o `RequestMappingHandlerMapping` vê o path final). Guardar `path_pattern` com `/api/clientes` ou fazer strip — escolher uma convenção e ser consistente com o filtro do passo 2.4.
+- Os paths aqui **já incluem** `/api` (o `RequestMappingHandlerMapping` vê o path final). Guardar `path_pattern` com `/api/clientes` ou fazer strip — escolher uma convenção e ser consistente com o filtro do passo 2.4.
 - Endpoint novo aparece sozinho no próximo arranque — é o upsert que garante isso.
 
 ✅ **Verificar:** arrancar → `SELECT modulo, count(*) FROM permissao GROUP BY modulo;` mostra os ~80 endpoints agrupados.
@@ -160,7 +118,7 @@ Notas:
 6. Senão → 403 com mensagem clara
 ```
 
-Cache: juntar `com.github.ben-manes.caffeine:caffeine` ao `pom.xml`. Cache `LoadingCache<Long, Set<String>>` roleId → códigos. **Invalidar no `PUT /roles/{id}`** (`cache.invalidate(roleId)`).
+Cache: juntar `com.github.ben-manes.caffeine:caffeine` ao `pom.xml`. Cache `LoadingCache<Long, Set<String>>` roleId → códigos. **Invalidar no** `PUT /roles/{id}` (`cache.invalidate(roleId)`).
 
 Para resolver o handler dentro do filtro: injectar `RequestMappingHandlerMapping` e chamar `getHandler(request)` — ou, mais simples, reconstruir o `codigo` a partir do path + método com a mesma regra do sync (recomendado: mesma regra = menos acoplamento).
 
@@ -259,43 +217,29 @@ Aplicar nos botões: `<button *hasPermission="'clientes.create'">Novo cliente</b
 3. **Último ADMIN**: em `desativar`/`activarOuDesativar` e no update de role, recusar se for o último user ATIVO com role `sistema`.
 4. **Access token só em memória**: remover `sessionStorage`; no F5, o guard chama `refresh()` (cookie) antes de `loadMe()`.
 5. **Testes** (`spring-boot-starter-security-test` + `webmvc-test` já estão no pom):
-   - 401 sem token; 403 sem permissão; ADMIN passa em tudo;
-   - desmarcar checkbox fecha o endpoint (cache invalidada);
-   - reset expira ao fim de 1h e não pode ser reutilizado;
-   - refresh rodado não pode ser reutilizado.
+
+- 401 sem token; 403 sem permissão; ADMIN passa em tudo;
+- desmarcar checkbox fecha o endpoint (cache invalidada);
+- reset expira ao fim de 1h e não pode ser reutilizado;
+- refresh rodado não pode ser reutilizado.
 
 ---
 
 # Armadilhas conhecidas (deste projeto)
 
-| Armadilha | Solução |
-| --------- | ------- |
-| Security matcher sem `/api` → tudo 401/403 | Matchers sempre com `/api/...` |
-| Boot 4: `flyway-core` sozinho não corre | Usar `spring-boot-starter-flyway` |
-| `ddl-auto: validate` rebenta após V5 | Mudar entidade + DTOs + mapper no mesmo commit da migration |
-| Nomes de tabela entidade ≠ migration | `@Table` = singular (`refresh_token`, não `refresh_tokens`) |
-| `Jwts.parser()` não existe no 0.11.5 | Usar `parserBuilder()` |
-| Segredo JWT curto / multilinha no `.env` | Uma linha: `openssl rand -base64 64 \| tr -d '\n'` |
-| `jwt` / `frontend` sob `spring:` no yaml | Propriedades na **raiz** (`jwt.secret`, não `spring.jwt.secret`) |
-| F5 no Angular perde o user | Guard chama `loadMe()` (Sprint 1) / `refresh()` (Sprint 4) |
-| Sync do catálogo cria permissões para `/roles` | Excluir `roles.*`/`permissoes.*` do catálogo; só bypass ADMIN |
-| `perfil` ainda referenciado no frontend | Select de roles substitui o enum no Sprint 3.3 |
-| Logout só limpa o cliente | Chamar `POST /auth/logout` para revogar o refresh na BD |
-| IDE gera `.class` com “Unresolved compilation problems” | `./mvnw compile` / Rebuild Project |
+| Armadilha                                               | Solução                                                          |
+| ------------------------------------------------------- | ---------------------------------------------------------------- | ----------- |
+| Security matcher sem `/api` → tudo 401/403              | Matchers sempre com `/api/...`                                   |
+| Boot 4: `flyway-core` sozinho não corre                 | Usar `spring-boot-starter-flyway`                                |
+| `ddl-auto: validate` rebenta após V5                    | Mudar entidade + DTOs + mapper no mesmo commit da migration      |
+| Nomes de tabela entidade ≠ migration                    | `@Table` = singular (`refresh_token`, não `refresh_tokens`)      |
+| `Jwts.parser()` não existe no 0.11.5                    | Usar `parserBuilder()`                                           |
+| Segredo JWT curto / multilinha no `.env`                | Uma linha: `openssl rand -base64 64                              | tr -d '\n'` |
+| `jwt` / `frontend` sob `spring:` no yaml                | Propriedades na **raiz** (`jwt.secret`, não `spring.jwt.secret`) |
+| F5 no Angular perde o user                              | Guard chama `loadMe()` (Sprint 1) / `refresh()` (Sprint 4)       |
+| Sync do catálogo cria permissões para `/roles`          | Excluir `roles.*`/`permissoes.*` do catálogo; só bypass ADMIN    |
+| `perfil` ainda referenciado no frontend                 | Select de roles substitui o enum no Sprint 3.3                   |
+| Logout só limpa o cliente                               | Chamar `POST /auth/logout` para revogar o refresh na BD          |
+| IDE gera `.class` com “Unresolved compilation problems” | `./mvnw compile` / Rebuild Project                               |
 
 ---
-
-# Ordem de commits sugerida
-
-1. ~~`V3` + entidades de token + config JWT~~ ✅
-2. ~~`JwtService` + `AuthService` + `AuthController`~~ ✅
-3. ~~Filtro JWT + `SecurityConfig` fechado~~ ✅ ← API protegida
-4. ~~`V4` seed admin~~ ✅
-5. ~~Angular: service + interceptor + guard + ecrãs ligados~~ ✅
-6. ~~Forgot/reset (link no console)~~ ✅
-7. `V5` ← **agora** + entidades role/permissao + migração de dados
-8. Sync do catálogo + filtro de permissões + cache
-9. API `/roles` + `/permissoes`
-10. UI roles (lista + matriz) + select de role em users
-11. Directiva + sidebar + guards de rota
-12. Sprint 4 (rate limit, cookies, testes)
