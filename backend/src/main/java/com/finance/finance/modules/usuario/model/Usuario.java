@@ -1,5 +1,7 @@
 package com.finance.finance.modules.usuario.model;
 
+import java.time.LocalDateTime;
+
 import com.finance.finance.modules.common.baseEntity.BaseEntity;
 import com.finance.finance.modules.common.enums.Perfil;
 import com.finance.finance.modules.common.enums.Situacao;
@@ -39,4 +41,6 @@ public class Usuario extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Situacao situacao;
+
+    private LocalDateTime ultimoAcesso;
 }

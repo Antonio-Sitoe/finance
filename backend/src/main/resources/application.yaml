@@ -24,5 +24,13 @@ spring:
     baseline-on-migrate: true
     baseline-version: 1
 
+jwt:
+  secret: ${JWT_SECRET}
+  access-ttl-minutes: ${JWT_ACCESS_TTL_MINUTES:15}
+  refresh-ttl-days: ${JWT_REFRESH_TTL_DAYS:7}
+
+frontend:
+  url: ${FRONTEND_URL:http://localhost:4200}
+
 server:
   port: ${SERVER_PORT:8081}

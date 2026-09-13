@@ -22,11 +22,13 @@ import { DashboardComponent } from "./pages/dashboard/dashboard/dashboard.compon
 import { FluxoDeCaixaComponent } from "./pages/fluxo-de-caixa/fluxo-de-caixa.component";
 import { ClientesRelatorioComponent } from "./pages/relatorios/clientes/clientes-relatorio.component";
 import { CategoriasRelatorioComponent } from "./pages/relatorios/categorias/categorias-relatorio.component";
+import { authGuard } from "./core/auth/auth.guard";
 
 export const routes: Routes = [
   {
     path: "",
     component: AppLayoutComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: "",

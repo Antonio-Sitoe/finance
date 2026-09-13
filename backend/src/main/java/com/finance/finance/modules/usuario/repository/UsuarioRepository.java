@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpecificationExecutor<Usuario> {
     boolean existsByEmail(String email);
 
+    Usuario findByEmail(String email);
+
     boolean existsByEmailAndIdNot(String email, Long id);
 
     @Query(value = """

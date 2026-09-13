@@ -121,7 +121,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + id));
     }
 
-    private void validarEmailUnico(String email, Long idAtual) {
+    public void validarEmailUnico(String email, Long idAtual) {
         boolean emailEmUso = idAtual == null
                 ? usuarioRepository.existsByEmail(email)
                 : usuarioRepository.existsByEmailAndIdNot(email, idAtual);

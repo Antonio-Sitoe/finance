@@ -3,27 +3,30 @@
 Guia passo a passo do plano [23 - Auth CRUD.md](23%20-%20Auth%20CRUD.md).
 O plano diz **o quê** e **porquê**; este guia diz **como**, em que ordem, e como verificar cada passo antes de avançar.
 
+Factos do projecto: [Auth/0.begging.md](Auth/0.begging.md).
+
 > **Regra de ouro:** não avances para o passo seguinte sem o ✅ do anterior.
 > Cada sprint termina num estado que compila e corre.
 
 ---
 
-## Antes de começar — factos deste projeto
+## Estado actual
 
-| Facto | Consequência no guia |
-|---|---|
-| `ApiPrefixConfig` junta `/api` a todos os `@RestController` | Rotas públicas são `/api/auth/login`, não `/auth/login` |
-| Servidor na porta **8081** | Testes: `http://localhost:8081/api/...` |
-| Config vem de `.env` (`spring.config.import`) | Segredos JWT e SMTP vão para o `.env`, nunca no código |
-| `ddl-auto: validate` | As entidades têm de bater **exactamente** com as migrations Flyway |
-| Flyway em `db/migration`, último é `V2` | Próximas migrations: `V3` (tokens), `V4` (roles) |
-| JJWT **0.11.5** já no `pom.xml` | API antiga: `Jwts.parserBuilder()` — ver snippets abaixo |
-| Lombok em todo o lado | Usar `@RequiredArgsConstructor`, `@Getter/@Setter` como no resto do código |
-| `Usuario` tem `perfil` (enum) e estende `BaseEntity` | Sprint 2 substitui `perfil` por `role_id` |
-| CORS já permite `http://localhost:4200` com credenciais | Cookies HttpOnly funcionam sem mexer no CORS |
-| Módulo `modules/auth` já existe (CRUD de `Usuario`) | Auth novo entra **nesse** módulo; roles vão para `modules/roles` |
+| Área | Estado | Onde |
+| ---- | ------ | ---- |
+| Backend auth (JWT, login/refresh/logout/me, security fechada) | ✅ Feito | [Auth/1.1-1.2](Auth/1.1-1.2.md) · [1.3-1.4](Auth/1.3-1.4.md) · [1.5-1.6](Auth/1.5-1.6.md) |
+| Seed admin (`V4`) | ✅ Feito | `admin@finance.com` / `Admin@123` |
+| Angular (interceptor, guard, ecrãs) | ⬜ Próximo | Passo **1.7** ↓ |
+| Forgot/reset + email | ⬜ Stubs no backend | Passo **1.9** |
+| Roles dinâmicas | ⬜ | Sprint 2 (`V5`) |
 
-Cria uma branch: `git checkout -b feat/auth`.
+**Login de teste (backend já protegido):**
+
+```bash
+curl -X POST http://localhost:8081/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@finance.com","senha":"Admin@123"}'
+```
 
 ---
 
@@ -31,290 +34,7 @@ Cria uma branch: `git checkout -b feat/auth`.
 
 **Objectivo:** ninguém entra sem senha; CRUD financeiro deixa de estar aberto.
 
-## Passo 1.1 — Migration V3 (tokens + último acesso)
-
-Criar `backend/src/main/resources/db/migration/V3__auth_tokens.sql`:
-
-```sql
-ALTER TABLE usuario ADD COLUMN ultimo_acesso TIMESTAMP;
-
-CREATE TABLE refresh_token (
-    id          BIGSERIAL PRIMARY KEY,
-    usuario_id  BIGINT       NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
-    token_hash  VARCHAR(255) NOT NULL UNIQUE,
-    expires_at  TIMESTAMP    NOT NULL,
-    revoked_at  TIMESTAMP,
-    created_at  TIMESTAMP    NOT NULL,
-    updated_at  TIMESTAMP    NOT NULL
-);
-CREATE INDEX idx_refresh_token_usuario ON refresh_token(usuario_id);
-
-CREATE TABLE password_reset_token (
-    id          BIGSERIAL PRIMARY KEY,
-    usuario_id  BIGINT       NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
-    token_hash  VARCHAR(255) NOT NULL,
-    expires_at  TIMESTAMP    NOT NULL,
-    used_at     TIMESTAMP,
-    created_at  TIMESTAMP    NOT NULL,
-    updated_at  TIMESTAMP    NOT NULL
-);
-CREATE INDEX idx_reset_token_usuario ON password_reset_token(usuario_id);
-```
-
-✅ **Verificar:** `./mvnw spring-boot:run` arranca sem erro Flyway; no Postgres, `\d refresh_token` existe.
-
-## Passo 1.2 — Config: segredo JWT e mail no `.env`
-
-Gerar o segredo (512 bits para HS256):
-
-```bash
-openssl rand -base64 64
-```
-
-Juntar ao `.env` (na raiz do `backend/` ou do repo — o `application.yaml` já importa ambos):
-
-```properties
-JWT_SECRET=<colar-o-base64-aqui>
-JWT_ACCESS_TTL_MINUTES=15
-JWT_REFRESH_TTL_DAYS=7
-FRONTEND_URL=http://localhost:4200
-# SMTP opcional — se faltar, o link de reset é logado na consola
-MAIL_HOST=
-MAIL_PORT=587
-MAIL_USERNAME=
-MAIL_PASSWORD=
-```
-
-Juntar ao `application.yaml`:
-
-```yaml
-jwt:
-  secret: ${JWT_SECRET}
-  access-ttl-minutes: ${JWT_ACCESS_TTL_MINUTES:15}
-  refresh-ttl-days: ${JWT_REFRESH_TTL_DAYS:7}
-
-frontend:
-  url: ${FRONTEND_URL:http://localhost:4200}
-```
-
-Dependência de mail no `pom.xml` (usada só no passo 1.9, mas já fica):
-
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-mail</artifactId>
-</dependency>
-```
-
-✅ **Verificar:** app arranca com as novas propriedades (não há uso ainda — só não pode falhar o placeholder).
-
-## Passo 1.3 — Entidades e repositórios de tokens
-
-Em `modules/auth/model/`:
-
-- `RefreshToken extends BaseEntity`: `id`, `usuario` (`@ManyToOne(fetch = LAZY)` + `@JoinColumn(name = "usuario_id")`), `tokenHash`, `expiresAt` (`LocalDateTime`), `revokedAt`.
-- `PasswordResetToken extends BaseEntity`: igual, mas `usedAt` em vez de `revokedAt`.
-
-> ⚠️ `ddl-auto: validate`: os nomes de coluna têm de corresponder (`tokenHash` → `token_hash`, etc.). O Spring faz o mapeamento camelCase→snake_case sozinho.
-
-Em `modules/auth/repository/`:
-
-- `RefreshTokenRepository extends JpaRepository<RefreshToken, Long>` com `Optional<RefreshToken> findByTokenHash(String hash)` e `List<RefreshToken> findAllByUsuarioIdAndRevokedAtIsNull(Long usuarioId)`.
-- `PasswordResetTokenRepository` com `Optional<PasswordResetToken> findByTokenHash(String hash)`.
-
-✅ **Verificar:** app arranca — o `validate` confirma que entidade ↔ tabela batem certo.
-
-## Passo 1.4 — JwtService
-
-`modules/auth/security/JwtService.java`. **Atenção: JJWT 0.11.5** — a API é `parserBuilder()`, não `parser()`:
-
-```java
-package com.finance.finance.modules.auth.security;
-
-import com.finance.finance.modules.auth.model.Usuario;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.security.Key;
-import java.util.Date;
-
-@Service
-public class JwtService {
-
-    private final Key key;
-    private final long accessTtlMillis;
-
-    public JwtService(@Value("${jwt.secret}") String secret,
-                      @Value("${jwt.access-ttl-minutes}") long accessTtlMinutes) {
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
-        this.accessTtlMillis = accessTtlMinutes * 60_000L;
-    }
-
-    public String gerarAccessToken(Usuario usuario) {
-        Date agora = new Date();
-        return Jwts.builder()
-                .setSubject(usuario.getId().toString())
-                .claim("email", usuario.getEmail())
-                .claim("role", usuario.getPerfil().name()) // Sprint 2: usuario.getRole().getCodigo()
-                .setIssuedAt(agora)
-                .setExpiration(new Date(agora.getTime() + accessTtlMillis))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    /** Lança JwtException se inválido ou expirado. */
-    public Jws<Claims> validar(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-    }
-}
-```
-
-✅ **Verificar:** compila (`./mvnw compile`).
-
-## Passo 1.5 — AuthService + AuthController
-
-**DTOs** em `modules/auth/dto/`: `LoginRequestDTO(email, senha)`, `LoginResponseDTO(accessToken, refreshToken)`, `RefreshRequestDTO(refreshToken)`, `ChangePasswordRequestDTO(senhaAtual, novaSenha, confirmacao)`, `ForgotPasswordRequestDTO(email)`, `ResetPasswordRequestDTO(token, novaSenha, confirmacao)`, `MeResponseDTO(id, nome, email, role, permissoes, ultimoAcesso, criadoEm)`.
-
-**`modules/auth/service/AuthService.java`** — lógica:
-
-```java
-public LoginResponseDTO login(LoginRequestDTO dto) {
-    Usuario usuario = usuarioRepository.findByEmail(dto.getEmail()).orElse(null);
-    // MESMA mensagem para user inexistente, inativo ou senha errada
-    if (usuario == null || usuario.getSituacao() != Situacao.ATIVO
-            || !passwordEncoder.matches(dto.getSenha(), usuario.getSenha())) {
-        throw new BusinessException("Email ou senha inválidos");
-    }
-    usuario.setUltimoAcesso(LocalDateTime.now());
-    return new LoginResponseDTO(jwtService.gerarAccessToken(usuario), criarRefreshToken(usuario));
-}
-
-private String criarRefreshToken(Usuario usuario) {
-    String cru = UUID.randomUUID().toString() + UUID.randomUUID();
-    RefreshToken rt = new RefreshToken();
-    rt.setUsuario(usuario);
-    rt.setTokenHash(sha256(cru));                       // nunca guardar o valor cru
-    rt.setExpiresAt(LocalDateTime.now().plusDays(refreshTtlDias));
-    refreshTokenRepository.save(rt);
-    return cru;                                          // devolvido UMA vez
-}
-
-private String sha256(String valor) {
-    try {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        return HexFormat.of().formatHex(md.digest(valor.getBytes(StandardCharsets.UTF_8)));
-    } catch (NoSuchAlgorithmException e) { throw new IllegalStateException(e); }
-}
-```
-
-`refresh(dto)`: buscar por hash → rejeitar se `revokedAt != null` ou expirado → **rotação**: marcar `revokedAt = now()` no antigo, criar novo → devolver par novo.
-
-`logout(usuarioId, refreshToken)`: revogar esse refresh (ou todos do user — decidir; o plano diz revogar o refresh na BD).
-
-**`modules/auth/controller/AuthController.java`** (`@RestController` + `@RequestMapping("/auth")` — o prefixo `/api` é automático):
-
-| Método | Notas |
-|---|---|
-| `POST /auth/login` | público |
-| `POST /auth/refresh` | público (o refresh é a credencial) |
-| `POST /auth/logout` | autenticado |
-| `GET /auth/me` | autenticado; devolve perfil + role + `permissoes[]` (Sprint 1: lista vazia ou derivada do enum) |
-| `PATCH /auth/me` | nome e email próprios — reutilizar `validarEmailUnico` do `UsuarioService` |
-| `POST /auth/change-password` | valida senha actual com `passwordEncoder.matches`; nova ≠ actual; confirmação igual |
-| `POST /auth/forgot-password` | público; **sempre 200** (passo 1.9) |
-| `POST /auth/reset-password` | público (passo 1.9) |
-
-Para obter o user autenticado: `Authentication auth = SecurityContextHolder.getContext().getAuthentication()` → `Long userId = Long.valueOf(auth.getName())`.
-
-✅ **Verificar:** compila. Ainda não fecha a segurança — isso é o próximo passo.
-
-## Passo 1.6 — Filtro JWT + fechar o SecurityConfig
-
-`modules/auth/security/JwtAuthenticationFilter.java`:
-
-```java
-@Component
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    private final JwtService jwtService;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header != null && header.startsWith("Bearer ")) {
-            try {
-                Claims claims = jwtService.validar(header.substring(7)).getBody();
-                var authentication = new UsernamePasswordAuthenticationToken(
-                        claims.getSubject(), null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + claims.get("role", String.class))));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (JwtException e) {
-                SecurityContextHolder.clearContext(); // segue sem auth → 401 adiante
-            }
-        }
-        chain.doFilter(request, response);
-    }
-}
-```
-
-Reescrever `config/SecurityConfig.java`:
-
-```java
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
-    http
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .csrf(csrf -> csrf.disable())
-        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/api/auth/login",
-                        "/api/auth/forgot-password",
-                        "/api/auth/reset-password",
-                        "/api/auth/refresh",
-                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
-                        "/actuator/**"
-                ).permitAll()
-                .anyRequest().authenticated())
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-    return http.build();
-}
-```
-
-> ⚠️ Os matchers levam `/api` porque o prefixo é aplicado no MVC, e a security chain vê o path final.
-
-✅ **Verificar (checkpoint grande — testar com curl):**
-
-```bash
-# 1. Sem token → 401
-curl -i http://localhost:8081/api/usuarios
-
-# 2. Login com um user existente → 200 + accessToken + refreshToken
-curl -X POST http://localhost:8081/api/auth/login \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"admin@finance.com","senha":"123456"}'
-
-# 3. Com token → 200
-TOKEN=<colar-accessToken>
-curl http://localhost:8081/api/usuarios -H "Authorization: Bearer $TOKEN"
-
-# 4. Login errado → mesma mensagem para email inexistente e senha errada
-curl -X POST http://localhost:8081/api/auth/login \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"naoexiste@x.com","senha":"qualquer"}'
-
-# 5. Refresh → par novo; repetir com o MESMO refresh → 401/400 (rotação)
-curl -X POST http://localhost:8081/api/auth/refresh \
-  -H 'Content-Type: application/json' -d '{"refreshToken":"<colar>"}'
-
-# 6. /auth/me devolve o user e ultimo_acesso foi gravado
-curl http://localhost:8081/api/auth/me -H "Authorization: Bearer $TOKEN"
-```
+> **Backend feito (1.1–1.6 + seed V4).** Continuar no frontend ↓
 
 ## Passo 1.7 — Angular: AuthService, interceptor, guard
 
@@ -323,47 +43,53 @@ Criar `frontend/src/app/core/auth/` (pasta nova):
 **`auth.service.ts`** — access token **em memória** (signal), refresh em memória também (v1 simples) ou cookie HttpOnly (ideal; exige o backend fazer `Set-Cookie` no login — pode ficar para o Sprint 4):
 
 ```ts
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
-  private api = "http://localhost:8081/api/auth";
+  private http = inject(HttpClient)
+  private api = 'http://localhost:8081/api/auth'
 
-  currentUser = signal<MeResponse | null>(null);
-  permissoes = computed(() => this.currentUser()?.permissoes ?? []);
+  currentUser = signal<MeResponse | null>(null)
+  permissoes = computed(() => this.currentUser()?.permissoes ?? [])
 
   login(email: string, senha: string) {
-    return this.http.post<LoginResponse>(`${this.api}/login`, { email, senha }).pipe(
-      tap((res) => sessionStorage.setItem("access_token", res.accessToken)),
-      tap((res) => sessionStorage.setItem("refresh_token", res.refreshToken)),
-      switchMap(() => this.loadMe()),
-    );
+    return this.http
+      .post<LoginResponse>(`${this.api}/login`, { email, senha })
+      .pipe(
+        tap((res) => sessionStorage.setItem('access_token', res.accessToken)),
+        tap((res) => sessionStorage.setItem('refresh_token', res.refreshToken)),
+        switchMap(() => this.loadMe()),
+      )
   }
 
   loadMe() {
-    return this.http.get<MeResponse>(`${this.api}/me`).pipe(
-      tap((me) => this.currentUser.set(me)),
-    );
+    return this.http
+      .get<MeResponse>(`${this.api}/me`)
+      .pipe(tap((me) => this.currentUser.set(me)))
   }
 
   refresh() {
-    const refreshToken = sessionStorage.getItem("refresh_token");
-    return this.http.post<LoginResponse>(`${this.api}/refresh`, { refreshToken }).pipe(
-      tap((res) => sessionStorage.setItem("access_token", res.accessToken)),
-      tap((res) => sessionStorage.setItem("refresh_token", res.refreshToken)),
-    );
+    const refreshToken = sessionStorage.getItem('refresh_token')
+    return this.http
+      .post<LoginResponse>(`${this.api}/refresh`, { refreshToken })
+      .pipe(
+        tap((res) => sessionStorage.setItem('access_token', res.accessToken)),
+        tap((res) => sessionStorage.setItem('refresh_token', res.refreshToken)),
+      )
   }
 
   logout() {
-    const refreshToken = sessionStorage.getItem("refresh_token");
+    const refreshToken = sessionStorage.getItem('refresh_token')
     return this.http.post<void>(`${this.api}/logout`, { refreshToken }).pipe(
       finalize(() => {
-        sessionStorage.clear();
-        this.currentUser.set(null);
+        sessionStorage.clear()
+        this.currentUser.set(null)
       }),
-    );
+    )
   }
 
-  get accessToken() { return sessionStorage.getItem("access_token"); }
+  get accessToken() {
+    return sessionStorage.getItem('access_token')
+  }
 }
 ```
 
@@ -373,29 +99,35 @@ export class AuthService {
 
 ```ts
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
-  const token = auth.accessToken;
+  const auth = inject(AuthService)
+  const router = inject(Router)
+  const token = auth.accessToken
 
-  const authReq = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
+  const authReq = token
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req
 
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === 401 && !req.url.includes("/auth/")) {
+      if (err.status === 401 && !req.url.includes('/auth/')) {
         return auth.refresh().pipe(
-          switchMap(() => next(authReq.clone({
-            setHeaders: { Authorization: `Bearer ${auth.accessToken}` },
-          }))),
+          switchMap(() =>
+            next(
+              authReq.clone({
+                setHeaders: { Authorization: `Bearer ${auth.accessToken}` },
+              }),
+            ),
+          ),
           catchError(() => {
-            router.navigate(["/signin"]);
-            return throwError(() => err);
+            router.navigate(['/signin'])
+            return throwError(() => err)
           }),
-        );
+        )
       }
-      return throwError(() => err);
+      return throwError(() => err)
     }),
-  );
-};
+  )
+}
 ```
 
 Registar em `app.config.ts`: `provideHttpClient(withInterceptors([authInterceptor]))`.
@@ -404,15 +136,15 @@ Registar em `app.config.ts`: `provideHttpClient(withInterceptors([authIntercepto
 
 ```ts
 export const authGuard: CanActivateFn = () => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
-  if (!auth.accessToken) return router.createUrlTree(["/signin"]);
-  if (auth.currentUser()) return true;
+  const auth = inject(AuthService)
+  const router = inject(Router)
+  if (!auth.accessToken) return router.createUrlTree(['/signin'])
+  if (auth.currentUser()) return true
   return auth.loadMe().pipe(
     map(() => true),
-    catchError(() => of(router.createUrlTree(["/signin"]))),
-  );
-};
+    catchError(() => of(router.createUrlTree(['/signin']))),
+  )
+}
 ```
 
 Em `app.routes.ts`, aplicar ao layout:
@@ -431,6 +163,7 @@ Em `app.routes.ts`, aplicar ao layout:
 ## Passo 1.8 — Ligar os ecrãs login / forgot / reset
 
 - `shared/components/auth/signin-form/signin-form.component.ts`: substituir o `setTimeout` (linha ~54) por `authService.login(...)`. Em erro 400/401 → mensagem “Email ou senha inválidos”. Em sucesso → `router.navigate(["/dashboard"])`.
+- Credenciais de teste: `admin@finance.com` / `Admin@123`.
 - `forgot-password.component.ts`: `POST /api/auth/forgot-password` → mostrar sempre “Se o email existir, receberás um link”.
 - `reset-password.component.ts`: ler `token` da query string (`ActivatedRoute.queryParamMap`) → `POST /api/auth/reset-password` → sucesso → `/signin`.
 - Header da app (dropdown do user): ligar “Sign out” ao `authService.logout()` → `/signin`.
@@ -439,7 +172,9 @@ Em `app.routes.ts`, aplicar ao layout:
 
 ## Passo 1.9 — Esqueci a senha + email
 
-`modules/auth/service/PasswordResetService.java`:
+Substituir os **stubs** em `AuthService.forgotPassword` / `resetPassword` (já existem no controller).
+
+`modules/auth/service/PasswordResetService.java` (ou métodos reais no `AuthService`):
 
 1. `forgotPassword(email)`: se o user existe e está ATIVO → token de 32 bytes (`SecureRandom` + Base64URL), guardar **hash** + `expires_at = now()+1h`, marcar tokens anteriores como usados. **Retornar 200 sempre.**
 2. `resetPassword(token, novaSenha)`: buscar por hash → validar expiração e `usedAt == null` → `passwordEncoder.encode` → marcar `usedAt` → **revogar todos os refresh** do user.
@@ -460,6 +195,7 @@ public void enviarLinkReset(String para, String token) {
 Tornar o `JavaMailSender` opcional: configurar `spring.mail.*` só se `MAIL_HOST` estiver preenchido (usar `@ConditionalOnProperty` num `MailConfig` ou simplesmente verificar a propriedade no service).
 
 ✅ **Verificar (checkpoint do Sprint 1):**
+
 - `POST /api/auth/forgot-password` com email inexistente → 200 igual.
 - Com email real → link aparece no log → abrir `http://localhost:4200/reset-password?token=...` → nova senha → login com a nova senha funciona; refresh tokens antigos revogados.
 
@@ -469,9 +205,11 @@ Tornar o `JavaMailSender` opcional: configurar `spring.mail.*` só se `MAIL_HOST
 
 **Objectivo:** matriz de permissões na BD, filtro que a aplica, API para o admin.
 
-## Passo 2.1 — Migration V4
+> Migrations: `V4` = seed admin (já feito). Roles = **`V5`**.
 
-`V4__roles_dinamicas.sql`:
+## Passo 2.1 — Migration V5
+
+`V5__roles_dinamicas.sql`:
 
 ```sql
 CREATE TABLE role (
@@ -530,6 +268,8 @@ ALTER TABLE usuario DROP COLUMN perfil;
 private Role role;
 ```
 
+Actualizar `JwtService.gerarAccessToken` para `usuario.getRole().getCodigo()` (hoje usa `perfil.name()`).
+
 ## Passo 2.3 — Sync do catálogo no startup
 
 `modules/roles/service/PermissionCatalogSync.java`:
@@ -562,6 +302,7 @@ public class PermissionCatalogSync implements ApplicationRunner {
 ```
 
 Notas:
+
 - Os paths aqui **já incluem `/api`** (o `RequestMappingHandlerMapping` vê o path final). Guardar `path_pattern` com `/api/clientes` ou fazer strip — escolher uma convenção e ser consistente com o filtro do passo 2.4.
 - Endpoint novo aparece sozinho no próximo arranque — é o upsert que garante isso.
 
@@ -585,6 +326,7 @@ Cache: juntar `com.github.ben-manes.caffeine:caffeine` ao `pom.xml`. Cache `Load
 Para resolver o handler dentro do filtro: injectar `RequestMappingHandlerMapping` e chamar `getHandler(request)` — ou, mais simples, reconstruir o `codigo` a partir do path + método com a mesma regra do sync (recomendado: mesma regra = menos acoplamento).
 
 ✅ **Verificar:**
+
 - ADMIN entra em tudo.
 - Criar na BD uma role sem `clientes.create`, atribuir a um user → `POST /api/clientes` → 403; `GET /api/clientes` → 200 (se `clientes.find` marcado).
 
@@ -592,16 +334,17 @@ Para resolver o handler dentro do filtro: injectar `RequestMappingHandlerMapping
 
 `modules/roles/controller/RoleController.java` (só ADMIN — ver regra abaixo):
 
-| Método | Notas |
-|---|---|
-| `GET /roles` | lista com nº de users por role |
-| `POST /roles` | criar vazia; `sistema` sempre `false` |
-| `GET /roles/{id}` | role + árvore `modulo → [{ codigo, acao, metodo, path, granted }]` |
-| `PUT /roles/{id}` | nome/descrição + `permissaoIds`; recusar se `sistema = true`; invalidar cache |
-| `DELETE /roles/{id}` | só se `sistema = false` **e** 0 users |
-| `GET /permissoes` | catálogo agrupado por módulo |
+| Método               | Notas                                                                         |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `GET /roles`         | lista com nº de users por role                                                |
+| `POST /roles`        | criar vazia; `sistema` sempre `false`                                         |
+| `GET /roles/{id}`    | role + árvore `modulo → [{ codigo, acao, metodo, path, granted }]`            |
+| `PUT /roles/{id}`    | nome/descrição + `permissaoIds`; recusar se `sistema = true`; invalidar cache |
+| `DELETE /roles/{id}` | só se `sistema = false` **e** 0 users                                         |
+| `GET /permissoes`    | catálogo agrupado por módulo                                                  |
 
 Regras a implementar no service:
+
 - Não editar matriz nem apagar a role `sistema = true`.
 - User não pode remover a **própria** role ADMIN.
 
@@ -636,18 +379,18 @@ No form de criar/editar user (`shared/components/users/...`): substituir o selec
 `shared/directives/has-permission.directive.ts`:
 
 ```ts
-@Directive({ selector: "[hasPermission]", standalone: true })
+@Directive({ selector: '[hasPermission]', standalone: true })
 export class HasPermissionDirective {
-  private templateRef = inject(TemplateRef);
-  private viewContainer = inject(ViewContainerRef);
-  private auth = inject(AuthService);
+  private templateRef = inject(TemplateRef)
+  private viewContainer = inject(ViewContainerRef)
+  private auth = inject(AuthService)
 
   @Input() set hasPermission(codigo: string) {
-    const isAdmin = this.auth.currentUser()?.role === "ADMIN";
+    const isAdmin = this.auth.currentUser()?.role === 'ADMIN'
     if (isAdmin || this.auth.permissoes().includes(codigo)) {
-      this.viewContainer.createEmbeddedView(this.templateRef);
+      this.viewContainer.createEmbeddedView(this.templateRef)
     } else {
-      this.viewContainer.clear();
+      this.viewContainer.clear()
     }
   }
 }
@@ -662,6 +405,7 @@ Aplicar nos botões: `<button *hasPermission="'clientes.create'">Novo cliente</b
 - Guard extra nas rotas sensíveis (`users`, `roles`): `canActivate` que verifica `role === 'ADMIN'`.
 
 ✅ **Verificar (checkpoint Sprint 3 = critério de aceite do plano):**
+
 1. Login ADMIN → `/roles` → “Add new role” **Operador lançamentos**.
 2. Marcar só Lançamentos (create, find, findOne, update, situacao) + find/findOne de Clientes, Categorias, Contas, Fornecedores.
 3. Criar o user operador com essa role.
@@ -686,28 +430,33 @@ Aplicar nos botões: `<button *hasPermission="'clientes.create'">Novo cliente</b
 # Armadilhas conhecidas (deste projeto)
 
 | Armadilha | Solução |
-|---|---|
+| --------- | ------- |
 | Security matcher sem `/api` → tudo 401/403 | Matchers sempre com `/api/...` |
-| `ddl-auto: validate` rebenta após V4 | Mudar entidade + DTOs + mapper no mesmo commit da migration |
-| `Jwts.parser()` não existe no 0.11.5 | Usar `parserBuilder()` (ver Passo 1.4) |
-| Segredo JWT curto → `WeakKeyException` | Base64 de 64 bytes (`openssl rand -base64 64`) |
+| Boot 4: `flyway-core` sozinho não corre | Usar `spring-boot-starter-flyway` |
+| `ddl-auto: validate` rebenta após V5 | Mudar entidade + DTOs + mapper no mesmo commit da migration |
+| Nomes de tabela entidade ≠ migration | `@Table` = singular (`refresh_token`, não `refresh_tokens`) |
+| `Jwts.parser()` não existe no 0.11.5 | Usar `parserBuilder()` |
+| Segredo JWT curto / multilinha no `.env` | Uma linha: `openssl rand -base64 64 \| tr -d '\n'` |
+| `jwt` / `frontend` sob `spring:` no yaml | Propriedades na **raiz** (`jwt.secret`, não `spring.jwt.secret`) |
 | F5 no Angular perde o user | Guard chama `loadMe()` (Sprint 1) / `refresh()` (Sprint 4) |
 | Sync do catálogo cria permissões para `/roles` | Excluir `roles.*`/`permissoes.*` do catálogo; só bypass ADMIN |
 | `perfil` ainda referenciado no frontend | Select de roles substitui o enum no Sprint 3.3 |
 | Logout só limpa o cliente | Chamar `POST /auth/logout` para revogar o refresh na BD |
+| IDE gera `.class` com “Unresolved compilation problems” | `./mvnw compile` / Rebuild Project |
 
 ---
 
 # Ordem de commits sugerida
 
-1. `V3` + entidades de token + config JWT
-2. `JwtService` + `AuthService` + `AuthController` (login/refresh/logout/me/change-password)
-3. Filtro JWT + `SecurityConfig` fechado ← **a API fica protegida aqui**
-4. Angular: service + interceptor + guard + ecrãs ligados
-5. Forgot/reset + mail/log
-6. `V4` + entidades role/permissao + migração de dados
-7. Sync do catálogo + filtro de permissões + cache
-8. API `/roles` + `/permissoes`
-9. UI roles (lista + matriz) + select de role em users
-10. Directiva + sidebar + guards de rota
-11. Sprint 4 (rate limit, cookies, testes)
+1. ~~`V3` + entidades de token + config JWT~~ ✅
+2. ~~`JwtService` + `AuthService` + `AuthController`~~ ✅
+3. ~~Filtro JWT + `SecurityConfig` fechado~~ ✅ ← API protegida
+4. ~~`V4` seed admin~~ ✅
+5. Angular: service + interceptor + guard + ecrãs ligados ← **agora**
+6. Forgot/reset + mail/log (substituir stubs)
+7. `V5` + entidades role/permissao + migração de dados
+8. Sync do catálogo + filtro de permissões + cache
+9. API `/roles` + `/permissoes`
+10. UI roles (lista + matriz) + select de role em users
+11. Directiva + sidebar + guards de rota
+12. Sprint 4 (rate limit, cookies, testes)

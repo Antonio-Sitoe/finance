@@ -1,7 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { CheckboxComponent } from "../../ui/input/checkbox.component";
 import { ButtonComponent } from "../../ui/button/button.component";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import {
   SolarDynamicIcon,
@@ -11,6 +11,7 @@ import {
   EyeClosedLineDuotone,
   DangerCircleBold,
 } from "@solar-icons/angular";
+import { AuthService } from "@/core/auth/auth.service";
 
 @Component({
   selector: "app-signin-form",
@@ -25,6 +26,9 @@ import {
   styles: ``,
 })
 export class SigninFormComponent {
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
   readonly LetterLineDuotone = LetterLineDuotone;
   readonly LockKeyholeLineDuotone = LockKeyholeLineDuotone;
   readonly EyeLineDuotone = EyeLineDuotone;
@@ -35,6 +39,7 @@ export class SigninFormComponent {
   isChecked = false;
   hasError = false;
   isLoading = false;
+  errorMessage = "Email ou senha inválidos";
 
   email = "";
   password = "";
@@ -44,16 +49,21 @@ export class SigninFormComponent {
   }
 
   onSignIn() {
+    if (!this.email || !this.password || this.isLoading) return;
+
     this.isLoading = true;
     this.hasError = false;
-    console.log("Email:", this.email);
-    console.log("Password:", this.password);
-    console.log("Remember Me:", this.isChecked);
 
-    // simulação — remover quando integrar com API
-    setTimeout(() => {
-      this.isLoading = false;
-      this.hasError = true;
-    }, 1200);
+    this.auth.login(this.email.trim(), this.password).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate(["/dashboard"]);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.hasError = true;
+        this.errorMessage = "Email ou senha inválidos";
+      },
+    });
   }
 }

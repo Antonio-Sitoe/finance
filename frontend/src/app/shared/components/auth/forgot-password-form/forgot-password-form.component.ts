@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ButtonComponent } from "../../ui/button/button.component";
 import { RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
@@ -8,6 +8,7 @@ import {
   AltArrowLeftLineDuotone,
   CheckCircleBold,
 } from "@solar-icons/angular";
+import { AuthService } from "@/core/auth/auth.service";
 
 @Component({
   selector: "app-forgot-password-form",
@@ -16,6 +17,8 @@ import {
   styles: ``,
 })
 export class ForgotPasswordFormComponent {
+  private readonly auth = inject(AuthService);
+
   readonly LetterLineDuotone = LetterLineDuotone;
   readonly AltArrowLeftLineDuotone = AltArrowLeftLineDuotone;
   readonly CheckCircleBold = CheckCircleBold;
@@ -25,14 +28,21 @@ export class ForgotPasswordFormComponent {
   isSubmitted = false;
 
   onSubmit() {
-    if (!this.email) return;
+    if (!this.email || this.isLoading) return;
     this.isLoading = true;
 
-    // simulação — remover quando integrar com API
-    setTimeout(() => {
-      this.isLoading = false;
-      this.isSubmitted = true;
-    }, 1200);
+    this.auth.forgotPassword(this.email.trim()).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.isSubmitted = true;
+      },
+      error: () => {
+        // Backend devolve sempre 200; se falhar validação/rede, mostrar mesmo o ecrã de sucesso
+        // para não revelar se o email existe (excepto erros de rede óbvios — UX do guia).
+        this.isLoading = false;
+        this.isSubmitted = true;
+      },
+    });
   }
 
   resend() {
