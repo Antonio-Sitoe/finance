@@ -1,11 +1,11 @@
-package com.finance.finance.modules.auth.mapper;
+package com.finance.finance.modules.usuario.mapper;
 
 import java.util.Optional;
 
-import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
-import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
-import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
-import com.finance.finance.modules.auth.model.Usuario;
+import com.finance.finance.modules.usuario.dto.UsuarioRequestDTO;
+import com.finance.finance.modules.usuario.dto.UsuarioResponseDTO;
+import com.finance.finance.modules.usuario.dto.UsuarioUpdateRequestDTO;
+import com.finance.finance.modules.usuario.model.Usuario;
 
 public final class UsuarioMapper {
 

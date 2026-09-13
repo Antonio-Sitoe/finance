@@ -1,4 +1,4 @@
-package com.finance.finance.modules.auth.dto;
+package com.finance.finance.modules.usuario.dto;
 
 import lombok.Builder;
 

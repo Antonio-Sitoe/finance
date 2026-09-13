@@ -1,7 +1,7 @@
-package com.finance.finance.modules.auth.repository;
+package com.finance.finance.modules.usuario.repository;
 
-import com.finance.finance.modules.auth.dto.UsuarioAnalytcsResponseDto;
-import com.finance.finance.modules.auth.model.Usuario;
+import com.finance.finance.modules.usuario.dto.UsuarioAnalytcsResponseDto;
+import com.finance.finance.modules.usuario.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

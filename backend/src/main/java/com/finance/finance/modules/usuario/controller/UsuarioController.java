@@ -1,11 +1,11 @@
-package com.finance.finance.modules.auth.controller;
+package com.finance.finance.modules.usuario.controller;
 
-import com.finance.finance.modules.auth.dto.UsuarioAnalytcsResponseDto;
-import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
-import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
-import com.finance.finance.modules.auth.dto.UsuarioStatusResponseDTO;
-import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
-import com.finance.finance.modules.auth.service.UsuarioService;
+import com.finance.finance.modules.usuario.dto.UsuarioAnalytcsResponseDto;
+import com.finance.finance.modules.usuario.dto.UsuarioRequestDTO;
+import com.finance.finance.modules.usuario.dto.UsuarioResponseDTO;
+import com.finance.finance.modules.usuario.dto.UsuarioStatusResponseDTO;
+import com.finance.finance.modules.usuario.dto.UsuarioUpdateRequestDTO;
+import com.finance.finance.modules.usuario.service.UsuarioService;
 import com.finance.finance.exceptions.ApiErrorResponse;
 import com.finance.finance.modules.common.enums.Perfil;
 import com.finance.finance.modules.common.enums.Situacao;
@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/usuarios")
 @RequiredArgsConstructor
-@Tag(name = "Usuários", description = "Endpoints para autenticação e gestão de usuários")
+@Tag(name = "Usuários", description = "Endpoints para gestão de usuários")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;

@@ -1,4 +1,4 @@
-package com.finance.finance.modules.auth.dto;
+package com.finance.finance.modules.usuario.dto;
 
 import com.finance.finance.modules.common.enums.Perfil;
 import com.finance.finance.modules.common.enums.Situacao;

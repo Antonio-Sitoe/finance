@@ -1,13 +1,13 @@
-package com.finance.finance.modules.auth.service;
+package com.finance.finance.modules.usuario.service;
 
-import com.finance.finance.modules.auth.dto.UsuarioAnalytcsResponseDto;
-import com.finance.finance.modules.auth.dto.UsuarioRequestDTO;
-import com.finance.finance.modules.auth.dto.UsuarioResponseDTO;
-import com.finance.finance.modules.auth.dto.UsuarioStatusResponseDTO;
-import com.finance.finance.modules.auth.dto.UsuarioUpdateRequestDTO;
-import com.finance.finance.modules.auth.mapper.UsuarioMapper;
-import com.finance.finance.modules.auth.model.Usuario;
-import com.finance.finance.modules.auth.repository.UsuarioRepository;
+import com.finance.finance.modules.usuario.dto.UsuarioAnalytcsResponseDto;
+import com.finance.finance.modules.usuario.dto.UsuarioRequestDTO;
+import com.finance.finance.modules.usuario.dto.UsuarioResponseDTO;
+import com.finance.finance.modules.usuario.dto.UsuarioStatusResponseDTO;
+import com.finance.finance.modules.usuario.dto.UsuarioUpdateRequestDTO;
+import com.finance.finance.modules.usuario.mapper.UsuarioMapper;
+import com.finance.finance.modules.usuario.model.Usuario;
+import com.finance.finance.modules.usuario.repository.UsuarioRepository;
 import com.finance.finance.modules.common.enums.Perfil;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
