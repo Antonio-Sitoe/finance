@@ -1,6 +1,5 @@
 package com.finance.finance.modules.usuario.dto;
 
-import com.finance.finance.modules.common.enums.Perfil;
 import com.finance.finance.modules.common.enums.Situacao;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -22,8 +21,8 @@ public class UsuarioRequestDTO {
     @Size(min = 6, max = 255, message = "A senha deve ter entre 6 e 255 caracteres")
     private String senha;
 
-    @NotNull(message = "O perfil é obrigatório")
-    private Perfil perfil;
+    @NotNull(message = "A role é obrigatória")
+    private Long roleId;
 
     @NotNull(message = "A situação é obrigatória")
     private Situacao situacao;

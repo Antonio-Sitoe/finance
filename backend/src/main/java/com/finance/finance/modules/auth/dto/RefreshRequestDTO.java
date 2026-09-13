@@ -1,13 +1,11 @@
 package com.finance.finance.modules.auth.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class RefreshRequestDTO {
-
-    @NotBlank(message = "O refresh token é obrigatório")
+    /** Opcional: preferir cookie HttpOnly `refresh_token`. */
     private String refreshToken;
 }

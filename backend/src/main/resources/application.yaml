@@ -29,6 +29,10 @@ jwt:
   access-ttl-minutes: ${JWT_ACCESS_TTL_MINUTES:15}
   refresh-ttl-days: ${JWT_REFRESH_TTL_DAYS:7}
 
+auth:
+  cookie:
+    secure: ${AUTH_COOKIE_SECURE:false}
+
 frontend:
   url: ${FRONTEND_URL:http://localhost:4200}
 

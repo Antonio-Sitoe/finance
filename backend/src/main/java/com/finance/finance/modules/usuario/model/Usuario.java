@@ -3,8 +3,8 @@ package com.finance.finance.modules.usuario.model;
 import java.time.LocalDateTime;
 
 import com.finance.finance.modules.common.baseEntity.BaseEntity;
-import com.finance.finance.modules.common.enums.Perfil;
 import com.finance.finance.modules.common.enums.Situacao;
+import com.finance.finance.modules.roles.model.Role;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -14,7 +14,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "usuario")
+@Entity
+@Table(name = "usuario")
 public class Usuario extends BaseEntity {
 
     @Id
@@ -34,9 +35,9 @@ public class Usuario extends BaseEntity {
     @Size(min = 6, max = 255, message = "A senha deve ter entre 6 e 255 caracteres")
     private String senha;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private Perfil perfil;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

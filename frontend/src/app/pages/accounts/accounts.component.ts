@@ -6,6 +6,8 @@ import { AccountDetailDrawerComponent } from "@/shared/components/accounts/accou
 import { IAccount } from "@/shared/interfaces/accounts.dto";
 import { AccountsFacadeService } from "@/shared/services/accounts/accounts.facade.service";
 
+import { HasPermissionDirective } from "@/shared/directives/has-permission.directive";
+
 @Component({
   selector: "app-accounts",
   imports: [
@@ -13,6 +15,7 @@ import { AccountsFacadeService } from "@/shared/services/accounts/accounts.facad
     AccountsListTableComponent,
     CreateAndEditAccountComponent,
     AccountDetailDrawerComponent,
+    HasPermissionDirective,
   ],
   templateUrl: "./accounts.component.html",
 })

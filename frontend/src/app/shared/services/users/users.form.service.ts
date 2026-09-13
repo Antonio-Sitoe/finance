@@ -26,7 +26,7 @@ export class UsersFormService {
         ],
       ],
       email: ["", [Validators.required, Validators.email]],
-      perfil: ["", Validators.required],
+      roleId: ["", Validators.required],
       situacao: [true],
       senha: ["", [Validators.required, passwordStrengthValidator]],
       confirmarSenha: ["", Validators.required],
@@ -89,7 +89,7 @@ export class UsersFormService {
     this.form.reset({
       nome: "",
       email: "",
-      perfil: "",
+      roleId: "",
       situacao: true,
       senha: "",
       confirmarSenha: "",
@@ -104,7 +104,7 @@ export class UsersFormService {
     this.form.reset({
       nome: user.nome,
       email: user.email,
-      perfil: user.perfil,
+      roleId: String(user.roleId),
       situacao: user.situacao === "ATIVO",
       senha: "",
       confirmarSenha: "",
@@ -116,11 +116,11 @@ export class UsersFormService {
   }
 
   buildCreatePayload() {
-    const { nome, email, perfil, situacao, senha } = this.form.value;
+    const { nome, email, roleId, situacao, senha } = this.form.value;
     return {
       nome: nome as string,
       email: email as string,
-      perfil: perfil as string,
+      roleId: Number(roleId),
       situacao: (situacao ? "ATIVO" : "INATIVO") as string,
       senha: senha as string,
     };
@@ -152,11 +152,11 @@ export class UsersFormService {
   }
 
   buildUpdatePayload() {
-    const { nome, email, perfil, situacao, senha } = this.form.value;
+    const { nome, email, roleId, situacao, senha } = this.form.value;
     return {
       nome: nome as string,
       email: email as string,
-      perfil: perfil as string,
+      roleId: Number(roleId),
       situacao: (situacao ? "ATIVO" : "INATIVO") as string,
       ...(senha ? { senha: senha as string } : {}),
     };
@@ -168,8 +168,8 @@ export class UsersFormService {
   get email() {
     return this.form.get("email")!;
   }
-  get perfil() {
-    return this.form.get("perfil")!;
+  get roleId() {
+    return this.form.get("roleId")!;
   }
   get situacao() {
     return this.form.get("situacao")!;

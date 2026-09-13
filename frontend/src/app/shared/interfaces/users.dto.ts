@@ -1,11 +1,13 @@
 import { PageResult } from '../config/listing/listing.dto'
-import { PROFILE, SITUATION } from './enum.dto'
+import { SITUATION } from './enum.dto'
 
 export interface IUsuario {
   id: number
   nome: string
   email: string
-  perfil: keyof typeof PROFILE
+  roleId: number
+  roleCodigo: string
+  roleNome: string
   situacao: keyof typeof SITUATION
   createdAt: string
 }
@@ -13,7 +15,7 @@ export interface IUsuario {
 export interface CreateUsuarioDto {
   nome: string
   email: string
-  perfil: string
+  roleId: number
   situacao: string
   senha: string
 }
@@ -21,7 +23,7 @@ export interface CreateUsuarioDto {
 export interface UpdateUsuarioDto {
   nome: string
   email: string
-  perfil: string
+  roleId: number
   situacao: string
   senha?: string
 }

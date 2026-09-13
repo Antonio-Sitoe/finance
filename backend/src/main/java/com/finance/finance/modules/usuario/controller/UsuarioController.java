@@ -7,7 +7,6 @@ import com.finance.finance.modules.usuario.dto.UsuarioStatusResponseDTO;
 import com.finance.finance.modules.usuario.dto.UsuarioUpdateRequestDTO;
 import com.finance.finance.modules.usuario.service.UsuarioService;
 import com.finance.finance.exceptions.ApiErrorResponse;
-import com.finance.finance.modules.common.enums.Perfil;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
@@ -95,11 +94,11 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = PageResponse.class)))
     })
     public ResponseEntity<PageResponse<UsuarioResponseDTO>> listar(
-            @Parameter(description = "Filtrar por utilizador", example = "ADMIN/USER") @RequestParam(required = false) Perfil perfil,
+            @Parameter(description = "Filtrar por role id") @RequestParam(required = false) Long roleId,
             @Parameter(description = "Filtrar por nome", example = "João") @RequestParam(required = false) String search,
             @Parameter(description = "Filtro por situação", example = "ATIVO") @RequestParam(required = false) Situacao situacao,
             @Valid @ModelAttribute PaginationRequest paginationRequest) {
-        return ResponseEntity.ok(usuarioService.listar(paginationRequest, perfil, situacao, search));
+        return ResponseEntity.ok(usuarioService.listar(paginationRequest, roleId, situacao, search));
     }
 
     @GetMapping("/{id}")

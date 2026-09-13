@@ -22,14 +22,14 @@ Utilizador ──1:1── Role ──N:N── Permissão (um método de contro
 
 ## Estado actual vs o que falta
 
-| Já existe | Falta |
+| Já existe ✅ | Notas |
 |---|---|
-| CRUD de utilizadores, senha com BCrypt | Login real, JWT, refresh, logout |
-| Ecrãs de login / esqueci / reset (ainda simulados) | Email + tokens de reset |
-| Enum `Perfil` `ADMIN` / `USER` | Roles dinâmicas + matriz de permissões |
-| `SecurityConfig` em `permitAll()` | Filtro JWT + filtro de permissão |
-| Gestão de users no Angular | Página **Roles** com checkboxes por módulo |
-| JWT no `pom.xml` | Emissão, refresh e interceptor no frontend |
+| Login / logout / JWT / refresh (cookie HttpOnly) | Access em memória; refresh rodado |
+| Forgot + reset (link no log se sem SMTP) | Token 1h, hash, uso único |
+| Roles dinâmicas + matriz + filtro + cache | `V5`, sync no startup, ADMIN bypass |
+| Página `/roles` + select de role nos users | UI tipo Strapi |
+| `*hasPermission` + sidebar/rotas filtradas | Users/Roles só ADMIN |
+| Rate limit + protecção último ADMIN | Sprint 4 |
 
 ~80 endpoints em 11 controllers. A UI agrupa **por módulo**, um checkbox **por método**.
 
@@ -163,7 +163,7 @@ Endpoint novo aparece sozinho na página de roles no próximo arranque.
 
 ## Esqueci a senha / reset
 
-Ecrãs `/forgot-password` e `/reset-password` já existem (ainda simulados).
+Ecrãs `/forgot-password` e `/reset-password` ligados à API.
 
 1. User pede reset com o email.
 2. Backend **sempre 200** (não revelar se o email existe).
@@ -225,14 +225,14 @@ Login / forgot / reset: trocar os `setTimeout` por API. Reset lê `token` da que
 ## Checklist
 
 ### Autenticação
-* [ ] Login com email e senha
-* [ ] Logout (revogar refresh)
-* [ ] Sessão com token JWT (15 min)
-* [ ] Refresh token (7 dias, rotação)
-* [ ] `GET /auth/me` + último acesso
-* [ ] Alterar a própria password
-* [ ] Esqueci a senha (email + token 1h)
-* [ ] Reset password (`/reset-password?token=`)
+* [x] Login com email e senha
+* [x] Logout (revogar refresh)
+* [x] Sessão com token JWT (15 min)
+* [x] Refresh token (7 dias, rotação) + cookie HttpOnly
+* [x] `GET /auth/me` + último acesso
+* [x] Alterar a própria password
+* [x] Esqueci a senha (email + token 1h; em local loga o link)
+* [x] Reset password (`/reset-password?token=`)
 
 ### Gestão de utilizadores (ADMIN)
 * [x] Criar utilizador (nome, email, senha, situação)
@@ -240,37 +240,43 @@ Login / forgot / reset: trocar os `setTimeout` por API. Reset lê `token` da que
 * [x] Desactivar utilizador (soft delete → INATIVO)
 * [x] Listar utilizadores com paginação
 * [x] Ver detalhe de utilizador por ID
-* [ ] Trocar enum `perfil` por select de role dinâmica
+* [x] Trocar enum `perfil` por select de role dinâmica
 
 ### Roles dinâmicas (ADMIN)
-* [ ] Tabelas `role`, `permissao`, `role_permissao`
-* [ ] Sync do catálogo no startup
-* [ ] CRUD de roles
-* [ ] Página lista de roles
-* [ ] Página detalhe com checkboxes por endpoint, agrupados por módulo
-* [ ] Filtro de autorização (ADMIN bypass; resto valida permissão)
-* [ ] Cache de permissões por role (invalidar no save)
-* [ ] Directiva `*hasPermission` + sidebar/rotas filtradas
-* [ ] Seed: ADMIN, USER, role exemplo “Operador de lançamentos”
+* [x] Tabelas `role`, `permissao`, `role_permissao`
+* [x] Sync do catálogo no startup
+* [x] CRUD de roles
+* [x] Página lista de roles
+* [x] Página detalhe com checkboxes por endpoint, agrupados por módulo
+* [x] Filtro de autorização (ADMIN bypass; resto valida permissão)
+* [x] Cache de permissões por role (invalidar no save)
+* [x] Directiva `*hasPermission` + sidebar/rotas filtradas
+* [x] Seed: ADMIN, USER (USER com permissões de leitura); “Operador de lançamentos” via UI
 
 ### Perfil do utilizador (qualquer autenticado)
-* [ ] Ver o próprio perfil (nome, email, role, situação, data de criação)
-* [ ] Editar o próprio nome e email
-* [ ] Ver data e hora do último acesso
+* [x] Ver o próprio perfil (nome, email, role, situação, data de criação)
+* [x] Editar o próprio nome e email
+* [x] Ver data e hora do último acesso
 
 ### UI — estado dos prompts
-* [x] Tela de Login + Esqueci a Password (ainda simulada)
-* [x] Tela de Reset Password (ainda simulada)
+* [x] Tela de Login + Esqueci a Password (ligadas à API)
+* [x] Tela de Reset Password (ligada à API)
 * [x] Gestão de Utilizadores
 * [x] Perfil do Utilizador
-* [ ] Ligar login / forgot / reset à API
-* [ ] Página de Roles (matriz de permissões)
+* [x] Ligar login / forgot / reset à API
+* [x] Página de Roles (matriz de permissões)
+
+### Endurecimento (Sprint 4)
+* [x] Rate limit em login e forgot-password
+* [x] Access token só em memória; refresh em cookie
+* [x] Não desactivar / remover role do último ADMIN
+* [x] Testes: refresh reutilizado, reset expirado, 403 sem permissão, rate limit 429
 
 ---
 
 ## Sprints
 
-### Sprint 1 — Auth a funcionar (sem roles dinâmicas ainda)
+### Sprint 1 — Auth a funcionar ✅
 1. Tabelas `refresh_token`, `password_reset_token`, coluna `ultimo_acesso`.
 2. `AuthController` + `JwtService` + filtro JWT.
 3. Fechar `SecurityConfig`: público só login/reset/refresh; resto autenticado.
@@ -280,7 +286,7 @@ Login / forgot / reset: trocar os `setTimeout` por API. Reset lê `token` da que
 
 Resultado: ninguém entra sem senha; o CRUD financeiro deixa de estar aberto.
 
-### Sprint 2 — Modelo de roles
+### Sprint 2 — Modelo de roles ✅
 1. Tabelas `role`, `permissao`, `role_permissao`.
 2. Migrar `usuario.perfil` → `role_id`.
 3. Sync do catálogo no startup.
@@ -288,18 +294,18 @@ Resultado: ninguém entra sem senha; o CRUD financeiro deixa de estar aberto.
 5. Cache por role; invalidar no save.
 6. API `/roles` e `/permissoes`.
 
-### Sprint 3 — UI admin tipo Strapi
+### Sprint 3 — UI admin tipo Strapi ✅
 1. Página lista + detalhe com checkboxes agrupados.
 2. Users: select de role dinâmica.
 3. Directiva de permissão nos botões (criar/editar/apagar).
 4. Sidebar e rotas filtradas.
-5. Seed da role exemplo “Operador de lançamentos”.
+5. Seed da role exemplo “Operador de lançamentos” (criar via UI no critério de aceite).
 
-### Sprint 4 — Endurecer
+### Sprint 4 — Endurecer ✅
 1. Rate limit em login e forgot-password.
-2. Rotação de refresh; revogar todos no reset de senha.
+2. Rotação de refresh; revogar todos no reset de senha; cookie HttpOnly.
 3. Não permitir desactivar o último ADMIN.
-4. Testes: 401 sem token, 403 sem permissão, ADMIN passa, desmarcar checkbox fecha o endpoint, reset expira.
+4. Testes: 403 sem permissão, ADMIN passa, reset expira, refresh rodado não reutiliza.
 
 ---
 

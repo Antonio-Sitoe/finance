@@ -7,6 +7,8 @@ import { CategoryDetailDrawerComponent } from "@/shared/components/categories/ca
 import { ICategory } from "@/shared/interfaces/categories.dto";
 import { CategoriesFacadeService } from "@/shared/services/categories/categories.facade.service";
 
+import { HasPermissionDirective } from "@/shared/directives/has-permission.directive";
+
 @Component({
   selector: "app-categories",
   imports: [
@@ -15,6 +17,7 @@ import { CategoriesFacadeService } from "@/shared/services/categories/categories
     CategoriesListTableComponent,
     CreateAndEditCategoryComponent,
     CategoryDetailDrawerComponent,
+    HasPermissionDirective,
   ],
   templateUrl: "./categories.component.html",
 })

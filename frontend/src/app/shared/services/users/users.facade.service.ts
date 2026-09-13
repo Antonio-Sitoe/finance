@@ -3,12 +3,15 @@ import { ListStore } from '@/shared/config/listing/list.store'
 import { ColumnDef } from '@/shared/components/ui/datatable/datatable'
 import { USERS_COLUMNS } from '@/shared/constants/users.columns'
 import { UsersApiService } from './users.api.service'
-import { PROFILE, SITUATION } from '@/shared/interfaces/enum.dto'
+import { SITUATION } from '@/shared/interfaces/enum.dto'
 import { computed, inject, Injectable, signal } from '@angular/core'
+import { RolesApiService } from '@/shared/services/roles/roles.api.service'
+import { SelectOption } from '@/shared/components/ui/select/select.component'
 
 @Injectable({ providedIn: 'root' })
 export class UserFacadeService {
   private api = inject(UsersApiService)
+  private rolesApi = inject(RolesApiService)
 
   readonly editingUser = signal<IUsuario | null>(null)
   readonly analytics = signal({
@@ -28,11 +31,11 @@ export class UserFacadeService {
     { value: SITUATION.INATIVO, label: 'Inactivo' },
   ]
 
-  readonly roleOptions = [
-    { value: '', label: 'Todos' },
-    { value: PROFILE.ADMIN, label: 'Administrador' },
-    { value: PROFILE.USER, label: 'Utilizador' },
-  ]
+  readonly roleOptions = signal<SelectOption[]>([{ value: '', label: 'Todos' }])
+
+  readonly roleFormOptions = computed(() =>
+    this.roleOptions().filter((r) => r.value !== ''),
+  )
 
   readonly list = new ListStore<IUsuario>()
   readonly selectedRows = signal<number[]>([])
@@ -44,7 +47,7 @@ export class UserFacadeService {
     String(this.list.query().filters?.['situacao'] ?? ''),
   )
   readonly filterRole = computed(() =>
-    String(this.list.query().filters?.['perfil'] ?? ''),
+    String(this.list.query().filters?.['roleId'] ?? ''),
   )
 
   readonly selectAll = computed(() => {
@@ -59,6 +62,21 @@ export class UserFacadeService {
   constructor() {
     this.list.connect((query) => this.api.getUsers(query))
     this.getUserAnalytics()
+    this.loadRoles()
+  }
+
+  loadRoles(): void {
+    this.rolesApi.list().subscribe({
+      next: (roles) => {
+        this.roleOptions.set([
+          { value: '', label: 'Todos' },
+          ...roles.map((r) => ({
+            value: String(r.id),
+            label: r.nome,
+          })),
+        ])
+      },
+    })
   }
 
   getUserAnalytics(): void {
@@ -73,8 +91,8 @@ export class UserFacadeService {
     this.list.setFilter('situacao', value)
   }
 
-  filterByPerfil(value: string): void {
-    this.list.setFilter('perfil', value)
+  filterByRole(value: string): void {
+    this.list.setFilter('roleId', value)
   }
 
   toggleSelectAll(): void {
@@ -95,5 +113,10 @@ export class UserFacadeService {
   badgeColor(situacao: string): 'success' | 'warning' | 'error' {
     if (situacao === SITUATION.ATIVO) return 'success'
     return 'error'
+  }
+
+  roleBadgeColor(roleCodigo: string): 'primary' | 'info' | 'light' {
+    if (roleCodigo === 'ADMIN') return 'primary'
+    return 'info'
   }
 }

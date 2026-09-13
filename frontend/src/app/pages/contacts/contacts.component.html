@@ -3,13 +3,15 @@
   description="Gira os contactos das empresas clientes e os seus dados de comunicação."
   [breadcrumbs]="[{ label: 'Sistema' }, { label: 'Contactos' }]"
 >
-  <button
-    (click)="openNew()"
-    class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
-  >
-    <span class="text-base leading-none">+</span>
-    Novo Contacto
-  </button>
+  <ng-container *hasPermission="'contactos.criar'">
+    <button
+      (click)="openNew()"
+      class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+    >
+      <span class="text-base leading-none">+</span>
+      Novo Contacto
+    </button>
+  </ng-container>
 </app-page-header>
 
 <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6">

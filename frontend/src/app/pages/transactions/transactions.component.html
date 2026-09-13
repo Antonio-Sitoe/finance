@@ -12,44 +12,46 @@
       Exportar CSV
     </button>
 
-    <div class="relative">
-      <button
-        (click)="toggleNewDropdown()"
-        class="dropdown-toggle inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
-      >
-        <span class="text-base leading-none">+</span>
-        Novo Lançamento
-        <ng-container [solarIcon]="'AltArrowDownBold'" [size]="14" />
-      </button>
+    <ng-container *hasPermission="'lancamentos.criar'">
+      <div class="relative">
+        <button
+          (click)="toggleNewDropdown()"
+          class="dropdown-toggle inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+        >
+          <span class="text-base leading-none">+</span>
+          Novo Lançamento
+          <ng-container [solarIcon]="'AltArrowDownBold'" [size]="14" />
+        </button>
 
-      <app-dropdown
-        [isOpen]="newDropdownOpen()"
-        (close)="newDropdownOpen.set(false)"
-        className="w-52 p-1.5"
-      >
-        <app-dropdown-item
-          (itemClick)="openNew()"
-          className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
+        <app-dropdown
+          [isOpen]="newDropdownOpen()"
+          (close)="newDropdownOpen.set(false)"
+          className="w-52 p-1.5"
         >
-          <ng-container [solarIcon]="'DocumentAddBold'" [size]="16" />
-          Lançamento Normal
-        </app-dropdown-item>
-        <app-dropdown-item
-          (itemClick)="openParcelado()"
-          className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
-        >
-          <ng-container [solarIcon]="'WidgetBold'" [size]="16" />
-          Lançamento Parcelado
-        </app-dropdown-item>
-        <app-dropdown-item
-          (itemClick)="openBulkImport()"
-          className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
-        >
-          <ng-container [solarIcon]="'UploadMinimalisticBold'" [size]="16" />
-          Importar CSV
-        </app-dropdown-item>
-      </app-dropdown>
-    </div>
+          <app-dropdown-item
+            (itemClick)="openNew()"
+            className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
+          >
+            <ng-container [solarIcon]="'DocumentAddBold'" [size]="16" />
+            Lançamento Normal
+          </app-dropdown-item>
+          <app-dropdown-item
+            (itemClick)="openParcelado()"
+            className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
+          >
+            <ng-container [solarIcon]="'WidgetBold'" [size]="16" />
+            Lançamento Parcelado
+          </app-dropdown-item>
+          <app-dropdown-item
+            (itemClick)="openBulkImport()"
+            className="flex items-center gap-2.5 w-full font-normal text-left text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
+          >
+            <ng-container [solarIcon]="'UploadMinimalisticBold'" [size]="16" />
+            Importar CSV
+          </app-dropdown-item>
+        </app-dropdown>
+      </div>
+    </ng-container>
   </div>
 </app-page-header>
 

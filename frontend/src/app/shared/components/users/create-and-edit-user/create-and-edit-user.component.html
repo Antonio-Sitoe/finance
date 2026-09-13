@@ -75,17 +75,17 @@
       </div>
 
       <div class="space-y-4">
-        <!-- Perfil de acesso -->
+        <!-- Role de acesso -->
         <div class="space-y-1.5">
-          <app-label>Perfil de Acesso</app-label>
+          <app-label>Role de Acesso</app-label>
           <app-select
-            placeholder="Seleccionar perfil"
-            [options]="facade.roleOptions.filter(r => r.value !== '')"
-            [value]="userForm.perfil.value ?? ''"
-            (valueChange)="userForm.perfil.setValue($event)"
+            placeholder="Seleccionar role"
+            [options]="facade.roleFormOptions()"
+            [value]="userForm.roleId.value ?? ''"
+            (valueChange)="userForm.roleId.setValue($event)"
           />
-          @if (userForm.perfil.invalid && userForm.perfil.touched) {
-            <p class="text-xs text-error-500">Seleccione um perfil</p>
+          @if (userForm.roleId.invalid && userForm.roleId.touched) {
+            <p class="text-xs text-error-500">Seleccione uma role</p>
           }
         </div>
 

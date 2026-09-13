@@ -9,6 +9,8 @@ import { SignInComponent } from "./pages/auth-pages/sign-in/sign-in.component";
 import { ForgotPasswordComponent } from "./pages/auth-pages/forgot-password/forgot-password.component";
 import { ResetPasswordComponent } from "./pages/auth-pages/reset-password/reset-password.component";
 import { UsersComponent } from "./pages/users/users.component";
+import { RolesListComponent } from "./pages/roles/roles-list/roles-list.component";
+import { RoleDetailComponent } from "./pages/roles/role-detail/role-detail.component";
 import { CostumersComponent } from "./pages/costumers/costumers.component";
 import { CostumerContactsComponent } from "./pages/costumer-contacts/costumer-contacts.component";
 import { ContactsComponent } from "./pages/contacts/contacts.component";
@@ -23,6 +25,7 @@ import { FluxoDeCaixaComponent } from "./pages/fluxo-de-caixa/fluxo-de-caixa.com
 import { ClientesRelatorioComponent } from "./pages/relatorios/clientes/clientes-relatorio.component";
 import { CategoriasRelatorioComponent } from "./pages/relatorios/categorias/categorias-relatorio.component";
 import { authGuard } from "./core/auth/auth.guard";
+import { adminGuard } from "./core/auth/admin.guard";
 
 export const routes: Routes = [
   {
@@ -43,7 +46,20 @@ export const routes: Routes = [
       {
         path: "users",
         component: UsersComponent,
+        canActivate: [adminGuard],
         title: "Finance Users | FinanceApp Administrative Panel",
+      },
+      {
+        path: "roles",
+        component: RolesListComponent,
+        canActivate: [adminGuard],
+        title: "Roles | FinanceApp Administrative Panel",
+      },
+      {
+        path: "roles/:id",
+        component: RoleDetailComponent,
+        canActivate: [adminGuard],
+        title: "Role | FinanceApp Administrative Panel",
       },
       {
         path: "costumers",

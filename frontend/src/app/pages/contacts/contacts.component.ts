@@ -7,6 +7,8 @@ import { ContactDetailDrawerComponent } from "@/shared/components/contacts/conta
 import { IContactDTO } from "@/shared/interfaces/contacts.dto";
 import { ContactsFacadeService } from "@/shared/services/contactos/contacts.facade.service";
 
+import { HasPermissionDirective } from "@/shared/directives/has-permission.directive";
+
 @Component({
   imports: [
     PageHeaderComponent,
@@ -14,6 +16,7 @@ import { ContactsFacadeService } from "@/shared/services/contactos/contacts.faca
     ContactsListTableComponent,
     CreateAndEditContactComponent,
     ContactDetailDrawerComponent,
+    HasPermissionDirective,
   ],
   templateUrl: "./contacts.component.html",
 })

@@ -1,4 +1,10 @@
-import { Component, inject, Input, signal, WritableSignal } from '@angular/core'
+import {
+  Component,
+  inject,
+  Input,
+  signal,
+  WritableSignal,
+} from '@angular/core'
 import { UserFacadeService } from '@/shared/services/users/users.facade.service'
 import { IUsuario } from '@/shared/interfaces/users.dto'
 import { DataTableComponent } from '@/shared/components/ui/datatable/datatable'
@@ -9,7 +15,6 @@ import { InputFieldComponent } from '@/shared/components/ui/input/input-field.co
 import { SelectComponent } from '@/shared/components/ui/select/select.component'
 import { CreateAndEditUserComponent } from '@/shared/components/users/create-and-edit-user/create-and-edit-user.component'
 import { UserDetailDrawerComponent } from '@/shared/components/users/user-detail-drawer/user-detail-drawer.component'
-import { ProfilePipe } from '@/shared/pipe/profile.pipe'
 import { DatePipe } from '@angular/common'
 import { SituationPipe } from '@/shared/pipe/situatuin.pipe'
 import {
@@ -22,7 +27,6 @@ import {
 @Component({
   imports: [
     DatePipe,
-    ProfilePipe,
     SituationPipe,
     DataTableComponent,
     BadgeComponent,

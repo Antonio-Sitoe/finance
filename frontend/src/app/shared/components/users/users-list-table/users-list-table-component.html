@@ -31,10 +31,10 @@
       className="w-full sm:w-44"
     />
     <app-select
-      placeholder="Todas as funções"
-      [options]="facade.roleOptions"
+      placeholder="Todas as roles"
+      [options]="facade.roleOptions()"
       [value]="facade.filterRole()"
-      (valueChange)="facade.filterByPerfil($event)"
+      (valueChange)="facade.filterByRole($event)"
       className="w-full sm:w-44"
     />
   </div>
@@ -62,7 +62,7 @@
       </div>
     </td>
     <td class="px-5 py-3.5 text-xs text-gray-600 dark:text-gray-400">
-      {{ row.perfil | profile }}
+      {{ row.roleNome || row.roleCodigo }}
     </td>
     <td class="px-5 py-3.5 mx-auto">
       <div class="flex items-center justify-center">

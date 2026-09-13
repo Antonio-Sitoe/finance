@@ -22,16 +22,15 @@ import com.finance.finance.exceptions.ResourceNotFoundException;
 import com.finance.finance.modules.auth.dto.ChangePasswordRequestDTO;
 import com.finance.finance.modules.auth.dto.ForgotPasswordRequestDTO;
 import com.finance.finance.modules.auth.dto.LoginRequestDTO;
-import com.finance.finance.modules.auth.dto.LoginResponseDTO;
 import com.finance.finance.modules.auth.dto.MeResponseDTO;
 import com.finance.finance.modules.auth.dto.MeUpdateRequestDTO;
-import com.finance.finance.modules.auth.dto.RefreshRequestDTO;
 import com.finance.finance.modules.auth.dto.ResetPasswordRequestDTO;
 import com.finance.finance.modules.auth.model.PasswordResetToken;
 import com.finance.finance.modules.auth.model.RefreshToken;
 import com.finance.finance.modules.auth.repository.PasswordResetTokenRepository;
 import com.finance.finance.modules.auth.repository.RefreshTokenRepository;
 import com.finance.finance.modules.common.enums.Situacao;
+import com.finance.finance.modules.roles.service.PermissionCacheService;
 import com.finance.finance.modules.usuario.model.Usuario;
 import com.finance.finance.modules.usuario.repository.UsuarioRepository;
 import com.finance.finance.modules.usuario.service.UsuarioService;
@@ -50,6 +49,7 @@ public class AuthService {
   private final JwtService jwtService;
   private final PasswordEncoder passwordEncoder;
   private final UsuarioService usuarioService;
+  private final PermissionCacheService permissionCacheService;
 
   @Value("${jwt.refresh-ttl-days}")
   private long refreshTtlDias;
@@ -57,7 +57,10 @@ public class AuthService {
   @Value("${frontend.url}")
   private String frontendUrl;
 
-  public LoginResponseDTO login(LoginRequestDTO dto) {
+  public record TokenPair(String accessToken, String refreshToken) {
+  }
+
+  public TokenPair login(LoginRequestDTO dto) {
     Usuario usuario = usuarioRepository.findByEmail(dto.getEmail());
 
     if (usuario == null || usuario.getSituacao() != Situacao.ATIVO
@@ -66,7 +69,7 @@ public class AuthService {
     }
     usuario.setUltimoAcesso(LocalDateTime.now());
     usuarioRepository.save(usuario);
-    return new LoginResponseDTO(jwtService.gerarAccessToken(usuario), criarRefreshToken(usuario));
+    return new TokenPair(jwtService.gerarAccessToken(usuario), criarRefreshToken(usuario));
   }
 
   private String criarRefreshToken(Usuario usuario) {
@@ -79,8 +82,11 @@ public class AuthService {
     return cru;
   }
 
-  public LoginResponseDTO refresh(RefreshRequestDTO dto) {
-    String hash = sha256(dto.getRefreshToken());
+  public TokenPair refresh(String refreshTokenCru) {
+    if (refreshTokenCru == null || refreshTokenCru.isBlank()) {
+      throw new BusinessException("Refresh token inválido");
+    }
+    String hash = sha256(refreshTokenCru);
     RefreshToken antigo = refreshTokenRepository.findByTokenHash(hash)
         .orElseThrow(() -> new BusinessException("Refresh token inválido"));
 
@@ -94,13 +100,14 @@ public class AuthService {
       throw new BusinessException("Refresh token inválido ou expirado");
     }
 
-    return new LoginResponseDTO(
-        jwtService.gerarAccessToken(usuario),
-        criarRefreshToken(usuario));
+    return new TokenPair(jwtService.gerarAccessToken(usuario), criarRefreshToken(usuario));
   }
 
-  public void logout(Long usuarioId, RefreshRequestDTO dto) {
-    String hash = sha256(dto.getRefreshToken());
+  public void logout(Long usuarioId, String refreshTokenCru) {
+    if (refreshTokenCru == null || refreshTokenCru.isBlank()) {
+      return;
+    }
+    String hash = sha256(refreshTokenCru);
     refreshTokenRepository.findByTokenHash(hash).ifPresent(rt -> {
       if (rt.getUsuario().getId().equals(usuarioId) && rt.getRevokedAt() == null) {
         rt.setRevokedAt(LocalDateTime.now());
@@ -185,12 +192,17 @@ public class AuthService {
   }
 
   private MeResponseDTO toMeResponse(Usuario u) {
+    String roleCodigo = u.getRole() != null ? u.getRole().getCodigo() : null;
+    List<String> permissoes = List.of();
+    if (u.getRole() != null && !u.getRole().isSistema()) {
+      permissoes = permissionCacheService.getCodigos(u.getRole().getId()).stream().sorted().toList();
+    }
     return MeResponseDTO.builder()
         .id(u.getId())
         .nome(u.getNome())
         .email(u.getEmail())
-        .role(u.getPerfil().name())
-        .permissoes(List.of())
+        .role(roleCodigo)
+        .permissoes(permissoes)
         .ultimoAcesso(u.getUltimoAcesso())
         .criadoEm(u.getCreatedAt())
         .build();

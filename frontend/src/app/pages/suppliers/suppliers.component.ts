@@ -7,6 +7,8 @@ import { SupplierDetailDrawerComponent } from '@/shared/components/suppliers/sup
 import { ISupplier } from '@/shared/interfaces/suppliers.dto'
 import { SuppliersFacadeService } from '@/shared/services/suppliers/suppliers.facade.service'
 
+import { HasPermissionDirective } from '@/shared/directives/has-permission.directive'
+
 @Component({
   selector: 'app-suppliers',
   imports: [
@@ -15,6 +17,7 @@ import { SuppliersFacadeService } from '@/shared/services/suppliers/suppliers.fa
     SuppliersListTableComponent,
     CreateAndEditSupplierComponent,
     SupplierDetailDrawerComponent,
+    HasPermissionDirective,
   ],
   templateUrl: './suppliers.component.html',
 })

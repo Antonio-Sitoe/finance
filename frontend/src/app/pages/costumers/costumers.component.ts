@@ -7,6 +7,8 @@ import { CostumerDetailDrawerComponent } from '@/shared/components/costumers/cos
 import { ICustomerDTO } from '@/shared/interfaces/costumers.dto'
 import { CustomerFacadeService } from '@/shared/services/customers/customer.listing.service'
 
+import { HasPermissionDirective } from '@/shared/directives/has-permission.directive'
+
 @Component({
   selector: 'app-costumers',
   imports: [
@@ -15,6 +17,7 @@ import { CustomerFacadeService } from '@/shared/services/customers/customer.list
     CostumersListTableComponent,
     CreateAndEditCostumerComponent,
     CostumerDetailDrawerComponent,
+    HasPermissionDirective,
   ],
   templateUrl: './costumers.component.html',
 })

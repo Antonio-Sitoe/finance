@@ -10,7 +10,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
+import com.finance.finance.modules.auth.security.AuthRateLimitFilter;
 import com.finance.finance.modules.auth.security.JwtAuthenticationFilter;
+import com.finance.finance.modules.roles.security.PermissionAuthorizationFilter;
 
 import java.util.List;
 
@@ -18,8 +20,8 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter,
+            PermissionAuthorizationFilter permissionFilter, AuthRateLimitFilter rateLimitFilter) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -34,7 +36,9 @@ public class SecurityConfig {
                                 "/actuator/**")
                         .permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(permissionFilter, JwtAuthenticationFilter.class);
         return http.build();
     }
 

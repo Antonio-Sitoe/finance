@@ -14,6 +14,8 @@ import { DropdownComponent } from '@/shared/components/ui/dropdown/dropdown.comp
 import { DropdownItemComponent } from '@/shared/components/ui/dropdown/dropdown-item/dropdown-item.component'
 import { SolarDynamicIcon } from '@solar-icons/angular'
 
+import { HasPermissionDirective } from '@/shared/directives/has-permission.directive'
+
 @Component({
   selector: 'app-transactions',
   imports: [
@@ -25,6 +27,7 @@ import { SolarDynamicIcon } from '@solar-icons/angular'
     DropdownComponent,
     DropdownItemComponent,
     SolarDynamicIcon,
+    HasPermissionDirective,
   ],
   templateUrl: './transactions.component.html',
 })

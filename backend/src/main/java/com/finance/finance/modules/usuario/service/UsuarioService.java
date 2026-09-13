@@ -8,7 +8,8 @@ import com.finance.finance.modules.usuario.dto.UsuarioUpdateRequestDTO;
 import com.finance.finance.modules.usuario.mapper.UsuarioMapper;
 import com.finance.finance.modules.usuario.model.Usuario;
 import com.finance.finance.modules.usuario.repository.UsuarioRepository;
-import com.finance.finance.modules.common.enums.Perfil;
+import com.finance.finance.modules.roles.model.Role;
+import com.finance.finance.modules.roles.repository.RoleRepository;
 import com.finance.finance.modules.common.enums.Situacao;
 import com.finance.finance.modules.common.pagination.PageResponse;
 import com.finance.finance.modules.common.pagination.PaginationRequest;
@@ -29,11 +30,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UsuarioResponseDTO criar(UsuarioRequestDTO dto) {
         validarEmailUnico(dto.getEmail(), null);
-        Usuario usuario = UsuarioMapper.toEntity(dto);
+        Role role = buscarRole(dto.getRoleId());
+        Usuario usuario = UsuarioMapper.toEntity(dto, role);
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         return UsuarioMapper.toResponseDTO(usuarioRepository.save(usuario));
     }
@@ -41,7 +44,13 @@ public class UsuarioService {
     public UsuarioResponseDTO atualizar(Long id, UsuarioUpdateRequestDTO dto) {
         Usuario usuario = buscarOuFalhar(id);
         validarEmailUnico(dto.getEmail(), id);
-        UsuarioMapper.updateEntity(usuario, dto);
+        Role role = buscarRole(dto.getRoleId());
+        if (usuario.getRole().isSistema() && !role.isSistema()) {
+            if (usuarioRepository.countActiveAdminsExcluding(id) == 0) {
+                throw new BusinessException("Não é possível remover a role ADMIN do último administrador activo");
+            }
+        }
+        UsuarioMapper.updateEntity(usuario, dto, role);
         if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
             usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         }
@@ -50,6 +59,7 @@ public class UsuarioService {
 
     public void desativar(Long id) {
         Usuario usuario = buscarOuFalhar(id);
+        garantirNaoUltimoAdminActivo(usuario);
         usuario.setSituacao(Situacao.INATIVO);
         usuarioRepository.save(usuario);
     }
@@ -59,6 +69,7 @@ public class UsuarioService {
 
         String mensagem;
         if (usuario.getSituacao() == Situacao.ATIVO) {
+            garantirNaoUltimoAdminActivo(usuario);
             usuario.setSituacao(Situacao.INATIVO);
             mensagem = "Usuário desativado com sucesso";
         } else {
@@ -71,13 +82,13 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<UsuarioResponseDTO> listar(PaginationRequest paginationRequest, Perfil perfil,
+    public PageResponse<UsuarioResponseDTO> listar(PaginationRequest paginationRequest, Long roleId,
             Situacao situacao, String search) {
         Pageable pageable = paginationRequest.toPageable("id");
         Specification<Usuario> spec = Specification.unrestricted();
 
-        if (perfil != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("perfil"), perfil));
+        if (roleId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("role").get("id"), roleId));
         }
 
         if (situacao != null) {
@@ -114,6 +125,19 @@ public class UsuarioService {
                 .totalInativos(totalInativos)
                 .totalAdministradores(totalAdministradores)
                 .build();
+    }
+
+    private void garantirNaoUltimoAdminActivo(Usuario usuario) {
+        if (usuario.getRole() != null && usuario.getRole().isSistema()
+                && usuario.getSituacao() == Situacao.ATIVO
+                && usuarioRepository.countActiveAdminsExcluding(usuario.getId()) == 0) {
+            throw new BusinessException("Não é possível desactivar o último administrador activo");
+        }
+    }
+
+    private Role buscarRole(Long roleId) {
+        return roleRepository.findById(roleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Role não encontrada com id: " + roleId));
     }
 
     private Usuario buscarOuFalhar(Long id) {

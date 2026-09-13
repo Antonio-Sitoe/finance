@@ -8,19 +8,16 @@ export const authGuard: CanActivateFn = () => {
   const router = inject(Router)
   const signIn = router.createUrlTree(['/signin'])
 
-  if (!auth.accessToken && !auth.refreshToken) {
-    return signIn
-  }
-
-  if (auth.currentUser()) {
+  if (auth.currentUser() && auth.accessToken) {
     return true
   }
 
-  const loadOrRefresh = auth.accessToken
+  // F5: access token em memória some → refresh via cookie HttpOnly, depois /me
+  const bootstrap$ = auth.accessToken
     ? auth.loadMe()
     : auth.refresh().pipe(switchMap(() => auth.loadMe()))
 
-  return loadOrRefresh.pipe(
+  return bootstrap$.pipe(
     map(() => true),
     catchError(() => {
       auth.clearSession()

@@ -1,10 +1,10 @@
-# Sprint 2 — Modelo de roles
+# Sprint 2 — Modelo de roles ✅
 
 **Objectivo:** matriz de permissões na BD, filtro que a aplica, API para o admin.
 
-> Migrations: `V4` = seed admin (já feito). Roles = `V5`.
+> Status: **backend concluído** (ver `documents/Auth/2.1-2.5.md`). Migrations: `V4` = seed admin. Roles = `V5`.
 
-## Passo 2.1 — Migration V5
+## Passo 2.1 — Migration V5 ✅
 
 `V5__roles_dinamicas.sql`:
 
@@ -53,7 +53,7 @@ ALTER TABLE usuario DROP COLUMN perfil;
 
 > ⚠️ Depois desta migration, o enum `Perfil` deixa de ser usado na entidade. Apagar o campo `perfil` de `Usuario`, dos DTOs, do `UsuarioService.listar` (filtro) e do `UsuarioMapper` — tudo **no mesmo commit**, senão o `validate` rebenta.
 
-## Passo 2.2 — Entidades
+## Passo 2.2 — Entidades ✅
 
 `modules/roles/model/`: `Role` (`codigo`, `nome`, `descricao`, `sistema`, `@ManyToMany` para `Permissao` via `role_permissao`) e `Permissao` (`codigo`, `modulo`, `acao`, `metodo`, `pathPattern`, `descricao`). Ambas `extends BaseEntity`.
 
@@ -67,7 +67,7 @@ private Role role;
 
 Actualizar `JwtService.gerarAccessToken` para `usuario.getRole().getCodigo()` (hoje usa `perfil.name()`).
 
-## Passo 2.3 — Sync do catálogo no startup
+## Passo 2.3 — Sync do catálogo no startup ✅
 
 `modules/roles/service/PermissionCatalogSync.java`:
 
@@ -105,7 +105,7 @@ Notas:
 
 ✅ **Verificar:** arrancar → `SELECT modulo, count(*) FROM permissao GROUP BY modulo;` mostra os ~80 endpoints agrupados.
 
-## Passo 2.4 — Filtro de autorização + cache
+## Passo 2.4 — Filtro de autorização + cache ✅
 
 `modules/roles/security/PermissionAuthorizationFilter.java`, registado **depois** do `JwtAuthenticationFilter`:
 
@@ -127,7 +127,7 @@ Para resolver o handler dentro do filtro: injectar `RequestMappingHandlerMapping
 - ADMIN entra em tudo.
 - Criar na BD uma role sem `clientes.create`, atribuir a um user → `POST /api/clientes` → 403; `GET /api/clientes` → 200 (se `clientes.find` marcado).
 
-## Passo 2.5 — API `/roles` e `/permissoes`
+## Passo 2.5 — API `/roles` e `/permissoes` ✅
 
 `modules/roles/controller/RoleController.java` (só ADMIN — ver regra abaixo):
 
@@ -151,13 +151,17 @@ Como “só ADMIN” ainda não tem anotação própria: na v1, validar no filtr
 
 ---
 
-# Sprint 3 — UI admin tipo Strapi
+# Sprint 3 — UI admin tipo Strapi ✅
 
-## Passo 3.1 — Página lista de roles
+**Objectivo:** páginas de roles, select dinâmico nos users, `*hasPermission`, sidebar filtrada.
+
+> Status: **concluído** (ver `documents/Auth/3.1-3.5.md`).
+
+## Passo 3.1 — Página lista de roles ✅
 
 `pages/roles/roles-list/` + rota `roles` em `app.routes.ts` (dentro do `AppLayoutComponent`, com `authGuard`). Reutilizar os componentes de tabela de `shared/components/ui/table` como em `users`. Colunas: nome, descrição, nº users, acções (editar/apagar). Botão “Add new role” → modal ou rota de detalhe nova.
 
-## Passo 3.2 — Página detalhe (matriz de checkboxes)
+## Passo 3.2 — Página detalhe (matriz de checkboxes) ✅
 
 `pages/roles/role-detail/`:
 
@@ -167,11 +171,11 @@ Como “só ADMIN” ainda não tem anotação própria: na v1, validar no filtr
 4. Save → `PUT /api/roles/{id}` (ou `POST` + `PUT` para role nova).
 5. Role `sistema = true` → matriz em read-only com aviso “ADMIN tem acesso total”.
 
-## Passo 3.3 — Select de role no formulário de users
+## Passo 3.3 — Select de role no formulário de users ✅
 
 No form de criar/editar user (`shared/components/users/...`): substituir o select do enum `perfil` por um select que carrega `GET /api/roles`. O `UsuarioRequestDTO` passa a ter `roleId`.
 
-## Passo 3.4 — Directiva `*hasPermission`
+## Passo 3.4 — Directiva `*hasPermission` ✅
 
 `shared/directives/has-permission.directive.ts`:
 
@@ -195,7 +199,7 @@ export class HasPermissionDirective {
 
 Aplicar nos botões: `<button *hasPermission="'clientes.create'">Novo cliente</button>`.
 
-## Passo 3.5 — Sidebar e rotas filtradas
+## Passo 3.5 — Sidebar e rotas filtradas ✅
 
 - Em `app-sidebar`: cada item de menu ganha um `modulo`; mostrar só se `permissoes()` contém `{modulo}.find` (ou se ADMIN).
 - Items Users e Roles: só ADMIN.
@@ -210,18 +214,13 @@ Aplicar nos botões: `<button *hasPermission="'clientes.create'">Novo cliente</b
 
 ---
 
-# Sprint 4 — Endurecer
+# Sprint 4 — Endurecer ✅
 
-1. **Rate limit** em `/api/auth/login` e `/api/auth/forgot-password` (Bucket4j ou filtro simples com cache Caffeine por IP: ex. 5 tentativas/minuto).
-2. **Refresh em cookie HttpOnly**: `POST /auth/login` faz `Set-Cookie: refresh_token=...; HttpOnly; SameSite=Strict`; `/auth/refresh` lê o cookie. Frontend deixa de guardar refresh no storage. CORS já tem `allowCredentials=true` — no Angular, `withCredentials: true` nesses pedidos.
-3. **Último ADMIN**: em `desativar`/`activarOuDesativar` e no update de role, recusar se for o último user ATIVO com role `sistema`.
-4. **Access token só em memória**: remover `sessionStorage`; no F5, o guard chama `refresh()` (cookie) antes de `loadMe()`.
-5. **Testes** (`spring-boot-starter-security-test` + `webmvc-test` já estão no pom):
-
-- 401 sem token; 403 sem permissão; ADMIN passa em tudo;
-- desmarcar checkbox fecha o endpoint (cache invalidada);
-- reset expira ao fim de 1h e não pode ser reutilizado;
-- refresh rodado não pode ser reutilizado.
+1. **Rate limit** ✅ em `/api/auth/login` e `/api/auth/forgot-password` (Caffeine, 5/min por IP).
+2. **Refresh em cookie HttpOnly** ✅ — `Set-Cookie: refresh_token`; body só com `accessToken`.
+3. **Último ADMIN** ✅ — bloquear desactivar / remover role do último admin activo.
+4. **Access token só em memória** ✅ — guard faz `refresh()` (cookie) → `loadMe()` no F5.
+5. **Testes** ✅ — refresh rodado, reset expirado/reutilizado, rate limit 429, 403 sem permissão, último admin.
 
 ---
 

@@ -4,50 +4,48 @@ import { finalize, Observable, switchMap, tap } from 'rxjs'
 import { AUTH_API_ENDPOINTS } from './auth.endpoints'
 import { LoginResponse, MeResponse } from './auth.models'
 
-const ACCESS_TOKEN_KEY = 'access_token'
-const REFRESH_TOKEN_KEY = 'refresh_token'
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient)
+
+  /** Access token só em memória (Sprint 4). Refresh vive no cookie HttpOnly. */
+  private accessTokenMemory: string | null = null
 
   readonly currentUser = signal<MeResponse | null>(null)
   readonly permissoes = computed(() => this.currentUser()?.permissoes ?? [])
 
   get accessToken(): string | null {
-    return sessionStorage.getItem(ACCESS_TOKEN_KEY)
-  }
-
-  get refreshToken(): string | null {
-    return sessionStorage.getItem(REFRESH_TOKEN_KEY)
+    return this.accessTokenMemory
   }
 
   login(email: string, senha: string): Observable<MeResponse> {
     return this.http
-      .post<LoginResponse>(AUTH_API_ENDPOINTS.LOGIN, { email, senha })
+      .post<LoginResponse>(
+        AUTH_API_ENDPOINTS.LOGIN,
+        { email, senha },
+        { withCredentials: true },
+      )
       .pipe(
-        tap((res) => this.persistTokens(res)),
+        tap((res) => this.persistAccessToken(res.accessToken)),
         switchMap(() => this.loadMe()),
       )
   }
 
   loadMe(): Observable<MeResponse> {
     return this.http
-      .get<MeResponse>(AUTH_API_ENDPOINTS.ME)
+      .get<MeResponse>(AUTH_API_ENDPOINTS.ME, { withCredentials: true })
       .pipe(tap((me) => this.currentUser.set(me)))
   }
 
   refresh(): Observable<LoginResponse> {
-    const refreshToken = this.refreshToken
     return this.http
-      .post<LoginResponse>(AUTH_API_ENDPOINTS.REFRESH, { refreshToken })
-      .pipe(tap((res) => this.persistTokens(res)))
+      .post<LoginResponse>(AUTH_API_ENDPOINTS.REFRESH, {}, { withCredentials: true })
+      .pipe(tap((res) => this.persistAccessToken(res.accessToken)))
   }
 
   logout(): Observable<void> {
-    const refreshToken = this.refreshToken
     return this.http
-      .post<void>(AUTH_API_ENDPOINTS.LOGOUT, { refreshToken })
+      .post<void>(AUTH_API_ENDPOINTS.LOGOUT, {}, { withCredentials: true })
       .pipe(finalize(() => this.clearSession()))
   }
 
@@ -68,13 +66,11 @@ export class AuthService {
   }
 
   clearSession(): void {
-    sessionStorage.removeItem(ACCESS_TOKEN_KEY)
-    sessionStorage.removeItem(REFRESH_TOKEN_KEY)
+    this.accessTokenMemory = null
     this.currentUser.set(null)
   }
 
-  private persistTokens(res: LoginResponse): void {
-    sessionStorage.setItem(ACCESS_TOKEN_KEY, res.accessToken)
-    sessionStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken)
+  private persistAccessToken(accessToken: string): void {
+    this.accessTokenMemory = accessToken
   }
 }

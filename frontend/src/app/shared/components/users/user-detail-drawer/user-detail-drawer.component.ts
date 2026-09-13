@@ -11,8 +11,7 @@ import { DrawerComponent } from '../../ui/drawer/drawer.component'
 import { BadgeComponent } from '../../ui/badge/badge.component'
 import { SwitchComponent } from '@/shared/components/ui/input/switch.component'
 import { IUsuario } from '@/shared/interfaces/users.dto'
-import { PROFILE, SITUATION } from '@/shared/interfaces/enum.dto'
-import { ProfilePipe } from '@/shared/pipe/profile.pipe'
+import { SITUATION } from '@/shared/interfaces/enum.dto'
 import { SituationPipe } from '@/shared/pipe/situatuin.pipe'
 import { AvatarTextComponent } from '@/shared/components/ui/avatar/avatar-text.component'
 import { UsersApiService } from '@/shared/services/users/users.api.service'
@@ -35,7 +34,6 @@ type BadgeColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light'
     DrawerComponent,
     BadgeComponent,
     SwitchComponent,
-    ProfilePipe,
     SituationPipe,
     AvatarTextComponent,
     SolarDynamicIcon,
@@ -104,8 +102,8 @@ export class UserDetailDrawerComponent implements OnInit {
     return 'error'
   }
 
-  roleColor(perfil: string): BadgeColor {
-    if (perfil === PROFILE.ADMIN) return 'primary'
+  roleColor(roleCodigo: string): BadgeColor {
+    if (roleCodigo === 'ADMIN') return 'primary'
     return 'light'
   }
 

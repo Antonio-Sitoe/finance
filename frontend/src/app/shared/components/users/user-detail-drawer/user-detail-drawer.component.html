@@ -35,8 +35,8 @@
       </div>
 
       <div class="flex gap-2">
-        <app-badge variant="solid" [color]="roleColor(user.perfil)" size="sm">
-          {{ user.perfil | profile }}
+        <app-badge variant="solid" [color]="roleColor(user.roleCodigo)" size="sm">
+          {{ user.roleNome || user.roleCodigo }}
         </app-badge>
         <app-badge
           variant="solid"
@@ -66,10 +66,10 @@
       >
         <div class="flex items-center justify-between py-3">
           <span class="text-sm text-gray-500 dark:text-gray-400"
-            >Perfil de Acesso</span
+            >Role de Acesso</span
           >
-          <app-badge variant="light" [color]="roleColor(user.perfil)" size="sm">
-            {{ user.perfil | profile }}
+          <app-badge variant="light" [color]="roleColor(user.roleCodigo)" size="sm">
+            {{ user.roleNome || user.roleCodigo }}
           </app-badge>
         </div>
 
@@ -160,7 +160,9 @@
           <div>
             <p class="text-sm text-gray-700 dark:text-gray-300">
               Função atribuída:
-              <span class="font-medium">{{ user.perfil | profile }}</span>
+              <span class="font-medium">{{
+                user.roleNome || user.roleCodigo
+              }}</span>
             </p>
             <p class="text-xs text-gray-400 dark:text-gray-500">
               {{ formatDate(user.createdAt) }}
