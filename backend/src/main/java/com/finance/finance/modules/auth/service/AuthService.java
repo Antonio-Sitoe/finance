@@ -5,7 +5,9 @@ import com.finance.finance.modules.auth.security.JwtService;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +15,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.finance.finance.exceptions.BusinessException;
 import com.finance.finance.exceptions.ResourceNotFoundException;
@@ -24,6 +27,7 @@ import com.finance.finance.modules.auth.dto.MeResponseDTO;
 import com.finance.finance.modules.auth.dto.MeUpdateRequestDTO;
 import com.finance.finance.modules.auth.dto.RefreshRequestDTO;
 import com.finance.finance.modules.auth.dto.ResetPasswordRequestDTO;
+import com.finance.finance.modules.auth.model.PasswordResetToken;
 import com.finance.finance.modules.auth.model.RefreshToken;
 import com.finance.finance.modules.auth.repository.PasswordResetTokenRepository;
 import com.finance.finance.modules.auth.repository.RefreshTokenRepository;
@@ -32,9 +36,10 @@ import com.finance.finance.modules.usuario.model.Usuario;
 import com.finance.finance.modules.usuario.repository.UsuarioRepository;
 import com.finance.finance.modules.usuario.service.UsuarioService;
 
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -49,6 +54,9 @@ public class AuthService {
   @Value("${jwt.refresh-ttl-days}")
   private long refreshTtlDias;
 
+  @Value("${frontend.url}")
+  private String frontendUrl;
+
   public LoginResponseDTO login(LoginRequestDTO dto) {
     Usuario usuario = usuarioRepository.findByEmail(dto.getEmail());
 
@@ -57,6 +65,7 @@ public class AuthService {
       throw new BusinessException("Email ou senha inválidos");
     }
     usuario.setUltimoAcesso(LocalDateTime.now());
+    usuarioRepository.save(usuario);
     return new LoginResponseDTO(jwtService.gerarAccessToken(usuario), criarRefreshToken(usuario));
   }
 
@@ -103,15 +112,7 @@ public class AuthService {
   public MeResponseDTO me(Long usuarioId) {
     Usuario u = usuarioRepository.findById(usuarioId)
         .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-    return MeResponseDTO.builder()
-        .id(u.getId())
-        .nome(u.getNome())
-        .email(u.getEmail())
-        .role(u.getPerfil().name()) // Sprint 2: u.getRole().getCodigo()
-        .permissoes(List.of()) // Sprint 2: lista real da role
-        .ultimoAcesso(u.getUltimoAcesso())
-        .criadoEm(u.getCreatedAt())
-        .build();
+    return toMeResponse(u);
   }
 
   public MeResponseDTO atualizarMe(Long usuarioId, MeUpdateRequestDTO dto) {
@@ -120,16 +121,7 @@ public class AuthService {
     usuarioService.validarEmailUnico(dto.getEmail(), usuarioId);
     u.setNome(dto.getNome());
     u.setEmail(dto.getEmail());
-    return me(usuarioId);
-  }
-
-  private String sha256(String valor) {
-    try {
-      MessageDigest md = MessageDigest.getInstance("SHA-256");
-      return HexFormat.of().formatHex(md.digest(valor.getBytes(StandardCharsets.UTF_8)));
-    } catch (NoSuchAlgorithmException e) {
-      throw new BusinessException("Erro ao gerar hash SHA-256");
-    }
+    return toMeResponse(usuarioRepository.save(u));
   }
 
   public void changePassword(Long usuarioId, ChangePasswordRequestDTO dto) {
@@ -145,14 +137,77 @@ public class AuthService {
       throw new BusinessException("A nova senha deve ser diferente da actual");
     }
     u.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
+    usuarioRepository.save(u);
   }
 
   public void forgotPassword(ForgotPasswordRequestDTO dto) {
-    // 1.9: se user ATIVO → criar PasswordResetToken (hash); sempre return sem erro
+    Usuario usuario = usuarioRepository.findByEmail(dto.getEmail());
+    if (usuario == null || usuario.getSituacao() != Situacao.ATIVO) {
+      return;
+    }
+
+    LocalDateTime agora = LocalDateTime.now();
+    passwordResetTokenRepository.findAllByUsuarioIdAndUsedAtIsNull(usuario.getId())
+        .forEach(t -> t.setUsedAt(agora));
+
+    String cru = gerarTokenCru();
+    PasswordResetToken prt = new PasswordResetToken();
+    prt.setUsuario(usuario);
+    prt.setTokenHash(sha256(cru));
+    prt.setExpiresAt(agora.plusHours(1));
+    passwordResetTokenRepository.save(prt);
+
+    String link = frontendUrl + "/reset-password?token=" + cru;
+    log.info("Link de reset de senha para {}: {}", usuario.getEmail(), link);
   }
 
   public void resetPassword(ResetPasswordRequestDTO dto) {
-    // 1.9: validar token, marcar usedAt, gravar nova senha
-    throw new BusinessException("Reset de senha ainda não disponível");
+    if (!dto.getNovaSenha().equals(dto.getConfirmacao())) {
+      throw new BusinessException("A confirmação não coincide com a nova senha");
+    }
+
+    PasswordResetToken prt = passwordResetTokenRepository.findByTokenHash(sha256(dto.getToken()))
+        .orElseThrow(() -> new BusinessException("Token de reset inválido ou expirado"));
+
+    if (prt.getUsedAt() != null || prt.getExpiresAt().isBefore(LocalDateTime.now())) {
+      throw new BusinessException("Token de reset inválido ou expirado");
+    }
+
+    Usuario usuario = prt.getUsuario();
+    usuario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
+    usuarioRepository.save(usuario);
+    prt.setUsedAt(LocalDateTime.now());
+    passwordResetTokenRepository.save(prt);
+
+    LocalDateTime agora = LocalDateTime.now();
+    refreshTokenRepository.findAllByUsuarioIdAndRevokedAtIsNull(usuario.getId())
+        .forEach(rt -> rt.setRevokedAt(agora));
+  }
+
+  private MeResponseDTO toMeResponse(Usuario u) {
+    return MeResponseDTO.builder()
+        .id(u.getId())
+        .nome(u.getNome())
+        .email(u.getEmail())
+        .role(u.getPerfil().name())
+        .permissoes(List.of())
+        .ultimoAcesso(u.getUltimoAcesso())
+        .criadoEm(u.getCreatedAt())
+        .build();
+  }
+
+  private String gerarTokenCru() {
+    byte[] bytes = new byte[32];
+    new SecureRandom().nextBytes(bytes);
+    return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+  }
+
+  private String sha256(String valor) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("SHA-256");
+      return HexFormat.of().formatHex(md.digest(valor.getBytes(StandardCharsets.UTF_8)));
+    } catch (NoSuchAlgorithmException e) {
+      throw new BusinessException("Erro ao gerar hash SHA-256");
+    }
   }
 }

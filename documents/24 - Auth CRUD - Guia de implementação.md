@@ -14,13 +14,13 @@ Factos do projecto: [Auth/0.begging.md](Auth/0.begging.md).
 
 | Área | Estado | Onde |
 | ---- | ------ | ---- |
-| Backend auth (JWT, login/refresh/logout/me, security fechada) | ✅ Feito | [Auth/1.1-1.2](Auth/1.1-1.2.md) · [1.3-1.4](Auth/1.3-1.4.md) · [1.5-1.6](Auth/1.5-1.6.md) |
-| Seed admin (`V4`) | ✅ Feito | `admin@finance.com` / `Admin@123` |
-| Angular (interceptor, guard, ecrãs) | ⬜ Próximo | Passo **1.7** ↓ |
-| Forgot/reset + email | ⬜ Stubs no backend | Passo **1.9** |
-| Roles dinâmicas | ⬜ | Sprint 2 (`V5`) |
+| Backend auth (JWT, security) | ✅ | [Auth/1.1–1.6](Auth/1.5-1.6.md) |
+| Seed admin (`V4`) | ✅ | `admin@finance.com` / `Admin@123` |
+| Angular (login/sessão/ecrãs) | ✅ | [Auth/1.7-1.8.md](Auth/1.7-1.8.md) |
+| Forgot/reset (link no console) | ✅ | [Auth/1.9.md](Auth/1.9.md) |
+| Roles dinâmicas | ⬜ Próximo | Sprint 2 ↓ |
 
-**Login de teste (backend já protegido):**
+**Login:** `admin@finance.com` / `Admin@123` — UI `/signin` ou:
 
 ```bash
 curl -X POST http://localhost:8081/api/auth/login \
@@ -28,176 +28,15 @@ curl -X POST http://localhost:8081/api/auth/login \
   -d '{"email":"admin@finance.com","senha":"Admin@123"}'
 ```
 
+**Reset:** `POST /api/auth/forgot-password` → copiar URL do log do backend → `/reset-password?token=...`
+
 ---
 
-# Sprint 1 — Auth a funcionar
+# Sprint 1 — Auth a funcionar ✅
 
-**Objectivo:** ninguém entra sem senha; CRUD financeiro deixa de estar aberto.
+Objectivo cumprido: API protegida + login Angular + reset via log.
 
-> **Backend feito (1.1–1.6 + seed V4).** Continuar no frontend ↓
-
-## Passo 1.7 — Angular: AuthService, interceptor, guard
-
-Criar `frontend/src/app/core/auth/` (pasta nova):
-
-**`auth.service.ts`** — access token **em memória** (signal), refresh em memória também (v1 simples) ou cookie HttpOnly (ideal; exige o backend fazer `Set-Cookie` no login — pode ficar para o Sprint 4):
-
-```ts
-@Injectable({ providedIn: 'root' })
-export class AuthService {
-  private http = inject(HttpClient)
-  private api = 'http://localhost:8081/api/auth'
-
-  currentUser = signal<MeResponse | null>(null)
-  permissoes = computed(() => this.currentUser()?.permissoes ?? [])
-
-  login(email: string, senha: string) {
-    return this.http
-      .post<LoginResponse>(`${this.api}/login`, { email, senha })
-      .pipe(
-        tap((res) => sessionStorage.setItem('access_token', res.accessToken)),
-        tap((res) => sessionStorage.setItem('refresh_token', res.refreshToken)),
-        switchMap(() => this.loadMe()),
-      )
-  }
-
-  loadMe() {
-    return this.http
-      .get<MeResponse>(`${this.api}/me`)
-      .pipe(tap((me) => this.currentUser.set(me)))
-  }
-
-  refresh() {
-    const refreshToken = sessionStorage.getItem('refresh_token')
-    return this.http
-      .post<LoginResponse>(`${this.api}/refresh`, { refreshToken })
-      .pipe(
-        tap((res) => sessionStorage.setItem('access_token', res.accessToken)),
-        tap((res) => sessionStorage.setItem('refresh_token', res.refreshToken)),
-      )
-  }
-
-  logout() {
-    const refreshToken = sessionStorage.getItem('refresh_token')
-    return this.http.post<void>(`${this.api}/logout`, { refreshToken }).pipe(
-      finalize(() => {
-        sessionStorage.clear()
-        this.currentUser.set(null)
-      }),
-    )
-  }
-
-  get accessToken() {
-    return sessionStorage.getItem('access_token')
-  }
-}
-```
-
-> O plano diz “access em memória”. `sessionStorage` é o compromisso pragmático da v1 (sobrevive a F5); anotar para endurecer no Sprint 4.
-
-**`auth.interceptor.ts`** (funcional):
-
-```ts
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(AuthService)
-  const router = inject(Router)
-  const token = auth.accessToken
-
-  const authReq = token
-    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    : req
-
-  return next(authReq).pipe(
-    catchError((err: HttpErrorResponse) => {
-      if (err.status === 401 && !req.url.includes('/auth/')) {
-        return auth.refresh().pipe(
-          switchMap(() =>
-            next(
-              authReq.clone({
-                setHeaders: { Authorization: `Bearer ${auth.accessToken}` },
-              }),
-            ),
-          ),
-          catchError(() => {
-            router.navigate(['/signin'])
-            return throwError(() => err)
-          }),
-        )
-      }
-      return throwError(() => err)
-    }),
-  )
-}
-```
-
-Registar em `app.config.ts`: `provideHttpClient(withInterceptors([authInterceptor]))`.
-
-**`auth.guard.ts`**:
-
-```ts
-export const authGuard: CanActivateFn = () => {
-  const auth = inject(AuthService)
-  const router = inject(Router)
-  if (!auth.accessToken) return router.createUrlTree(['/signin'])
-  if (auth.currentUser()) return true
-  return auth.loadMe().pipe(
-    map(() => true),
-    catchError(() => of(router.createUrlTree(['/signin']))),
-  )
-}
-```
-
-Em `app.routes.ts`, aplicar ao layout:
-
-```ts
-{
-  path: "",
-  component: AppLayoutComponent,
-  canActivate: [authGuard],
-  children: [ /* ... tudo igual ... */ ],
-},
-```
-
-✅ **Verificar:** abrir `http://localhost:4200/dashboard` sem login → redireciona para `/signin`.
-
-## Passo 1.8 — Ligar os ecrãs login / forgot / reset
-
-- `shared/components/auth/signin-form/signin-form.component.ts`: substituir o `setTimeout` (linha ~54) por `authService.login(...)`. Em erro 400/401 → mensagem “Email ou senha inválidos”. Em sucesso → `router.navigate(["/dashboard"])`.
-- Credenciais de teste: `admin@finance.com` / `Admin@123`.
-- `forgot-password.component.ts`: `POST /api/auth/forgot-password` → mostrar sempre “Se o email existir, receberás um link”.
-- `reset-password.component.ts`: ler `token` da query string (`ActivatedRoute.queryParamMap`) → `POST /api/auth/reset-password` → sucesso → `/signin`.
-- Header da app (dropdown do user): ligar “Sign out” ao `authService.logout()` → `/signin`.
-
-✅ **Verificar:** fluxo completo login → dashboard → F5 (guarda + `loadMe`) → logout → `/signin`.
-
-## Passo 1.9 — Esqueci a senha + email
-
-Substituir os **stubs** em `AuthService.forgotPassword` / `resetPassword` (já existem no controller).
-
-`modules/auth/service/PasswordResetService.java` (ou métodos reais no `AuthService`):
-
-1. `forgotPassword(email)`: se o user existe e está ATIVO → token de 32 bytes (`SecureRandom` + Base64URL), guardar **hash** + `expires_at = now()+1h`, marcar tokens anteriores como usados. **Retornar 200 sempre.**
-2. `resetPassword(token, novaSenha)`: buscar por hash → validar expiração e `usedAt == null` → `passwordEncoder.encode` → marcar `usedAt` → **revogar todos os refresh** do user.
-
-`modules/auth/service/MailService.java`:
-
-```java
-public void enviarLinkReset(String para, String token) {
-    String link = frontendUrl + "/reset-password?token=" + token;
-    if (mailSender == null || hostEstaVazio) {
-        log.info("SMTP não configurado. Link de reset para {}: {}", para, link);
-        return;
-    }
-    // SimpleMailMessage com o link
-}
-```
-
-Tornar o `JavaMailSender` opcional: configurar `spring.mail.*` só se `MAIL_HOST` estiver preenchido (usar `@ConditionalOnProperty` num `MailConfig` ou simplesmente verificar a propriedade no service).
-
-✅ **Verificar (checkpoint do Sprint 1):**
-
-- `POST /api/auth/forgot-password` com email inexistente → 200 igual.
-- Com email real → link aparece no log → abrir `http://localhost:4200/reset-password?token=...` → nova senha → login com a nova senha funciona; refresh tokens antigos revogados.
+Arquivo: [1.1-1.2](Auth/1.1-1.2.md) · [1.3-1.4](Auth/1.3-1.4.md) · [1.5-1.6](Auth/1.5-1.6.md) · [1.7-1.8](Auth/1.7-1.8.md) · [1.9](Auth/1.9.md)
 
 ---
 
@@ -452,9 +291,9 @@ Aplicar nos botões: `<button *hasPermission="'clientes.create'">Novo cliente</b
 2. ~~`JwtService` + `AuthService` + `AuthController`~~ ✅
 3. ~~Filtro JWT + `SecurityConfig` fechado~~ ✅ ← API protegida
 4. ~~`V4` seed admin~~ ✅
-5. Angular: service + interceptor + guard + ecrãs ligados ← **agora**
-6. Forgot/reset + mail/log (substituir stubs)
-7. `V5` + entidades role/permissao + migração de dados
+5. ~~Angular: service + interceptor + guard + ecrãs ligados~~ ✅
+6. ~~Forgot/reset (link no console)~~ ✅
+7. `V5` ← **agora** + entidades role/permissao + migração de dados
 8. Sync do catálogo + filtro de permissões + cache
 9. API `/roles` + `/permissoes`
 10. UI roles (lista + matriz) + select de role em users
