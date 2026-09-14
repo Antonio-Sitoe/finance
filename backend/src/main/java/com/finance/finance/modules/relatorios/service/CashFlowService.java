@@ -160,6 +160,7 @@ public class CashFlowService {
                                 .build();
         }
 
+        @SuppressWarnings("null")
         @Transactional(readOnly = true)
         public DreDTO obterDre(LocalDate de, LocalDate ate) {
                 if (de.isAfter(ate)) {

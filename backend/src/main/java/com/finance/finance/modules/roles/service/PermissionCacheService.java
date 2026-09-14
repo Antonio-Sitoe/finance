@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.finance.finance.modules.roles.model.Role;
 import com.finance.finance.modules.roles.repository.PermissaoRepository;
 import com.finance.finance.modules.roles.repository.RoleRepository;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -37,7 +36,7 @@ public class PermissionCacheService {
     }
 
     public boolean isSistema(Long roleId) {
-        return roleRepository.findById(roleId).map(Role::isSistema).orElse(false);
+        return roleRepository.findById(roleId).map(role -> role.isSistema()).orElse(false);
     }
 
     public void invalidate(Long roleId) {

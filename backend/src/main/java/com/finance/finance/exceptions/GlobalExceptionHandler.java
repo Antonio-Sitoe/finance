@@ -1,6 +1,5 @@
 package com.finance.finance.exceptions;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -124,7 +123,7 @@ public class GlobalExceptionHandler {
                 Throwable cause = ex.getCause();
                 if (cause instanceof InvalidFormatException invalidFormat) {
                         String fieldPath = invalidFormat.getPath().stream()
-                                        .map(JsonMappingException.Reference::getFieldName)
+                                        .map(ref -> ref == null ? null : ref.getFieldName())
                                         .filter(Objects::nonNull)
                                         .collect(Collectors.joining("."));
 

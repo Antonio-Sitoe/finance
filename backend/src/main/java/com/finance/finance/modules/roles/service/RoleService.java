@@ -143,7 +143,7 @@ public class RoleService {
 
     private RoleDetailDTO toDetail(Role role) {
         Set<Long> grantedIds = role.getPermissoes().stream()
-                .map(Permissao::getId)
+                .map(p -> p == null ? null : p.getId())
                 .collect(Collectors.toSet());
 
         Map<String, List<PermissaoGrantedDTO>> matriz = new LinkedHashMap<>();

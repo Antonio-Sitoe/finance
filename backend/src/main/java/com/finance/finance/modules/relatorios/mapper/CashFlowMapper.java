@@ -137,8 +137,8 @@ public class CashFlowMapper {
         public static BigDecimal somarPorTipo(List<DreCategoriaProjection> categorias, TipoLancamento tipo) {
                 return categorias.stream()
                                 .filter(c -> tipo.name().equals(c.getTipo()))
-                                .map(DreCategoriaProjection::getTotal)
-                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                                .map(c -> c.getTotal() != null ? c.getTotal() : BigDecimal.ZERO)
+                                .reduce(BigDecimal.ZERO, (sum, value) -> sum.add(value));
         }
 
         public static BigDecimal percentual(BigDecimal valor, BigDecimal total) {
