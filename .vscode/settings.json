@@ -1,0 +1,6 @@
+{
+  "java.debug.settings.onBuildFailureProceed": true,
+  "java.configuration.maven.userSettings": "${workspaceFolder}/backend/.mvn/settings.xml",
+  "maven.settingsFile": "${workspaceFolder}/backend/.mvn/settings.xml",
+  "java.jdt.ls.vmargs": "-Daether.connector.connectTimeout=60000 -Daether.connector.http.requestTimeout=600000"
+}

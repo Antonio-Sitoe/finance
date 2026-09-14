@@ -4,7 +4,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.util.StringUtils;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 public final class PermissionCodes {
@@ -98,13 +97,10 @@ public final class PermissionCodes {
     }
 
     public static String pickPrimaryPattern(RequestMappingInfo info) {
-        if (info.getPathPatternsCondition() != null
-                && !info.getPathPatternsCondition().getPatternValues().isEmpty()) {
-            return info.getPathPatternsCondition().getPatternValues().iterator().next();
-        }
-        if (info.getPatternsCondition() != null
-                && !info.getPatternsCondition().getPatterns().isEmpty()) {
-            return info.getPatternsCondition().getPatterns().iterator().next();
+        // Covers both PathPatternParser and legacy Ant PathMatcher mappings (Spring 5.3+).
+        Set<String> patterns = info.getPatternValues();
+        if (!patterns.isEmpty()) {
+            return patterns.iterator().next();
         }
         return "";
     }
@@ -114,9 +110,5 @@ public final class PermissionCodes {
             return "GET";
         }
         return info.getMethodsCondition().getMethods().iterator().next().name();
-    }
-
-    public static String codigoFromHandler(HandlerMethod handlerMethod, String pathWithApi) {
-        return buildCodigo(pathWithApi, handlerMethod.getMethod().getName());
     }
 }

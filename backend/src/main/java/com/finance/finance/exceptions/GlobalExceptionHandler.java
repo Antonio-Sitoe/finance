@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +123,7 @@ public class GlobalExceptionHandler {
                 if (cause instanceof InvalidFormatException invalidFormat) {
                         String fieldPath = invalidFormat.getPath().stream()
                                         .map(ref -> ref == null ? null : ref.getFieldName())
-                                        .filter(Objects::nonNull)
+                                        .filter(name -> name != null)
                                         .collect(Collectors.joining("."));
 
                         String expectedType = invalidFormat.getTargetType() != null

@@ -100,7 +100,7 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
             if (executionChain == null || !(executionChain.getHandler() instanceof HandlerMethod handlerMethod)) {
                 return null;
             }
-            return PermissionCodes.codigoFromHandler(handlerMethod, path);
+            return PermissionCodes.buildCodigo(path, handlerMethod.getMethod().getName());
         } catch (Exception e) {
             return null;
         }
