@@ -1,19 +1,20 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { ThemeToggleTwoComponent } from '../../components/common/theme-toggle-two/theme-toggle-two.component';
-import { SolarDynamicIcon, BuildingsBold, CheckCircleBold } from '@solar-icons/angular';
+import { Component } from '@angular/core'
+import { RouterModule } from '@angular/router'
+import { ThemeToggleTwoComponent } from '../../components/common/theme-toggle-two/theme-toggle-two.component'
+import {
+  SolarDynamicIcon,
+  BuildingsBold,
+  CheckCircleBold,
+} from '@solar-icons/angular'
 
 @Component({
   selector: 'app-auth-page-layout',
-  imports: [
-    RouterModule,
-    ThemeToggleTwoComponent,
-    SolarDynamicIcon,
-  ],
+  imports: [RouterModule, ThemeToggleTwoComponent, SolarDynamicIcon],
   templateUrl: './auth-page-layout.component.html',
-  styles: ``
+  styles: ``,
 })
 export class AuthPageLayoutComponent {
-  readonly BuildingsBold = BuildingsBold;
-  readonly CheckCircleBold = CheckCircleBold;
+  readonly BuildingsBold = BuildingsBold
+  readonly CheckCircleBold = CheckCircleBold
+  readonly year = new Date().getFullYear()
 }
